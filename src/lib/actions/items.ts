@@ -14,6 +14,7 @@ export async function createItemAction(formData: FormData) {
       brand: formData.get("brand") || undefined,
       model: formData.get("model") || undefined,
       currentKm: rawKm ? Number(rawKm) : undefined,
+      address: formData.get("address") || undefined,
     },
   });
   const item = await itemService.createItem(input);

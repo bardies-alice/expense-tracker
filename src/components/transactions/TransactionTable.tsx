@@ -1,8 +1,10 @@
-import Link from "next/link";
 import type { Category, ExpenseLine, Item, Subcategory, Transaction } from "@prisma/client";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { formatDate, formatEUR } from "@/lib/format";
 import { DeleteTransactionButton } from "./DeleteTransactionButton";
+import { TransactionModal } from "./TransactionModal";
+
+type CategoryWithRelations = Category & { subcategories: Subcategory[]; items: Item[] };
 
 type TransactionRow = Transaction & {
   category: Category;
@@ -11,7 +13,13 @@ type TransactionRow = Transaction & {
   lines: ExpenseLine[];
 };
 
-export function TransactionTable({ transactions }: { transactions: TransactionRow[] }) {
+export function TransactionTable({
+  transactions,
+  categories,
+}: {
+  transactions: TransactionRow[];
+  categories: CategoryWithRelations[];
+}) {
   if (transactions.length === 0) {
     return <EmptyState title="Sin transacciones" description="Registra tu primer gasto o ingreso." />;
   }
@@ -41,9 +49,22 @@ export function TransactionTable({ transactions }: { transactions: TransactionRo
               </td>
               <td className="px-4 py-2 text-right">
                 <div className="flex justify-end gap-3">
-                  <Link href={`/gastos/${t.id}/editar`} className="text-xs text-indigo-600 hover:text-indigo-800">
-                    Editar
-                  </Link>
+                  <TransactionModal
+                    categories={categories}
+                    trigger="Editar"
+                    variant="secondary"
+                    initial={{
+                      id: t.id,
+                      type: t.type,
+                      amount: t.amount,
+                      date: t.date.toISOString(),
+                      notes: t.notes,
+                      categoryId: t.categoryId,
+                      subcategoryId: t.subcategoryId,
+                      itemId: t.itemId,
+                      lines: t.lines.map((l) => ({ productName: l.productName, quantity: l.quantity, totalPrice: l.totalPrice })),
+                    }}
+                  />
                   <DeleteTransactionButton id={t.id} />
                 </div>
               </td>

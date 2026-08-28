@@ -27,17 +27,39 @@ export function TransactionForm({
   categories,
   initial,
   defaultCategoryId,
+  defaultItemId,
+  onSuccess,
 }: {
   categories: CategoryWithRelations[];
   initial?: TransactionInitial;
   defaultCategoryId?: string;
+  defaultItemId?: string;
+  onSuccess?: () => void;
 }) {
   const router = useRouter();
   const [pending, setPending] = useState(false);
   const [categoryId, setCategoryId] = useState(initial?.categoryId ?? defaultCategoryId ?? categories[0]?.id ?? "");
   const [lines, setLines] = useState<ExpenseLineDraft[]>(initial?.lines ?? []);
+  const [amount, setAmount] = useState<string>(initial?.amount != null ? String(initial.amount) : "");
+
+  function handleLinesChange(next: ExpenseLineDraft[]) {
+    setLines(next);
+    if (next.length > 0) {
+      const total = next.reduce((sum, l) => sum + l.totalPrice, 0);
+      setAmount(String(Math.round(total * 100) / 100));
+    }
+  }
 
   const category = useMemo(() => categories.find((c) => c.id === categoryId), [categories, categoryId]);
+  const [type, setType] = useState<"EXPENSE" | "INCOME">(initial?.type ?? (category?.slug === "salario" ? "INCOME" : "EXPENSE"));
+
+  function handleCategoryChange(id: string) {
+    setCategoryId(id);
+    if (!initial) {
+      const next = categories.find((c) => c.id === id);
+      setType(next?.slug === "salario" ? "INCOME" : "EXPENSE");
+    }
+  }
 
   async function handleSubmit(formData: FormData) {
     setPending(true);
@@ -48,7 +70,11 @@ export function TransactionForm({
       } else {
         await createTransactionAction(formData);
       }
-      router.push("/gastos");
+      if (onSuccess) {
+        onSuccess();
+      } else {
+        router.push("/gastos");
+      }
     } finally {
       setPending(false);
     }
@@ -57,16 +83,16 @@ export function TransactionForm({
   return (
     <form action={handleSubmit} className="max-w-lg space-y-4">
       <div className="grid grid-cols-2 gap-3">
-        <Select name="type" defaultValue={initial?.type ?? "EXPENSE"}>
+        <Select name="type" value={type} onChange={(e) => setType(e.target.value as "EXPENSE" | "INCOME")}>
           <option value="EXPENSE">Gasto</option>
           <option value="INCOME">Ingreso</option>
         </Select>
-        <Input name="amount" type="number" step="0.01" placeholder="Importe" defaultValue={initial?.amount} required />
+        <Input name="amount" type="number" step="0.01" placeholder="Importe" value={amount} onChange={(e) => setAmount(e.target.value)} required />
       </div>
 
       <Input name="date" type="date" defaultValue={initial?.date?.slice(0, 10) ?? new Date().toISOString().slice(0, 10)} required />
 
-      <Select name="categoryId" value={categoryId} onChange={(e) => setCategoryId(e.target.value)}>
+      <Select name="categoryId" value={categoryId} onChange={(e) => handleCategoryChange(e.target.value)}>
         {categories.map((c) => (
           <option key={c.id} value={c.id}>
             {c.name}
@@ -86,7 +112,7 @@ export function TransactionForm({
       )}
 
       {category && category.items.length > 0 && (
-        <Select name="itemId" defaultValue={initial?.itemId ?? ""}>
+        <Select name="itemId" defaultValue={initial?.itemId ?? defaultItemId ?? ""}>
           <option value="">(sin item asociado)</option>
           {category.items.map((i) => (
             <option key={i.id} value={i.id}>
@@ -98,7 +124,7 @@ export function TransactionForm({
 
       <Input name="notes" placeholder="Notas (opcional)" defaultValue={initial?.notes ?? ""} />
 
-      <TransactionLinesEditor lines={lines} onChange={setLines} />
+      <TransactionLinesEditor lines={lines} onChange={handleLinesChange} />
 
       <Button type="submit" disabled={pending} className="w-full">
         {pending ? "Guardando..." : initial?.id ? "Guardar cambios" : "Crear gasto"}

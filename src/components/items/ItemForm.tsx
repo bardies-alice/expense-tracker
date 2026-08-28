@@ -49,6 +49,7 @@ export function ItemForm({ categoryId, defaultType = "GENERIC" }: { categoryId: 
               <Input name="currentKm" type="number" placeholder="Kilometraje actual" />
             </>
           )}
+          {type === "HOUSE" && <Input name="address" placeholder="Dirección (opcional)" />}
           <Button type="submit" disabled={pending} className="w-full">
             {pending ? "Creando..." : "Crear"}
           </Button>
