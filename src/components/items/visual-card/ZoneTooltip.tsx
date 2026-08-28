@@ -11,7 +11,7 @@ export interface ZoneTooltipInfo {
 
 export function ZoneTooltip({ info }: { info: ZoneTooltipInfo | null }) {
   if (!info) {
-    return <p className="m-0 text-xs text-gray-400">Pasa el ratón o toca una zona del vehículo para ver su estado.</p>;
+    return <p className="m-0 text-xs text-gray-400">Pasa el ratón o toca una zona para ver su estado.</p>;
   }
 
   return (

@@ -1,25 +1,35 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
-import type { Subcategory, Transaction } from "@prisma/client";
+import type { Category, Item, Subcategory, Transaction } from "@prisma/client";
 import { formatDate, formatEUR } from "@/lib/format";
+import { Modal } from "@/components/ui/Modal";
+import { TransactionForm } from "@/components/transactions/TransactionForm";
 
-export interface VehicleTransaction extends Pick<Transaction, "id" | "date" | "notes" | "amount" | "type"> {
+export interface ItemExpenseTransaction extends Pick<Transaction, "id" | "date" | "notes" | "amount" | "type"> {
   subcategoryId: string | null;
   categoryLabel: string;
 }
 
-export function VehicleExpensesPanel({
-  categoryId,
+export function ItemExpensesPanel({
+  category,
+  item,
   subcategories,
   transactions,
 }: {
-  categoryId: string;
+  category: Category;
+  item: Item;
   subcategories: Subcategory[];
-  transactions: VehicleTransaction[];
+  transactions: ItemExpenseTransaction[];
 }) {
+  const router = useRouter();
+  const categoryId = category.id;
+  const itemId = item.id;
   const [activeTab, setActiveTab] = useState<string>("todos");
+  const [addOpen, setAddOpen] = useState(false);
+  const formCategories = useMemo(() => [{ ...category, subcategories, items: [item] }], [category, subcategories, item]);
 
   const tabs = useMemo(() => [{ id: "todos", label: "Todos" }, ...subcategories.map((s) => ({ id: s.id, label: s.name }))], [subcategories]);
 
@@ -33,9 +43,17 @@ export function VehicleExpensesPanel({
           <h2 className="m-0 text-sm font-semibold text-gray-800">Gastos relacionados</h2>
           <p className="mt-1 text-xs text-gray-400">{visible.length} movimientos</p>
         </div>
-        <div className="text-right">
-          <p className="m-0 text-[11px] uppercase tracking-wide text-gray-400">Total</p>
-          <p className="mt-0.5 text-lg font-bold text-gray-900">{formatEUR(Math.abs(total))}</p>
+        <div className="flex items-start gap-4">
+          <div className="text-right">
+            <p className="m-0 text-[11px] uppercase tracking-wide text-gray-400">Total</p>
+            <p className="mt-0.5 text-lg font-bold text-gray-900">{formatEUR(Math.abs(total))}</p>
+          </div>
+          <button
+            onClick={() => setAddOpen(true)}
+            className="whitespace-nowrap rounded-lg bg-indigo-600 px-3 py-2 text-[13px] font-medium text-white hover:bg-indigo-700"
+          >
+            + Añadir gasto
+          </button>
         </div>
       </div>
 
@@ -83,9 +101,21 @@ export function VehicleExpensesPanel({
 
       <div className="border-t border-gray-200 px-5 py-3.5">
         <Link href={`/categorias/${categoryId}`} className="text-[13px] font-medium text-indigo-600 hover:text-indigo-800">
-          Ver todos los gastos del vehículo →
+          Ver todos los gastos de {item.name} →
         </Link>
       </div>
+
+      <Modal open={addOpen} onClose={() => setAddOpen(false)} title={`Nuevo gasto de ${item.name}`}>
+        <TransactionForm
+          categories={formCategories}
+          defaultCategoryId={categoryId}
+          defaultItemId={itemId}
+          onSuccess={() => {
+            setAddOpen(false);
+            router.refresh();
+          }}
+        />
+      </Modal>
     </div>
   );
 }

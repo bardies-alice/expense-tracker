@@ -21,7 +21,9 @@ export function KmUpdateForm({ itemId, categoryId, currentKm }: { itemId: string
   return (
     <form onSubmit={handleSubmit} className="flex items-center gap-2.5">
       <label className="text-xs font-medium uppercase tracking-wide text-gray-400">Kilometraje</label>
-      <Input type="number" value={km} onChange={(e) => setKm(Number(e.target.value))} className="w-32" />
+      <div className="w-32">
+        <Input type="number" value={km} onChange={(e) => setKm(Number(e.target.value))} />
+      </div>
       <button
         type="submit"
         disabled={pending}

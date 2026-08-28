@@ -26,7 +26,7 @@ export function ItemMaintenancePanel({
   return (
     <>
       <VisualCard itemType={itemType} components={components} currentKm={currentKm} onZoneClick={setSelectedComponentId} />
-      {itemType === "CAR" && catalog && (
+      {(itemType === "CAR" || itemType === "HOUSE") && catalog && (
         <MaintenanceComponentsList itemId={itemId} components={components} catalog={catalog} onSelect={setSelectedComponentId} />
       )}
       <MaintenanceEventForm

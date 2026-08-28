@@ -6,8 +6,8 @@ import { computeComponentStatus } from "@/lib/maintenance/computeStatus";
 import { getComponentDefinitions } from "@/lib/maintenance/rules";
 import { ItemMaintenancePanel } from "@/components/items/ItemMaintenancePanel";
 import { KmUpdateForm } from "@/components/items/KmUpdateForm";
-import { VehicleExpensesPanel } from "@/components/items/VehicleExpensesPanel";
-import type { CarMetadata } from "@/types";
+import { ItemExpensesPanel } from "@/components/items/ItemExpensesPanel";
+import type { CarMetadata, HouseMetadata } from "@/types";
 import type { VisualComponent } from "@/components/items/visual-card/VisualCard";
 
 export default async function ItemDetailPage({ params }: { params: Promise<{ itemId: string }> }) {
@@ -15,8 +15,9 @@ export default async function ItemDetailPage({ params }: { params: Promise<{ ite
   const item = await getItemById(itemId);
   if (!item) notFound();
 
-  const metadata = (item.metadata as CarMetadata | null) ?? undefined;
+  const metadata = (item.metadata as (CarMetadata & HouseMetadata) | null) ?? undefined;
   const currentKm = metadata?.currentKm;
+  const subtitle = metadata?.plate ?? metadata?.address;
 
   const visualComponents: VisualComponent[] = item.components.map((c) => {
     const lastEvent = c.events[0];
@@ -48,6 +49,7 @@ export default async function ItemDetailPage({ params }: { params: Promise<{ ite
 
   const catalog = getComponentDefinitions(item.type);
   const transactions = await listTransactions({ itemId: item.id });
+  const hasExpensesPanel = item.type === "CAR" || item.type === "HOUSE";
 
   return (
     <div>
@@ -63,13 +65,13 @@ export default async function ItemDetailPage({ params }: { params: Promise<{ ite
           <h1 className="m-0 text-2xl font-bold tracking-tight text-gray-900">{item.name}</h1>
           <p className="mt-1.5 text-sm text-gray-500">
             {item.category.name}
-            {metadata?.plate ? ` · ${metadata.plate}` : ""}
+            {subtitle ? ` · ${subtitle}` : ""}
           </p>
         </div>
         {item.type === "CAR" && <KmUpdateForm itemId={item.id} categoryId={item.categoryId} currentKm={currentKm ?? 0} />}
       </div>
 
-      <div className={item.type === "CAR" ? "grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(360px,460px)_1fr]" : ""}>
+      <div className={hasExpensesPanel ? "grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(360px,460px)_1fr]" : ""}>
         <div>
           <ItemMaintenancePanel
             itemId={item.id}
@@ -80,9 +82,10 @@ export default async function ItemDetailPage({ params }: { params: Promise<{ ite
           />
         </div>
 
-        {item.type === "CAR" && (
-          <VehicleExpensesPanel
-            categoryId={item.categoryId}
+        {hasExpensesPanel && (
+          <ItemExpensesPanel
+            category={item.category}
+            item={item}
             subcategories={item.category.subcategories}
             transactions={transactions.map((t) => ({
               id: t.id,

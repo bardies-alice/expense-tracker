@@ -54,6 +54,7 @@ export function VisualCard({
   }
 
   const isCar = itemType === "CAR";
+  const hasZones = itemType === "CAR" || itemType === "HOUSE";
 
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
@@ -81,7 +82,7 @@ export function VisualCard({
         {itemType === "GENERIC" && <p className="text-sm text-gray-400">Sin representación visual para este tipo de item.</p>}
       </div>
 
-      {isCar && (
+      {hasZones && (
         <div className="border-t border-gray-200 bg-gray-50 px-5 py-4">
           <div className="min-h-[20px]">
             <ZoneTooltip info={hoveredInfo ? toTooltipInfo(hoveredInfo) : null} />

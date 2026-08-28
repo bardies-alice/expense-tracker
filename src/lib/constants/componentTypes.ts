@@ -23,6 +23,10 @@ export const COMPONENT_CATALOG: Record<ItemType, ComponentTypeDefinition[]> = {
   HOUSE: [
     { componentType: "BOILER", zoneKey: "boiler", label: "Caldera", ruleType: "TIME", intervalDays: 365, warningDays: 30 },
     { componentType: "ROOF", zoneKey: "roof", label: "Tejado", ruleType: "TIME", intervalDays: 3650, warningDays: 180 },
+    { componentType: "ALARM", zoneKey: "alarm", label: "Alarma", ruleType: "TIME", intervalDays: 365, warningDays: 30 },
+    { componentType: "HOME_INSURANCE", zoneKey: "home-insurance", label: "Seguro hogar", ruleType: "TIME", intervalDays: 365, warningDays: 15 },
+    { componentType: "WATER_HEATER", zoneKey: "water-heater", label: "Termo agua", ruleType: "TIME", intervalDays: 1825, warningDays: 90 },
+    { componentType: "SMOKE_DETECTOR", zoneKey: "smoke-detector", label: "Detector de humo", ruleType: "TIME", intervalDays: 365, warningDays: 30 },
   ],
   GENERIC: [],
 };
