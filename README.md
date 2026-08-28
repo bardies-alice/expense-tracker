@@ -1,36 +1,40 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Mis Gastos
 
-## Getting Started
+App de gestión de gastos personales (Next.js + Prisma + SQLite). Single-user, sin login.
 
-First, run the development server:
+## Desarrollo
 
 ```bash
+npm install
+npx prisma migrate dev
+npm run seed
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abrir http://localhost:3000
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Modelo de datos
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Ver `prisma/schema.prisma`. Piezas clave: `Category`/`Subcategory`, `Item` (coche/casa/genérico, con `metadata` JSON), `MaintenanceComponent`/`MaintenanceEvent` (reglas y estado de mantenimiento por zona, `zoneKey` mapea a la ficha SVG), `Transaction`/`ExpenseLine` (gastos/ingresos y líneas de producto).
 
-## Learn More
+El estado de un componente de mantenimiento (`ok`/`warning`/`overdue`/`unknown`) **no se guarda**: se calcula en `src/lib/maintenance/computeStatus.ts` a partir del último evento y las reglas del componente.
 
-To learn more about Next.js, take a look at the following resources:
+## API — contratos para integraciones futuras
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Estas rutas ya funcionan hoy (CRUD real), pero están pensadas para que Alexa y OCR se conecten sin cambios de arquitectura. Reusan la misma lógica que la UI (`src/lib/core`).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### `GET/POST /api/transactions`
+CRUD programático de transacciones. `POST` body = mismo shape que `transactionSchema` (`src/lib/validation/schemas.ts`): `{ type, amount, date, categoryId, subcategoryId?, itemId?, notes?, lines?: [{productName, quantity, totalPrice}] }`.
 
-## Deploy on Vercel
+### `GET/PATCH/DELETE /api/transactions/:id`
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### `POST /api/webhooks/alexa`
+Placeholder para una futura Alexa Skill.
+- `{ "type": "expense", "amount": 12.5, "categoryId": "...", "notes"?: "..." }` → crea una `Transaction` con `source=ALEXA`.
+- `{ "type": "shopping_item", "productName": "leche" }` → de momento solo confirma recepción (202), no hay lógica de lista de la compra en el MVP.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### `POST /api/receipts`
+Placeholder para OCR de tickets. `multipart/form-data` con campos `receipt` (archivo) y `categoryId`. Guarda la imagen en `public/uploads/receipts` y crea una `Transaction` borrador (`amount=0`, `source=OCR`, `receiptImageUrl`). La extracción de líneas de producto (OCR real) se añadirá después actualizando esa misma transacción con `ExpenseLine`.
+
+### `GET/POST /api/maintenance/:componentId/events`
+Registra o lista eventos de mantenimiento de un componente por API (pensado para registrar por voz vía Alexa en el futuro). Body `POST`: `{ date, mileageKm?, notes?, cost? }`.

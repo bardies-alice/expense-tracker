@@ -1,0 +1,108 @@
+import { prisma } from "@/lib/prisma";
+import type { z } from "zod";
+import type { transactionSchema, transactionUpdateSchema } from "@/lib/validation/schemas";
+
+export interface TransactionFilters {
+  categoryId?: string;
+  itemId?: string;
+  type?: "EXPENSE" | "INCOME";
+  from?: Date;
+  to?: Date;
+}
+
+export function listTransactions(filters: TransactionFilters = {}) {
+  return prisma.transaction.findMany({
+    where: {
+      categoryId: filters.categoryId,
+      itemId: filters.itemId,
+      type: filters.type,
+      date: {
+        gte: filters.from,
+        lte: filters.to,
+      },
+    },
+    include: { category: true, subcategory: true, item: true, lines: true },
+    orderBy: { date: "desc" },
+  });
+}
+
+export function getTransactionById(id: string) {
+  return prisma.transaction.findUnique({
+    where: { id },
+    include: { lines: true },
+  });
+}
+
+export function createTransaction(input: z.infer<typeof transactionSchema>) {
+  const { lines, ...data } = input;
+  return prisma.transaction.create({
+    data: {
+      ...data,
+      lines: lines?.length ? { create: lines } : undefined,
+    },
+    include: { lines: true },
+  });
+}
+
+export function updateTransaction(id: string, input: z.infer<typeof transactionUpdateSchema>) {
+  const { lines, ...data } = input;
+  return prisma.$transaction(async (tx) => {
+    if (lines) {
+      await tx.expenseLine.deleteMany({ where: { transactionId: id } });
+    }
+    return tx.transaction.update({
+      where: { id },
+      data: {
+        ...data,
+        lines: lines?.length ? { create: lines } : undefined,
+      },
+      include: { lines: true },
+    });
+  });
+}
+
+export function deleteTransaction(id: string) {
+  return prisma.transaction.delete({ where: { id } });
+}
+
+export async function getMonthlySummary(monthsBack = 6) {
+  const since = new Date();
+  since.setMonth(since.getMonth() - monthsBack);
+  const transactions = await prisma.transaction.findMany({
+    where: { date: { gte: since } },
+    select: { type: true, amount: true, date: true },
+  });
+
+  const byMonth = new Map<string, { income: number; expense: number }>();
+  for (const t of transactions) {
+    const key = `${t.date.getFullYear()}-${String(t.date.getMonth() + 1).padStart(2, "0")}`;
+    const entry = byMonth.get(key) ?? { income: 0, expense: 0 };
+    if (t.type === "INCOME") entry.income += t.amount;
+    else entry.expense += t.amount;
+    byMonth.set(key, entry);
+  }
+  return Array.from(byMonth.entries())
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([month, totals]) => ({ month, ...totals }));
+}
+
+export async function getTopProducts(limit = 10, categorySlug?: string) {
+  const lines = await prisma.expenseLine.findMany({
+    where: categorySlug
+      ? { transaction: { category: { slug: categorySlug } } }
+      : undefined,
+    select: { productName: true, quantity: true, totalPrice: true },
+  });
+
+  const byProduct = new Map<string, { count: number; total: number }>();
+  for (const l of lines) {
+    const entry = byProduct.get(l.productName) ?? { count: 0, total: 0 };
+    entry.count += l.quantity;
+    entry.total += l.totalPrice;
+    byProduct.set(l.productName, entry);
+  }
+  return Array.from(byProduct.entries())
+    .sort(([, a], [, b]) => b.count - a.count)
+    .slice(0, limit)
+    .map(([productName, stats]) => ({ productName, ...stats }));
+}

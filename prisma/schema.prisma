@@ -1,0 +1,150 @@
+// Prisma schema — expense tracker
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Category {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  slug      String   @unique
+  icon      String?
+  color     String?
+  isDefault Boolean  @default(false)
+  isCustom  Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  subcategories Subcategory[]
+  items         Item[]
+  transactions  Transaction[]
+}
+
+model Subcategory {
+  id         String   @id @default(cuid())
+  name       String
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  transactions Transaction[]
+
+  @@unique([categoryId, name])
+}
+
+enum ItemType {
+  CAR
+  HOUSE
+  GENERIC
+}
+
+model Item {
+  id         String    @id @default(cuid())
+  categoryId String
+  category   Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  type       ItemType
+  name       String
+  metadata   Json?
+  visualKind String?
+  archivedAt DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  components   MaintenanceComponent[]
+  transactions Transaction[]
+}
+
+enum MaintenanceRuleType {
+  DISTANCE
+  TIME
+  DISTANCE_OR_TIME
+}
+
+model MaintenanceComponent {
+  id            String              @id @default(cuid())
+  itemId        String
+  item          Item                @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  componentType String
+  zoneKey       String
+  label         String
+  ruleType      MaintenanceRuleType
+  intervalKm    Int?
+  intervalDays  Int?
+  warningKm     Int?
+  warningDays   Int?
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+
+  events MaintenanceEvent[]
+
+  @@index([itemId])
+}
+
+model MaintenanceEvent {
+  id            String       @id @default(cuid())
+  componentId   String
+  component     MaintenanceComponent @relation(fields: [componentId], references: [id], onDelete: Cascade)
+  date          DateTime
+  mileageKm     Int?
+  notes         String?
+  cost          Float?
+  transactionId String?      @unique
+  transaction   Transaction? @relation(fields: [transactionId], references: [id])
+  createdAt     DateTime     @default(now())
+
+  @@index([componentId])
+}
+
+enum TransactionType {
+  EXPENSE
+  INCOME
+}
+
+enum TransactionSource {
+  MANUAL
+  ALEXA
+  OCR
+}
+
+model Transaction {
+  id              String            @id @default(cuid())
+  type            TransactionType
+  amount          Float
+  date            DateTime
+  notes           String?
+  categoryId      String
+  category        Category          @relation(fields: [categoryId], references: [id])
+  subcategoryId   String?
+  subcategory     Subcategory?      @relation(fields: [subcategoryId], references: [id])
+  itemId          String?
+  item            Item?             @relation(fields: [itemId], references: [id])
+  source          TransactionSource @default(MANUAL)
+  receiptImageUrl String?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  lines            ExpenseLine[]
+  maintenanceEvent MaintenanceEvent?
+
+  @@index([categoryId])
+  @@index([itemId])
+  @@index([date])
+}
+
+model ExpenseLine {
+  id            String      @id @default(cuid())
+  transactionId String
+  transaction   Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+  productName   String
+  quantity      Float       @default(1)
+  unitPrice     Float?
+  totalPrice    Float
+  category      String?
+  createdAt     DateTime    @default(now())
+
+  @@index([transactionId])
+  @@index([productName])
+}
