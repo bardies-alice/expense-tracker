@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { createTripAction } from "@/lib/actions/trips";
 import { fetchSubdivisions, fetchWorldCountries, isDrillSupported, type GeoOption } from "@/lib/geo";
@@ -8,7 +9,8 @@ import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { Modal } from "@/components/ui/Modal";
 
-export function TripForm({ categoryId, onSaved }: { categoryId: string; onSaved: () => void }) {
+export function TripForm({ categoryId }: { categoryId: string }) {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [pending, setPending] = useState(false);
   const [countries, setCountries] = useState<GeoOption[]>([]);
@@ -55,7 +57,7 @@ export function TripForm({ categoryId, onSaved }: { categoryId: string; onSaved:
       await createTripAction(formData, categoryId);
       formRef.current?.reset();
       setOpen(false);
-      onSaved();
+      router.refresh();
     } finally {
       setPending(false);
     }

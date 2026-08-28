@@ -35,7 +35,7 @@ export async function fetchWorldCountries(): Promise<GeoLayer> {
     .filter((f) => f.id != null)
     .map((f) => ({ code: String(f.id), name: f.properties.name }))
     .sort((a, b) => a.name.localeCompare(b.name));
-  return { geography: topo, options };
+  return { geography: geo as unknown as Record<string, unknown>, options };
 }
 
 export async function fetchSubdivisions(countryCode: string): Promise<GeoLayer | null> {
@@ -51,7 +51,7 @@ export async function fetchSubdivisions(countryCode: string): Promise<GeoLayer |
       .filter((f) => f.id != null)
       .map((f) => ({ code: String(f.id), name: f.properties.name }))
       .sort((a, b) => a.name.localeCompare(b.name));
-    return { geography: data, options };
+    return { geography: geo as unknown as Record<string, unknown>, options };
   }
 
   const features = data.features as Array<{ properties: { cod_ccaa: string; name: string } }>;
