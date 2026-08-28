@@ -70,6 +70,16 @@ export const transactionSchema = z.object({
 
 export const transactionUpdateSchema = transactionSchema.partial();
 
+export const tripSchema = z.object({
+  countryCode: z.string().min(1),
+  countryName: z.string().min(1),
+  subdivisionCode: z.string().optional(),
+  subdivisionName: z.string().optional(),
+  startDate: z.coerce.date(),
+  endDate: z.coerce.date().optional(),
+  notes: z.string().optional(),
+});
+
 export const alexaWebhookSchema = z.discriminatedUnion("type", [
   z.object({
     type: z.literal("expense"),

@@ -134,6 +134,20 @@ model Transaction {
   @@index([date])
 }
 
+model Trip {
+  id               String    @id @default(cuid())
+  countryCode      String
+  countryName      String
+  subdivisionCode  String?
+  subdivisionName  String?
+  startDate        DateTime
+  endDate          DateTime?
+  notes            String?
+  createdAt        DateTime  @default(now())
+
+  @@index([countryCode])
+}
+
 model ExpenseLine {
   id            String      @id @default(cuid())
   transactionId String
