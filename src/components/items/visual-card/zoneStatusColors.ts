@@ -15,6 +15,27 @@ export const ZONE_STATUS_GLOW: Record<ComponentStatus, string> = {
   unknown: "transparent",
 };
 
+export const ZONE_STATUS_LABEL: Record<ComponentStatus, string> = {
+  ok: "Al día",
+  warning: "Próximo",
+  overdue: "Atrasado",
+  unknown: "Sin datos",
+};
+
+export const ZONE_STATUS_BADGE_BG: Record<ComponentStatus, string> = {
+  ok: "#c6f6d5",
+  warning: "#feebc8",
+  overdue: "#fed7d7",
+  unknown: "#edf2f7",
+};
+
+export const ZONE_STATUS_BADGE_TEXT: Record<ComponentStatus, string> = {
+  ok: "#22543d",
+  warning: "#744210",
+  overdue: "#742a2a",
+  unknown: "#718096",
+};
+
 export function statusColor(status: ComponentStatus | undefined) {
   return ZONE_STATUS_COLOR[status ?? "unknown"];
 }

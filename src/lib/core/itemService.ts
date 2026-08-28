@@ -7,7 +7,7 @@ export function getItemById(id: string) {
   return prisma.item.findUnique({
     where: { id },
     include: {
-      category: true,
+      category: { include: { subcategories: true } },
       components: { include: { events: { orderBy: { date: "desc" } } } },
     },
   });

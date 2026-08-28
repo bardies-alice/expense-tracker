@@ -50,27 +50,22 @@ export function VisualCard({
   const isCar = itemType === "CAR";
 
   return (
-    <div
-      className={clsx(
-        chakraPetch.variable,
-        "overflow-hidden rounded-xl border",
-        isCar ? "border-[#0d0f12] bg-[#16181c]" : "border-gray-200 bg-white"
-      )}
-      style={isCar ? { fontFamily: "var(--font-chakra)" } : undefined}
-    >
-      {isCar && (
-        <div className="flex items-center justify-between border-b border-[#2c3037] bg-[#1c1f24] px-5 py-3">
-          <span className="text-[10px] font-medium uppercase tracking-[0.2em] text-[#7d8590]">Cuadro de mando</span>
-          <div className="flex items-baseline gap-1.5 rounded-md bg-[#0d0f12] px-3 py-1">
-            <span className="text-lg font-semibold tabular-nums text-[#e8eaed]">
+    <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+      <div className="flex items-center justify-between border-b border-gray-200 bg-gray-50 px-5 py-3.5">
+        <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-gray-400">
+          {isCar ? "Cuadro de mando" : "Estado"}
+        </span>
+        {isCar && (
+          <div className={clsx(chakraPetch.variable, "flex items-baseline gap-1.5 rounded-md bg-gray-900 px-3 py-1.5")}>
+            <span className="text-[19px] font-semibold text-gray-50" style={{ fontFamily: "var(--font-chakra)" }}>
               {currentKm != null ? currentKm.toLocaleString("es-ES") : "—"}
             </span>
-            <span className="text-[10px] uppercase tracking-wide text-[#7d8590]">km</span>
+            <span className="text-[10px] uppercase tracking-wide text-gray-400">km</span>
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
-      <div className={clsx("flex items-center justify-center p-6", isCar && "bg-[#16181c]")}>
+      <div className={clsx("bg-white px-5 pb-2.5 pt-7", isCar && "aspect-[640/500]")}>
         {itemType === "CAR" && (
           <CarSvg zoneStatuses={zoneStatuses} hoveredZone={hoveredZone} onZoneHover={setHoveredZone} onZoneClick={handleZoneClick} />
         )}
@@ -80,12 +75,13 @@ export function VisualCard({
         {itemType === "GENERIC" && <p className="text-sm text-gray-400">Sin representación visual para este tipo de item.</p>}
       </div>
 
-      {isCar ? (
-        <div className="border-t border-[#2c3037] bg-[#1c1f24] px-5 py-4">
-          <div className="min-h-[1.25rem]">
-            <ZoneTooltip info={hoveredInfo ? toTooltipInfo(hoveredInfo) : null} dark />
+      {isCar && (
+        <div className="border-t border-gray-200 bg-gray-50 px-5 py-4">
+          <div className="min-h-[20px]">
+            <ZoneTooltip info={hoveredInfo ? toTooltipInfo(hoveredInfo) : null} />
           </div>
-          <div className="mt-3 grid grid-cols-3 gap-px overflow-hidden rounded-lg bg-[#2c3037] sm:grid-cols-6">
+
+          <div className="mt-3.5 grid grid-cols-3 gap-px overflow-hidden rounded-lg bg-gray-200 sm:grid-cols-6">
             {components.map((c) => {
               const active = isActive(c.status);
               const color = statusColor(c.status);
@@ -95,32 +91,18 @@ export function VisualCard({
                   onClick={() => onZoneClick?.(c.id)}
                   onMouseEnter={() => setHoveredZone(c.zoneKey)}
                   onMouseLeave={() => setHoveredZone(null)}
-                  className="flex flex-col items-center gap-1.5 bg-[#16181c] px-2 py-3 transition-colors hover:bg-[#1c1f24]"
+                  className="flex flex-col items-center gap-1.5 bg-white px-1.5 py-3 transition-colors hover:bg-gray-50"
                 >
                   <TelltaleIcon
                     componentType={c.componentType}
-                    className={active ? "telltale-pulse" : undefined}
                     style={{ width: 22, height: 22, color, filter: active ? `drop-shadow(0 0 4px ${statusGlow(c.status)})` : undefined }}
                   />
-                  <span className="text-center text-[9px] uppercase leading-tight tracking-wide text-[#7d8590]">{c.label}</span>
+                  <span className="text-center text-[9px] uppercase leading-tight tracking-wide text-gray-500">{c.label}</span>
                 </button>
               );
             })}
           </div>
         </div>
-      ) : (
-        <ul className="divide-y divide-gray-100 border-t border-gray-200">
-          {components.map((c) => (
-            <li key={c.id} className="flex items-center justify-between px-4 py-2 text-sm">
-              <button onClick={() => onZoneClick?.(c.id)} className="text-left font-medium text-gray-800 hover:text-indigo-600">
-                {c.label}
-              </button>
-              <span className="text-xs" style={{ color: statusColor(c.status) }}>
-                {c.status}
-              </span>
-            </li>
-          ))}
-        </ul>
       )}
     </div>
   );

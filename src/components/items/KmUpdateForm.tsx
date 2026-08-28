@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { updateItemKmAction } from "@/lib/actions/items";
-import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 
 export function KmUpdateForm({ itemId, categoryId, currentKm }: { itemId: string; categoryId: string; currentKm: number }) {
@@ -20,11 +19,16 @@ export function KmUpdateForm({ itemId, categoryId, currentKm }: { itemId: string
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex items-center gap-2">
+    <form onSubmit={handleSubmit} className="flex items-center gap-2.5">
+      <label className="text-xs font-medium uppercase tracking-wide text-gray-400">Kilometraje</label>
       <Input type="number" value={km} onChange={(e) => setKm(Number(e.target.value))} className="w-32" />
-      <Button type="submit" variant="secondary" disabled={pending}>
-        {pending ? "..." : "Actualizar km"}
-      </Button>
+      <button
+        type="submit"
+        disabled={pending}
+        className="h-10 rounded-lg border-none bg-gray-100 px-5 text-sm font-medium text-gray-800 hover:bg-gray-200 disabled:opacity-50"
+      >
+        {pending ? "..." : "Actualizar"}
+      </button>
     </form>
   );
 }

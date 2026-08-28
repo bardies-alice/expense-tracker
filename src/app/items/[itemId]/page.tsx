@@ -1,11 +1,12 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getItemById } from "@/lib/core/itemService";
+import { listTransactions } from "@/lib/core/transactionService";
 import { computeComponentStatus } from "@/lib/maintenance/computeStatus";
 import { getComponentDefinitions } from "@/lib/maintenance/rules";
 import { ItemMaintenancePanel } from "@/components/items/ItemMaintenancePanel";
 import { KmUpdateForm } from "@/components/items/KmUpdateForm";
-import { MaintenanceComponentForm } from "@/components/maintenance/MaintenanceComponentForm";
-import { MaintenanceHistoryTable } from "@/components/maintenance/MaintenanceHistoryTable";
+import { VehicleExpensesPanel } from "@/components/items/VehicleExpensesPanel";
 import type { CarMetadata } from "@/types";
 import type { VisualComponent } from "@/components/items/visual-card/VisualCard";
 
@@ -41,33 +42,54 @@ export default async function ItemDetailPage({ params }: { params: Promise<{ ite
   });
 
   const catalog = getComponentDefinitions(item.type);
+  const transactions = await listTransactions({ itemId: item.id });
 
   return (
-    <div className="space-y-8">
-      <div className="flex items-center justify-between">
+    <div>
+      <Link href={`/categorias/${item.categoryId}`} className="mb-4 inline-flex items-center gap-1.5 text-[13px] text-gray-500 hover:text-gray-700">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M15 18l-6-6 6-6" />
+        </svg>
+        {item.category.name}
+      </Link>
+
+      <div className="mb-7 flex flex-wrap items-end justify-between gap-6">
         <div>
-          <h1 className="text-xl font-semibold text-gray-900">{item.name}</h1>
-          <p className="text-sm text-gray-500">{item.category.name}</p>
+          <h1 className="m-0 text-2xl font-bold tracking-tight text-gray-900">{item.name}</h1>
+          <p className="mt-1.5 text-sm text-gray-500">
+            {item.category.name}
+            {metadata?.plate ? ` · ${metadata.plate}` : ""}
+          </p>
         </div>
+        {item.type === "CAR" && <KmUpdateForm itemId={item.id} categoryId={item.categoryId} currentKm={currentKm ?? 0} />}
+      </div>
+
+      <div className={item.type === "CAR" ? "grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(360px,460px)_1fr]" : ""}>
+        <div>
+          <ItemMaintenancePanel
+            itemId={item.id}
+            itemType={item.type}
+            components={visualComponents}
+            currentKm={currentKm}
+            catalog={catalog}
+          />
+        </div>
+
         {item.type === "CAR" && (
-          <KmUpdateForm itemId={item.id} categoryId={item.categoryId} currentKm={currentKm ?? 0} />
+          <VehicleExpensesPanel
+            categoryId={item.categoryId}
+            subcategories={item.category.subcategories}
+            transactions={transactions.map((t) => ({
+              id: t.id,
+              date: t.date,
+              notes: t.notes,
+              amount: t.amount,
+              type: t.type,
+              subcategoryId: t.subcategoryId,
+              categoryLabel: t.subcategory?.name ?? t.category.name,
+            }))}
+          />
         )}
-      </div>
-
-      <ItemMaintenancePanel itemId={item.id} itemType={item.type} components={visualComponents} currentKm={currentKm} />
-
-      <div className="flex items-center justify-between">
-        <h2 className="text-sm font-medium text-gray-500">Componentes de mantenimiento</h2>
-        <MaintenanceComponentForm itemId={item.id} catalog={catalog} />
-      </div>
-
-      <div className="space-y-6">
-        {item.components.map((c) => (
-          <div key={c.id}>
-            <h3 className="mb-2 text-sm font-medium text-gray-700">{c.label}</h3>
-            <MaintenanceHistoryTable events={c.events} />
-          </div>
-        ))}
       </div>
     </div>
   );
