@@ -65,7 +65,7 @@ export function VisualCard({
         )}
       </div>
 
-      <div className={clsx("bg-white px-5 pb-2.5 pt-7", isCar && "aspect-[640/500]")}>
+      <div className="flex items-center justify-center bg-white px-5 pb-2.5 pt-7">
         {itemType === "CAR" && (
           <CarSvg zoneStatuses={zoneStatuses} hoveredZone={hoveredZone} onZoneHover={setHoveredZone} onZoneClick={handleZoneClick} />
         )}
