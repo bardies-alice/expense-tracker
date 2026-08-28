@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import * as maintenanceService from "@/lib/core/maintenanceService";
-import { maintenanceComponentSchema, maintenanceEventSchema } from "@/lib/validation/schemas";
+import { maintenanceComponentSchema, maintenanceComponentUpdateSchema, maintenanceEventSchema } from "@/lib/validation/schemas";
 
 export async function createMaintenanceComponentAction(formData: FormData) {
   const input = maintenanceComponentSchema.parse({
@@ -18,6 +18,22 @@ export async function createMaintenanceComponentAction(formData: FormData) {
   });
   const component = await maintenanceService.createMaintenanceComponent(input);
   revalidatePath(`/items/${input.itemId}`);
+  return component;
+}
+
+export async function updateMaintenanceComponentAction(formData: FormData) {
+  const itemId = formData.get("itemId") as string;
+  const componentId = formData.get("componentId") as string;
+  const input = maintenanceComponentUpdateSchema.parse({
+    label: formData.get("label"),
+    ruleType: formData.get("ruleType"),
+    intervalKm: numOrUndef(formData.get("intervalKm")),
+    intervalDays: numOrUndef(formData.get("intervalDays")),
+    warningKm: numOrUndef(formData.get("warningKm")),
+    warningDays: numOrUndef(formData.get("warningDays")),
+  });
+  const component = await maintenanceService.updateMaintenanceComponent(componentId, input);
+  revalidatePath(`/items/${itemId}`);
   return component;
 }
 

@@ -30,6 +30,15 @@ export const maintenanceComponentSchema = z.object({
   warningDays: z.number().int().positive().optional(),
 });
 
+export const maintenanceComponentUpdateSchema = z.object({
+  label: z.string().min(1),
+  ruleType: z.enum(["DISTANCE", "TIME", "DISTANCE_OR_TIME"]),
+  intervalKm: z.number().int().positive().optional(),
+  intervalDays: z.number().int().positive().optional(),
+  warningKm: z.number().int().positive().optional(),
+  warningDays: z.number().int().positive().optional(),
+});
+
 export const maintenanceEventSchema = z.object({
   componentId: z.string().min(1),
   date: z.coerce.date(),

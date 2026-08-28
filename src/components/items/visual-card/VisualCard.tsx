@@ -3,6 +3,7 @@
 import { useState } from "react";
 import clsx from "clsx";
 import type { ComponentStatus } from "@/types";
+import type { MaintenanceRuleType } from "@prisma/client";
 import { chakraPetch } from "@/lib/fonts";
 import { CarSvg } from "./CarSvg";
 import { HouseSvg } from "./HouseSvg";
@@ -18,6 +19,11 @@ export interface VisualComponent {
   status: ComponentStatus;
   lastEventDate: Date | null;
   lastEventKm: number | null;
+  ruleType: MaintenanceRuleType;
+  intervalKm: number | null;
+  intervalDays: number | null;
+  warningKm: number | null;
+  warningDays: number | null;
 }
 
 export function VisualCard({

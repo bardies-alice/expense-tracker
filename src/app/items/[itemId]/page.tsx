@@ -38,6 +38,11 @@ export default async function ItemDetailPage({ params }: { params: Promise<{ ite
       status,
       lastEventDate: lastEvent?.date ?? null,
       lastEventKm: lastEvent?.mileageKm ?? null,
+      ruleType: c.ruleType,
+      intervalKm: c.intervalKm,
+      intervalDays: c.intervalDays,
+      warningKm: c.warningKm,
+      warningDays: c.warningDays,
     };
   });
 
