@@ -53,7 +53,7 @@ export default async function ItemDetailPage({ params }: { params: Promise<{ ite
 
   return (
     <div>
-      <Link href={`/categorias/${item.categoryId}`} className="mb-4 inline-flex items-center gap-1.5 text-[13px] text-gray-500 hover:text-gray-700">
+      <Link href={`/categorias/${item.category.slug}`} className="mb-4 inline-flex items-center gap-1.5 text-[13px] text-gray-500 hover:text-gray-700">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M15 18l-6-6 6-6" />
         </svg>

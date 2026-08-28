@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import * as itemService from "@/lib/core/itemService";
+import { getCategorySlug } from "@/lib/core/categoryService";
 import { itemSchema } from "@/lib/validation/schemas";
 
 export async function createItemAction(formData: FormData) {
@@ -18,7 +19,8 @@ export async function createItemAction(formData: FormData) {
     },
   });
   const item = await itemService.createItem(input);
-  revalidatePath(`/categorias/${input.categoryId}`);
+  const slug = await getCategorySlug(input.categoryId);
+  if (slug) revalidatePath(`/categorias/${slug}`);
   return item;
 }
 
@@ -27,10 +29,12 @@ export async function updateItemKmAction(itemId: string, categoryId: string, cur
   const metadata = { ...(item?.metadata as Record<string, unknown> | undefined), currentKm };
   await itemService.updateItemMetadata(itemId, metadata);
   revalidatePath(`/items/${itemId}`);
-  revalidatePath(`/categorias/${categoryId}`);
+  const slug = await getCategorySlug(categoryId);
+  if (slug) revalidatePath(`/categorias/${slug}`);
 }
 
 export async function deleteItemAction(id: string, categoryId: string) {
   await itemService.deleteItem(id);
-  revalidatePath(`/categorias/${categoryId}`);
+  const slug = await getCategorySlug(categoryId);
+  if (slug) revalidatePath(`/categorias/${slug}`);
 }

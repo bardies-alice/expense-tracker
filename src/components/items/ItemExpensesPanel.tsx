@@ -100,7 +100,7 @@ export function ItemExpensesPanel({
       )}
 
       <div className="border-t border-gray-200 px-5 py-3.5">
-        <Link href={`/categorias/${categoryId}`} className="text-[13px] font-medium text-indigo-600 hover:text-indigo-800">
+        <Link href={`/categorias/${category.slug}`} className="text-[13px] font-medium text-indigo-600 hover:text-indigo-800">
           Ver todos los gastos de {item.name} →
         </Link>
       </div>

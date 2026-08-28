@@ -8,7 +8,7 @@ export function CategoryList({ categories }: { categories: (Category & { subcate
       {categories.map((c) => (
         <Link
           key={c.id}
-          href={`/categorias/${c.id}`}
+          href={`/categorias/${c.slug}`}
           className="flex flex-col items-center gap-2 rounded-lg border border-gray-200 bg-white p-5 text-center transition-shadow hover:shadow-md"
         >
           <div

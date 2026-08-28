@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getCategoryById, listCategoriesWithItems } from "@/lib/core/categoryService";
+import { getCategoryBySlug, listCategoriesWithItems } from "@/lib/core/categoryService";
 import { listTransactions } from "@/lib/core/transactionService";
 import { listTrips } from "@/lib/core/tripService";
 import { ItemList } from "@/components/items/ItemList";
@@ -13,12 +13,12 @@ const DEFAULT_ITEM_TYPE: Record<string, "CAR" | "HOUSE"> = {
   casa: "HOUSE",
 };
 
-export default async function CategoriaDetailPage({ params }: { params: Promise<{ categoryId: string }> }) {
-  const { categoryId } = await params;
-  const [category, categories] = await Promise.all([getCategoryById(categoryId), listCategoriesWithItems()]);
+export default async function CategoriaDetailPage({ params }: { params: Promise<{ categorySlug: string }> }) {
+  const { categorySlug } = await params;
+  const [category, categories] = await Promise.all([getCategoryBySlug(categorySlug), listCategoriesWithItems()]);
   if (!category) notFound();
 
-  const transactions = await listTransactions({ categoryId });
+  const transactions = await listTransactions({ categoryId: category.id });
   const itemsEnabled = category.slug in DEFAULT_ITEM_TYPE;
   const isTravel = category.slug === "viajes";
   const trips = isTravel ? await listTrips() : [];

@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import * as tripService from "@/lib/core/tripService";
+import { getCategorySlug } from "@/lib/core/categoryService";
 import { tripSchema } from "@/lib/validation/schemas";
 
 export async function createTripAction(formData: FormData, categoryId: string) {
@@ -15,11 +16,13 @@ export async function createTripAction(formData: FormData, categoryId: string) {
     notes: formData.get("notes") || undefined,
   });
   const trip = await tripService.createTrip(input);
-  revalidatePath(`/categorias/${categoryId}`);
+  const slug = await getCategorySlug(categoryId);
+  if (slug) revalidatePath(`/categorias/${slug}`);
   return trip;
 }
 
 export async function deleteTripAction(id: string, categoryId: string) {
   await tripService.deleteTrip(id);
-  revalidatePath(`/categorias/${categoryId}`);
+  const slug = await getCategorySlug(categoryId);
+  if (slug) revalidatePath(`/categorias/${slug}`);
 }

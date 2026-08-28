@@ -26,6 +26,7 @@ export async function createSubcategoryAction(formData: FormData) {
     categoryId: formData.get("categoryId"),
   });
   const sub = await categoryService.createSubcategory(input);
-  revalidatePath(`/categorias/${input.categoryId}`);
+  const slug = await categoryService.getCategorySlug(input.categoryId);
+  if (slug) revalidatePath(`/categorias/${slug}`);
   return sub;
 }

@@ -35,6 +35,21 @@ export function getCategoryById(id: string) {
   });
 }
 
+export function getCategoryBySlug(slug: string) {
+  return prisma.category.findUnique({
+    where: { slug },
+    include: {
+      subcategories: true,
+      items: { orderBy: { createdAt: "desc" } },
+    },
+  });
+}
+
+export async function getCategorySlug(id: string) {
+  const category = await prisma.category.findUnique({ where: { id }, select: { slug: true } });
+  return category?.slug ?? null;
+}
+
 export function createCategory(input: z.infer<typeof categorySchema>) {
   return prisma.category.create({
     data: {
