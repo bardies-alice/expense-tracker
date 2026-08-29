@@ -111,6 +111,7 @@ enum TransactionSource {
   MANUAL
   ALEXA
   OCR
+  IMPORT
 }
 
 model Transaction {
@@ -127,6 +128,7 @@ model Transaction {
   item            Item?             @relation(fields: [itemId], references: [id])
   source          TransactionSource @default(MANUAL)
   receiptImageUrl String?
+  externalRef     String?           @unique
   recurringRuleId String?
   recurringRule   RecurringRule?    @relation(fields: [recurringRuleId], references: [id])
   createdAt       DateTime          @default(now())

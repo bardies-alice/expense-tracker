@@ -5,6 +5,7 @@ const LINKS = [
   { href: "/categorias", label: "Categorías" },
   { href: "/gastos", label: "Gastos" },
   { href: "/calendario", label: "Calendario" },
+  { href: "/importar", label: "Importar" },
 ];
 
 export function NavBar() {
