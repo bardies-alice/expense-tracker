@@ -210,6 +210,9 @@ export function ImportCsvClient({
       const res = await importTransactionsAction(payload);
       const importedRefs = new Set(payload.map((p) => p.externalRef));
       setRows((prev) => prev?.map((r) => (importedRefs.has(r.externalRef) ? { ...r, alreadyImported: true } : r)) ?? null);
+      // Drop them from the tab you're working in too, instead of leaving a grayed-out
+      // "✓ importado" row you have to scroll or page past to reach the next one.
+      setPinnedRefs((prev) => new Set([...prev].filter((ref) => !importedRefs.has(ref))));
       setResult(res);
       router.refresh();
     } finally {
