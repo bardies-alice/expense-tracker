@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import type { Category, ImportMerchantRule, Subcategory } from "@prisma/client";
 import { normalizeMerchant, parseRevolutCsv, type ParsedImportRow } from "@/lib/import/revolut";
 import { getExistingExternalRefsAction, importTransactionsAction } from "@/lib/actions/imports";
-import { createSubcategoryAction } from "@/lib/actions/categories";
+import { createCategoryAction, createSubcategoryAction } from "@/lib/actions/categories";
 import { Button } from "@/components/ui/Button";
 import { Select } from "@/components/ui/Select";
 import { Input } from "@/components/ui/Input";
@@ -70,6 +70,9 @@ export function ImportCsvClient({
   const [newSubFor, setNewSubFor] = useState<string | null>(null);
   const [newSubName, setNewSubName] = useState("");
   const [creatingSub, setCreatingSub] = useState(false);
+  const [newCatFor, setNewCatFor] = useState<string | null>(null);
+  const [newCatName, setNewCatName] = useState("");
+  const [creatingCat, setCreatingCat] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   function categoryBySlug(slug: string | null) {
@@ -214,6 +217,33 @@ export function ImportCsvClient({
       setNewSubName("");
     } finally {
       setCreatingSub(false);
+    }
+  }
+
+  function handleCategorySelect(r: EditableRow, value: string) {
+    if (value === "__new__") {
+      setNewCatFor(r.externalRef);
+      setNewCatName("");
+      return;
+    }
+    updateRow(r.externalRef, { categoryId: value, subcategoryId: "" });
+  }
+
+  async function submitNewCategory(r: EditableRow) {
+    const name = newCatName.trim();
+    if (!name) return;
+    setCreatingCat(true);
+    try {
+      const formData = new FormData();
+      formData.set("name", name);
+      const created = await createCategoryAction(formData);
+      const newCategory: CategoryWithSub = { ...created, subcategories: [] };
+      setCategories((prev) => [...prev, newCategory]);
+      updateRow(r.externalRef, { categoryId: newCategory.id, subcategoryId: "" });
+      setNewCatFor(null);
+      setNewCatName("");
+    } finally {
+      setCreatingCat(false);
     }
   }
 
@@ -370,18 +400,42 @@ export function ImportCsvClient({
                     {formatEUR(Math.abs(r.importe))}
                   </td>
                   <td className="px-3 py-2">
-                    <Select
-                      value={r.categoryId}
-                      onChange={(e) => updateRow(r.externalRef, { categoryId: e.target.value, subcategoryId: "" })}
-                      className={`min-w-[140px] ${!r.categoryId && r.included ? "border-amber-400" : ""}`}
-                    >
-                      <option value="">(sin categoría)</option>
-                      {categories.map((c) => (
-                        <option key={c.id} value={c.id}>
-                          {c.name}
-                        </option>
-                      ))}
-                    </Select>
+                    {newCatFor === r.externalRef ? (
+                      <div className="flex items-center gap-1">
+                        <Input
+                          autoFocus
+                          placeholder="Nombre de la categoría"
+                          value={newCatName}
+                          onChange={(e) => setNewCatName(e.target.value)}
+                          onKeyDown={(e) => e.key === "Enter" && submitNewCategory(r)}
+                          className="w-36"
+                        />
+                        <button
+                          onClick={() => submitNewCategory(r)}
+                          disabled={creatingCat || !newCatName.trim()}
+                          className="text-xs text-indigo-600 hover:text-indigo-800 disabled:opacity-40"
+                        >
+                          ✓
+                        </button>
+                        <button onClick={() => setNewCatFor(null)} className="text-xs text-gray-400 hover:text-gray-600">
+                          ✕
+                        </button>
+                      </div>
+                    ) : (
+                      <Select
+                        value={r.categoryId}
+                        onChange={(e) => handleCategorySelect(r, e.target.value)}
+                        className={`min-w-[140px] ${!r.categoryId && r.included ? "border-amber-400" : ""}`}
+                      >
+                        <option value="">(sin categoría)</option>
+                        {categories.map((c) => (
+                          <option key={c.id} value={c.id}>
+                            {c.name}
+                          </option>
+                        ))}
+                        <option value="__new__">+ Nueva categoría...</option>
+                      </Select>
+                    )}
                   </td>
                   <td className="px-3 py-2">
                     {category && newSubFor === r.externalRef ? (
