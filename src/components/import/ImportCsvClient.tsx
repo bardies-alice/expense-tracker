@@ -25,6 +25,18 @@ type Tab = "pendientes" | "listas" | "importadas" | "todos";
 
 const PAGE_SIZE = 50;
 
+function classify(r: EditableRow): Tab {
+  if (r.alreadyImported) return "importadas";
+  if (!r.categoryId) return "pendientes";
+  return "listas";
+}
+
+function snapshotFor(tabValue: Tab, list: EditableRow[]) {
+  return new Set(
+    list.filter((r) => !r.internal && (tabValue === "todos" || classify(r) === tabValue)).map((r) => r.externalRef)
+  );
+}
+
 function toDate(fechaInicio: string) {
   // "2026-01-03 23:57:54" -> ISO-ish, Date constructor parses this fine with a "T"
   return fechaInicio.replace(" ", "T");
@@ -42,6 +54,7 @@ export function ImportCsvClient({
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(0);
   const [tab, setTab] = useState<Tab>("pendientes");
+  const [pinnedRefs, setPinnedRefs] = useState<Set<string>>(new Set());
   const [pending, setPending] = useState(false);
   const [loadingFile, setLoadingFile] = useState(false);
   const [result, setResult] = useState<{ imported: number; skipped: number; remembered: number } | null>(null);
@@ -62,8 +75,7 @@ export function ImportCsvClient({
       const realExternalRefs = parsed.filter((r) => !r.internal).map((r) => r.externalRef);
       const existingRefs = new Set(await getExistingExternalRefsAction(realExternalRefs));
 
-      setRows(
-        parsed.map((r) => {
+      const built: EditableRow[] = parsed.map((r) => {
           const alreadyImported = existingRefs.has(r.externalRef);
           const saved = merchantRuleMap.get(normalizeMerchant(r.descripcion));
           if (saved) {
@@ -90,8 +102,10 @@ export function ImportCsvClient({
             alreadyRemembered: false,
             alreadyImported,
           };
-        })
-      );
+        });
+
+      setRows(built);
+      setPinnedRefs(snapshotFor("pendientes", built));
       setResult(null);
       setPage(0);
       setTab("pendientes");
@@ -103,17 +117,14 @@ export function ImportCsvClient({
   const realRows = useMemo(() => rows?.filter((r) => !r.internal) ?? [], [rows]);
   const internalCount = (rows?.length ?? 0) - realRows.length;
 
-  const pendientesRows = useMemo(() => realRows.filter((r) => !r.alreadyImported && !r.categoryId), [realRows]);
-  const listasRows = useMemo(() => realRows.filter((r) => !r.alreadyImported && r.categoryId), [realRows]);
-  const importadasRows = useMemo(() => realRows.filter((r) => r.alreadyImported), [realRows]);
+  // Live counts (for tab labels) recompute as you edit rows.
+  const pendientesRows = useMemo(() => realRows.filter((r) => classify(r) === "pendientes"), [realRows]);
+  const listasRows = useMemo(() => realRows.filter((r) => classify(r) === "listas"), [realRows]);
+  const importadasRows = useMemo(() => realRows.filter((r) => classify(r) === "importadas"), [realRows]);
 
-  const TAB_ROWS: Record<Tab, EditableRow[]> = {
-    pendientes: pendientesRows,
-    listas: listasRows,
-    importadas: importadasRows,
-    todos: realRows,
-  };
-  const tabRows = TAB_ROWS[tab];
+  // The rows actually shown for the active tab stay pinned to whatever matched when the tab
+  // was opened, so picking a category doesn't yank the row out from under you mid-edit.
+  const tabRows = useMemo(() => realRows.filter((r) => pinnedRefs.has(r.externalRef)), [realRows, pinnedRefs]);
 
   const filteredRows = useMemo(() => {
     if (!search.trim()) return tabRows;
@@ -131,6 +142,7 @@ export function ImportCsvClient({
 
   function changeTab(next: Tab) {
     setTab(next);
+    setPinnedRefs(snapshotFor(next, rows ?? []));
     setPage(0);
   }
 
@@ -151,6 +163,8 @@ export function ImportCsvClient({
           rememberMatchText: r.remember ? normalizeMerchant(r.descripcion) : undefined,
         }));
       const res = await importTransactionsAction(payload);
+      const importedRefs = new Set(payload.map((p) => p.externalRef));
+      setRows((prev) => prev?.map((r) => (importedRefs.has(r.externalRef) ? { ...r, alreadyImported: true } : r)) ?? null);
       setResult(res);
       router.refresh();
     } finally {

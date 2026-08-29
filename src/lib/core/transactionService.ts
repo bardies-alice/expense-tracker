@@ -91,9 +91,17 @@ export async function getCategoryMonthComparison(reference = new Date()) {
   const lastMonthStart = new Date(reference.getFullYear(), reference.getMonth() - 1, 1);
   const nextMonthStart = new Date(reference.getFullYear(), reference.getMonth() + 1, 1);
 
+  // Card refunds land as type INCOME in the purchase's own category (e.g. Amazon -> Ocio),
+  // not as a real income like salary. Netting any non-Salario income against that category's
+  // expenses is a cheap heuristic that works because no other income source lands in a
+  // spend category, without needing an explicit "is this a refund" flag on Transaction.
   const transactions = await prisma.transaction.findMany({
-    where: { type: "EXPENSE", date: { gte: lastMonthStart, lt: nextMonthStart } },
-    select: { amount: true, date: true, notes: true, categoryId: true, category: { select: { name: true, color: true } } },
+    where: {
+      type: { in: ["EXPENSE", "INCOME"] },
+      date: { gte: lastMonthStart, lt: nextMonthStart },
+      category: { slug: { not: "salario" } },
+    },
+    select: { amount: true, date: true, notes: true, type: true, categoryId: true, category: { select: { name: true, color: true } } },
     orderBy: { amount: "desc" },
   });
 
@@ -102,22 +110,47 @@ export async function getCategoryMonthComparison(reference = new Date()) {
     color: string;
     thisMonth: number;
     lastMonth: number;
-    topExpenses: { notes: string | null; amount: number; date: Date }[];
+    thisMonthExpenses: { notes: string | null; amount: number; date: Date }[];
+    thisMonthRefundAmounts: number[];
   }
   const rows = new Map<string, Row>();
   for (const t of transactions) {
-    const entry = rows.get(t.categoryId) ?? { name: t.category.name, color: t.category.color ?? "#6366f1", thisMonth: 0, lastMonth: 0, topExpenses: [] };
+    const entry =
+      rows.get(t.categoryId) ??
+      { name: t.category.name, color: t.category.color ?? "#6366f1", thisMonth: 0, lastMonth: 0, thisMonthExpenses: [], thisMonthRefundAmounts: [] };
+    const signed = t.type === "EXPENSE" ? t.amount : -t.amount;
     if (t.date >= thisMonthStart) {
-      entry.thisMonth += t.amount;
-      if (entry.topExpenses.length < 5) entry.topExpenses.push({ notes: t.notes, amount: t.amount, date: t.date });
+      entry.thisMonth += signed;
+      if (t.type === "EXPENSE") entry.thisMonthExpenses.push({ notes: t.notes, amount: t.amount, date: t.date });
+      else entry.thisMonthRefundAmounts.push(t.amount);
     } else {
-      entry.lastMonth += t.amount;
+      entry.lastMonth += signed;
     }
     rows.set(t.categoryId, entry);
   }
 
+  // Drop expenses that were fully refunded (matching amount, same category/month) from the
+  // "top expenses" spotlight — the category total above already nets them out.
+  for (const entry of rows.values()) {
+    const remainingRefunds = [...entry.thisMonthRefundAmounts];
+    entry.thisMonthExpenses = entry.thisMonthExpenses.filter((e) => {
+      const i = remainingRefunds.indexOf(e.amount);
+      if (i === -1) return true;
+      remainingRefunds.splice(i, 1);
+      return false;
+    });
+  }
+
   return Array.from(rows.entries())
-    .map(([categoryId, r]) => ({ categoryId, ...r, delta: r.thisMonth - r.lastMonth }))
+    .map(([categoryId, r]) => ({
+      categoryId,
+      name: r.name,
+      color: r.color,
+      thisMonth: r.thisMonth,
+      lastMonth: r.lastMonth,
+      delta: r.thisMonth - r.lastMonth,
+      topExpenses: r.thisMonthExpenses.slice(0, 5),
+    }))
     .filter((r) => r.thisMonth > 0 || r.lastMonth > 0)
     .sort((a, b) => b.thisMonth - a.thisMonth);
 }

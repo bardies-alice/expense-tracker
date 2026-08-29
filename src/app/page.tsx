@@ -35,8 +35,16 @@ export default async function DashboardPage({
     listAllComponentsWithLatestEvent(),
   ]);
 
-  const income = monthTransactions.filter((t) => t.type === "INCOME").reduce((sum, t) => sum + t.amount, 0);
-  const expense = monthTransactions.filter((t) => t.type === "EXPENSE").reduce((sum, t) => sum + t.amount, 0);
+  // Card refunds land as type INCOME in the purchase's own category (e.g. Amazon -> Ocio), not
+  // as real income — netting them out of "Gastos" and excluding them from "Ingresos" keeps both
+  // cards showing actual money in/out rather than gross purchase + gross refund.
+  const income = monthTransactions
+    .filter((t) => t.type === "INCOME" && t.category.slug === "salario")
+    .reduce((sum, t) => sum + t.amount, 0);
+  const refunds = monthTransactions
+    .filter((t) => t.type === "INCOME" && t.category.slug !== "salario")
+    .reduce((sum, t) => sum + t.amount, 0);
+  const expense = monthTransactions.filter((t) => t.type === "EXPENSE").reduce((sum, t) => sum + t.amount, 0) - refunds;
 
   const attentionNeeded = components
     .map((c) => {
