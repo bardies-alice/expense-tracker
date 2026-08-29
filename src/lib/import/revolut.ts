@@ -14,9 +14,37 @@ export interface ParsedImportRow extends RawImportRow {
   internal: boolean;
   type: "EXPENSE" | "INCOME";
   guessedCategorySlug: string | null;
+  guessedSubcategoryName: string | null;
 }
 
 const INTERNAL_TRANSFER_PATTERN = /fondos monetarios flexibles|retirada del pocket|al pocket|closing transaction/i;
+
+/**
+ * Checked first: merchant patterns specific enough to imply both a category
+ * and one of its existing subcategories (e.g. Netflix -> Ocio/Suscripciones).
+ */
+const SUBCATEGORY_RULES: { categorySlug: string; subcategoryName: string; pattern: RegExp }[] = [
+  {
+    categorySlug: "ocio",
+    subcategoryName: "Suscripciones",
+    pattern: /netflix|spotify|\bhbo\b|disney\+?|\bsteam\b|playstation|\bapple\b|\bclaude\b|\bcursor\b|microsoft store|basic-?fit|gimnasio/i,
+  },
+  { categorySlug: "comida", subcategoryName: "Delivery", pattern: /glovo|uber eats|just eat/i },
+  {
+    categorySlug: "comida",
+    subcategoryName: "Supermercado",
+    pattern: /carrefour|mercadona|lidl|d[ií]a %|alcampo|eroski|bm supermercados|supermercado|alimentacion|mini ?market/i,
+  },
+  { categorySlug: "coche", subcategoryName: "Combustible", pattern: /cepsa|repsol|\bshell\b|\bbp\b|galp|gas lac|plenergy|gasolinera/i },
+  { categorySlug: "coche", subcategoryName: "ITV", pattern: /\bitv\b/i },
+  {
+    categorySlug: "casa",
+    subcategoryName: "Suministros",
+    pattern: /iberdrola|endesa|naturgy|\bdigi\b|movistar|vodafone|\borange\b|telecom|\bagua\b|gas natural/i,
+  },
+  { categorySlug: "viajes", subcategoryName: "Alojamiento", pattern: /booking|airbnb|hotel/i },
+  { categorySlug: "viajes", subcategoryName: "Transporte", pattern: /ryanair|vueling|iberia|renfe|omio|ouigo|kiwi\.com/i },
+];
 
 const CATEGORY_KEYWORDS: Record<string, RegExp> = {
   comida:
@@ -28,11 +56,14 @@ const CATEGORY_KEYWORDS: Record<string, RegExp> = {
   viajes: /booking|ryanair|vueling|iberia|renfe|omio|airbnb|hotel|ouigo|kiwi\.com/i,
 };
 
-function guessCategorySlug(descripcion: string): string | null {
-  for (const [slug, pattern] of Object.entries(CATEGORY_KEYWORDS)) {
-    if (pattern.test(descripcion)) return slug;
+function guessCategory(descripcion: string): { categorySlug: string | null; subcategoryName: string | null } {
+  for (const rule of SUBCATEGORY_RULES) {
+    if (rule.pattern.test(descripcion)) return { categorySlug: rule.categorySlug, subcategoryName: rule.subcategoryName };
   }
-  return null;
+  for (const [slug, pattern] of Object.entries(CATEGORY_KEYWORDS)) {
+    if (pattern.test(descripcion)) return { categorySlug: slug, subcategoryName: null };
+  }
+  return { categorySlug: null, subcategoryName: null };
 }
 
 /** Minimal RFC4180 CSV parser: handles quoted fields with embedded commas/quotes. */
@@ -86,6 +117,7 @@ export function parseRevolutCsv(text: string): ParsedImportRow[] {
     const importe = Number(importeStr);
     const internal = tipo === "Cambio" || INTERNAL_TRANSFER_PATTERN.test(descripcion) || importe === 0;
     const externalRef = `revolut:${fechaInicio}:${importeStr}:${descripcion}`;
+    const guess = internal ? { categorySlug: null, subcategoryName: null } : guessCategory(descripcion);
 
     return {
       tipo,
@@ -99,7 +131,8 @@ export function parseRevolutCsv(text: string): ParsedImportRow[] {
       externalRef,
       internal,
       type: importe < 0 ? "EXPENSE" : "INCOME",
-      guessedCategorySlug: internal ? null : guessCategorySlug(descripcion),
+      guessedCategorySlug: guess.categorySlug,
+      guessedSubcategoryName: guess.subcategoryName,
     };
   });
 }

@@ -35,20 +35,26 @@ export function ImportCsvClient({ categories }: { categories: CategoryWithSub[] 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   function categoryBySlug(slug: string | null) {
-    if (!slug) return "";
-    return categories.find((c) => c.slug === slug)?.id ?? "";
+    if (!slug) return null;
+    return categories.find((c) => c.slug === slug) ?? null;
   }
 
   async function handleFile(file: File) {
     const text = await file.text();
     const parsed = parseRevolutCsv(text);
     setRows(
-      parsed.map((r) => ({
-        ...r,
-        included: !r.internal,
-        categoryId: categoryBySlug(r.guessedCategorySlug),
-        subcategoryId: "",
-      }))
+      parsed.map((r) => {
+        const category = categoryBySlug(r.guessedCategorySlug);
+        const subcategory = category && r.guessedSubcategoryName
+          ? category.subcategories.find((s) => s.name === r.guessedSubcategoryName)
+          : null;
+        return {
+          ...r,
+          included: !r.internal,
+          categoryId: category?.id ?? "",
+          subcategoryId: subcategory?.id ?? "",
+        };
+      })
     );
     setResult(null);
     setPage(0);
