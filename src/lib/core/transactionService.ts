@@ -86,21 +86,33 @@ export async function getMonthlySummary(monthsBack = 6) {
     .map(([month, totals]) => ({ month, ...totals }));
 }
 
-export async function getCategoryMonthComparison() {
-  const now = new Date();
-  const thisMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-  const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+export async function getCategoryMonthComparison(reference = new Date()) {
+  const thisMonthStart = new Date(reference.getFullYear(), reference.getMonth(), 1);
+  const lastMonthStart = new Date(reference.getFullYear(), reference.getMonth() - 1, 1);
+  const nextMonthStart = new Date(reference.getFullYear(), reference.getMonth() + 1, 1);
 
   const transactions = await prisma.transaction.findMany({
-    where: { type: "EXPENSE", date: { gte: lastMonthStart } },
-    select: { amount: true, date: true, categoryId: true, category: { select: { name: true, color: true } } },
+    where: { type: "EXPENSE", date: { gte: lastMonthStart, lt: nextMonthStart } },
+    select: { amount: true, date: true, notes: true, categoryId: true, category: { select: { name: true, color: true } } },
+    orderBy: { amount: "desc" },
   });
 
-  const rows = new Map<string, { name: string; color: string; thisMonth: number; lastMonth: number }>();
+  interface Row {
+    name: string;
+    color: string;
+    thisMonth: number;
+    lastMonth: number;
+    topExpenses: { notes: string | null; amount: number; date: Date }[];
+  }
+  const rows = new Map<string, Row>();
   for (const t of transactions) {
-    const entry = rows.get(t.categoryId) ?? { name: t.category.name, color: t.category.color ?? "#6366f1", thisMonth: 0, lastMonth: 0 };
-    if (t.date >= thisMonthStart) entry.thisMonth += t.amount;
-    else entry.lastMonth += t.amount;
+    const entry = rows.get(t.categoryId) ?? { name: t.category.name, color: t.category.color ?? "#6366f1", thisMonth: 0, lastMonth: 0, topExpenses: [] };
+    if (t.date >= thisMonthStart) {
+      entry.thisMonth += t.amount;
+      if (entry.topExpenses.length < 5) entry.topExpenses.push({ notes: t.notes, amount: t.amount, date: t.date });
+    } else {
+      entry.lastMonth += t.amount;
+    }
     rows.set(t.categoryId, entry);
   }
 

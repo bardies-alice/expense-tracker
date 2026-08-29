@@ -10,14 +10,27 @@ import { TopProductsChart } from "@/components/dashboard/TopProductsChart";
 import { StatusBadge } from "@/components/ui/Badge";
 import type { CarMetadata } from "@/types";
 
-export default async function DashboardPage() {
+const MONTH_LABEL = new Intl.DateTimeFormat("es-ES", { month: "long", year: "numeric" });
+
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ month?: string }>;
+}) {
+  const { month } = await searchParams;
+
   const now = new Date();
-  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  const reference =
+    month && /^\d{4}-\d{2}$/.test(month) ? new Date(Number(month.slice(0, 4)), Number(month.slice(5, 7)) - 1, 1) : now;
+  const isFiltered = month && /^\d{4}-\d{2}$/.test(month);
+
+  const monthStart = new Date(reference.getFullYear(), reference.getMonth(), 1);
+  const monthEnd = new Date(reference.getFullYear(), reference.getMonth() + 1, 0, 23, 59, 59);
 
   const [monthTransactions, monthlySummary, categoryComparison, topProducts, components] = await Promise.all([
-    listTransactions({ from: monthStart }),
+    listTransactions({ from: monthStart, to: monthEnd }),
     getMonthlySummary(6),
-    getCategoryMonthComparison(),
+    getCategoryMonthComparison(reference),
     getTopProducts(8, "comida"),
     listAllComponentsWithLatestEvent(),
   ]);
@@ -46,7 +59,26 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-8">
-      <h1 className="text-xl font-semibold text-gray-900">Resumen</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-xl font-semibold text-gray-900">
+          Resumen
+          {isFiltered && (
+            <span className="ml-2 font-normal text-gray-400">
+              — {MONTH_LABEL.format(reference).replace(/^./, (c) => c.toUpperCase())}
+            </span>
+          )}
+        </h1>
+        {isFiltered && (
+          <div className="flex items-center gap-3 text-sm">
+            <Link href={`/gastos?month=${month}`} className="text-indigo-600 hover:text-indigo-800">
+              Ver transacciones →
+            </Link>
+            <Link href="/" className="text-gray-400 hover:text-gray-600">
+              Quitar filtro ✕
+            </Link>
+          </div>
+        )}
+      </div>
 
       <SummaryCards income={income} expense={expense} />
 
