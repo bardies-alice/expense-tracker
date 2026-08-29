@@ -140,15 +140,27 @@ export function ImportCsvClient({
     setRows((prev) => prev?.map((r) => (r.externalRef === externalRef ? { ...r, ...patch } : r)) ?? null);
   }
 
-  // Setting the category/subcategory on one row applies it to every other row for the same
-  // merchant in this list too, so you don't have to repeat it for every "Metro de Madrid" etc.
+  // Setting the category/subcategory on one row can apply it to every other row for the same
+  // merchant in this list too, so you don't have to repeat it for every "Metro de Madrid" etc —
+  // but ask first, since a repeated description (e.g. a Bizum to the same person) doesn't always
+  // mean the same category.
   function updateCategoryForMerchant(externalRef: string, patch: { categoryId: string; subcategoryId: string }) {
     setRows((prev) => {
       if (!prev) return null;
       const target = prev.find((r) => r.externalRef === externalRef);
       if (!target) return prev;
       const key = normalizeMerchant(target.descripcion);
-      return prev.map((r) => (!r.alreadyImported && normalizeMerchant(r.descripcion) === key ? { ...r, ...patch } : r));
+      const siblings = prev.filter((r) => r.externalRef !== externalRef && !r.alreadyImported && normalizeMerchant(r.descripcion) === key);
+
+      const applyToAll =
+        siblings.length > 0 &&
+        confirm(`Hay ${siblings.length} filas más de "${target.descripcion}" en esta lista. ¿Aplicar la misma categoría a todas?`);
+
+      return prev.map((r) => {
+        if (r.externalRef === externalRef) return { ...r, ...patch };
+        if (applyToAll && normalizeMerchant(r.descripcion) === key && !r.alreadyImported) return { ...r, ...patch };
+        return r;
+      });
     });
   }
 
