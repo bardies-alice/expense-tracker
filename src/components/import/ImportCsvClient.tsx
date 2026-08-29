@@ -8,6 +8,7 @@ import { getExistingExternalRefsAction, importTransactionsAction } from "@/lib/a
 import { Button } from "@/components/ui/Button";
 import { Select } from "@/components/ui/Select";
 import { Input } from "@/components/ui/Input";
+import { Modal } from "@/components/ui/Modal";
 import { formatEUR } from "@/lib/format";
 
 type CategoryWithSub = Category & { subcategories: Subcategory[] };
@@ -58,6 +59,12 @@ export function ImportCsvClient({
   const [pending, setPending] = useState(false);
   const [loadingFile, setLoadingFile] = useState(false);
   const [result, setResult] = useState<{ imported: number; skipped: number; remembered: number } | null>(null);
+  const [propagation, setPropagation] = useState<{
+    descripcion: string;
+    patch: { categoryId: string; subcategoryId: string };
+    siblings: EditableRow[];
+    selected: Set<string>;
+  } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   function categoryBySlug(slug: string | null) {
@@ -140,28 +147,42 @@ export function ImportCsvClient({
     setRows((prev) => prev?.map((r) => (r.externalRef === externalRef ? { ...r, ...patch } : r)) ?? null);
   }
 
-  // Setting the category/subcategory on one row can apply it to every other row for the same
-  // merchant in this list too, so you don't have to repeat it for every "Metro de Madrid" etc —
-  // but ask first, since a repeated description (e.g. a Bizum to the same person) doesn't always
-  // mean the same category.
-  function updateCategoryForMerchant(externalRef: string, patch: { categoryId: string; subcategoryId: string }) {
-    setRows((prev) => {
-      if (!prev) return null;
-      const target = prev.find((r) => r.externalRef === externalRef);
-      if (!target) return prev;
-      const key = normalizeMerchant(target.descripcion);
-      const siblings = prev.filter((r) => r.externalRef !== externalRef && !r.alreadyImported && normalizeMerchant(r.descripcion) === key);
+  function siblingsOf(r: EditableRow): EditableRow[] {
+    if (!rows) return [];
+    const key = normalizeMerchant(r.descripcion);
+    return rows.filter((x) => x.externalRef !== r.externalRef && !x.alreadyImported && normalizeMerchant(x.descripcion) === key);
+  }
 
-      const applyToAll =
-        siblings.length > 0 &&
-        confirm(`Hay ${siblings.length} filas más de "${target.descripcion}" en esta lista. ¿Aplicar la misma categoría a todas?`);
-
-      return prev.map((r) => {
-        if (r.externalRef === externalRef) return { ...r, ...patch };
-        if (applyToAll && normalizeMerchant(r.descripcion) === key && !r.alreadyImported) return { ...r, ...patch };
-        return r;
-      });
+  // Explicit, on demand: once a row has category (and subcategory, if any) set the way you want,
+  // "Aplicar a otras" lets you pick which other rows for the same merchant get the same treatment.
+  // Triggering this off the category/subcategory selects themselves would pop the modal before
+  // you'd even picked a subcategory.
+  function openPropagation(r: EditableRow) {
+    const siblings = siblingsOf(r);
+    if (siblings.length === 0) return;
+    setPropagation({
+      descripcion: r.descripcion,
+      patch: { categoryId: r.categoryId, subcategoryId: r.subcategoryId },
+      siblings,
+      selected: new Set(siblings.map((s) => s.externalRef)),
     });
+  }
+
+  function togglePropagationRow(externalRef: string) {
+    setPropagation((prev) => {
+      if (!prev) return null;
+      const selected = new Set(prev.selected);
+      if (selected.has(externalRef)) selected.delete(externalRef);
+      else selected.add(externalRef);
+      return { ...prev, selected };
+    });
+  }
+
+  function confirmPropagation() {
+    if (!propagation) return;
+    const { patch, selected } = propagation;
+    setRows((prev) => prev?.map((r) => (selected.has(r.externalRef) ? { ...r, ...patch } : r)) ?? null);
+    setPropagation(null);
   }
 
   function changeTab(next: Tab) {
@@ -276,6 +297,7 @@ export function ImportCsvClient({
               <th className="px-3 py-2">Categoría</th>
               <th className="px-3 py-2">Subcategoría</th>
               <th className="px-3 py-2">Recordar</th>
+              <th className="px-3 py-2">Otras filas</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
@@ -305,7 +327,7 @@ export function ImportCsvClient({
                   <td className="px-3 py-2">
                     <Select
                       value={r.categoryId}
-                      onChange={(e) => updateCategoryForMerchant(r.externalRef, { categoryId: e.target.value, subcategoryId: "" })}
+                      onChange={(e) => updateRow(r.externalRef, { categoryId: e.target.value, subcategoryId: "" })}
                       className={!r.categoryId && r.included ? "border-amber-400" : ""}
                     >
                       <option value="">(sin categoría)</option>
@@ -320,7 +342,7 @@ export function ImportCsvClient({
                     {category && category.subcategories.length > 0 && (
                       <Select
                         value={r.subcategoryId}
-                        onChange={(e) => updateCategoryForMerchant(r.externalRef, { categoryId: r.categoryId, subcategoryId: e.target.value })}
+                        onChange={(e) => updateRow(r.externalRef, { subcategoryId: e.target.value })}
                       >
                         <option value="">(ninguna)</option>
                         {category.subcategories.map((s) => (
@@ -346,6 +368,13 @@ export function ImportCsvClient({
                       />
                     )}
                   </td>
+                  <td className="px-3 py-2">
+                    {r.categoryId && siblingsOf(r).length > 0 && (
+                      <button onClick={() => openPropagation(r)} className="whitespace-nowrap text-xs text-indigo-600 hover:text-indigo-800">
+                        Aplicar a otras ({siblingsOf(r).length})
+                      </button>
+                    )}
+                  </td>
                 </tr>
               );
             })}
@@ -365,6 +394,39 @@ export function ImportCsvClient({
             Siguiente →
           </button>
         </div>
+      )}
+
+      {propagation && (
+        <Modal open onClose={() => setPropagation(null)} title={`Aplicar categoría a otras filas de "${propagation.descripcion}"`}>
+          <div className="space-y-3">
+            <p className="text-sm text-gray-500">
+              Elegí a cuáles de estas {propagation.siblings.length} filas también aplicar la categoría elegida.
+            </p>
+            <ul className="max-h-64 space-y-1 overflow-y-auto">
+              {propagation.siblings.map((s) => (
+                <li key={s.externalRef}>
+                  <label className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-gray-50">
+                    <input
+                      type="checkbox"
+                      checked={propagation.selected.has(s.externalRef)}
+                      onChange={() => togglePropagationRow(s.externalRef)}
+                    />
+                    <span className="text-gray-500">{s.fechaInicio.slice(0, 10)}</span>
+                    <span className="ml-auto font-medium text-gray-900">{formatEUR(Math.abs(s.importe))}</span>
+                  </label>
+                </li>
+              ))}
+            </ul>
+            <div className="flex gap-2">
+              <Button variant="secondary" className="flex-1" onClick={() => setPropagation(null)}>
+                Solo esta fila
+              </Button>
+              <Button className="flex-1" onClick={confirmPropagation} disabled={propagation.selected.size === 0}>
+                Aplicar a {propagation.selected.size} fila{propagation.selected.size === 1 ? "" : "s"}
+              </Button>
+            </div>
+          </div>
+        </Modal>
       )}
     </div>
   );
