@@ -1,9 +1,11 @@
 import Link from "next/link";
-import { getMonthlySummary, getTopProducts, listTransactions } from "@/lib/core/transactionService";
+import { getCategoryMonthComparison, getMonthlySummary, getTopProducts, listTransactions } from "@/lib/core/transactionService";
 import { listAllComponentsWithLatestEvent } from "@/lib/core/maintenanceService";
 import { computeComponentStatus } from "@/lib/maintenance/computeStatus";
 import { SummaryCards } from "@/components/dashboard/SummaryCards";
 import { IncomeVsExpenseChart } from "@/components/dashboard/IncomeVsExpenseChart";
+import { BalanceTrendChart } from "@/components/dashboard/BalanceTrendChart";
+import { CategoryComparisonList } from "@/components/dashboard/CategoryComparisonList";
 import { TopProductsChart } from "@/components/dashboard/TopProductsChart";
 import { StatusBadge } from "@/components/ui/Badge";
 import type { CarMetadata } from "@/types";
@@ -12,9 +14,10 @@ export default async function DashboardPage() {
   const now = new Date();
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
 
-  const [monthTransactions, monthlySummary, topProducts, components] = await Promise.all([
+  const [monthTransactions, monthlySummary, categoryComparison, topProducts, components] = await Promise.all([
     listTransactions({ from: monthStart }),
     getMonthlySummary(6),
+    getCategoryMonthComparison(),
     getTopProducts(8, "comida"),
     listAllComponentsWithLatestEvent(),
   ]);
@@ -53,10 +56,20 @@ export default async function DashboardPage() {
           <IncomeVsExpenseChart data={monthlySummary} />
         </section>
         <section className="rounded-lg border border-gray-200 bg-white p-4">
-          <h2 className="mb-3 text-sm font-medium text-gray-500">Productos más comprados (comida)</h2>
-          <TopProductsChart data={topProducts} />
+          <h2 className="mb-3 text-sm font-medium text-gray-500">Balance acumulado (6 meses)</h2>
+          <BalanceTrendChart data={monthlySummary} />
         </section>
       </div>
+
+      <section className="rounded-lg border border-gray-200 bg-white p-4">
+        <h2 className="mb-4 text-sm font-medium text-gray-500">Gasto por categoría vs mes anterior</h2>
+        <CategoryComparisonList rows={categoryComparison} />
+      </section>
+
+      <section className="rounded-lg border border-gray-200 bg-white p-4">
+        <h2 className="mb-3 text-sm font-medium text-gray-500">Productos más comprados (comida)</h2>
+        <TopProductsChart data={topProducts} />
+      </section>
 
       {attentionNeeded.length > 0 && (
         <section>

@@ -86,6 +86,30 @@ export async function getMonthlySummary(monthsBack = 6) {
     .map(([month, totals]) => ({ month, ...totals }));
 }
 
+export async function getCategoryMonthComparison() {
+  const now = new Date();
+  const thisMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+
+  const transactions = await prisma.transaction.findMany({
+    where: { type: "EXPENSE", date: { gte: lastMonthStart } },
+    select: { amount: true, date: true, categoryId: true, category: { select: { name: true, color: true } } },
+  });
+
+  const rows = new Map<string, { name: string; color: string; thisMonth: number; lastMonth: number }>();
+  for (const t of transactions) {
+    const entry = rows.get(t.categoryId) ?? { name: t.category.name, color: t.category.color ?? "#6366f1", thisMonth: 0, lastMonth: 0 };
+    if (t.date >= thisMonthStart) entry.thisMonth += t.amount;
+    else entry.lastMonth += t.amount;
+    rows.set(t.categoryId, entry);
+  }
+
+  return Array.from(rows.entries())
+    .map(([categoryId, r]) => ({ categoryId, ...r, delta: r.thisMonth - r.lastMonth }))
+    .filter((r) => r.thisMonth > 0 || r.lastMonth > 0)
+    .sort((a, b) => b.thisMonth - a.thisMonth);
+}
+
 export async function getTopProducts(limit = 10, categorySlug?: string) {
   const lines = await prisma.expenseLine.findMany({
     where: categorySlug
