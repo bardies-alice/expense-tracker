@@ -54,5 +54,9 @@ export function updateItemMetadata(id: string, metadata: Record<string, unknown>
 }
 
 export function deleteItem(id: string) {
-  return prisma.item.delete({ where: { id } });
+  return prisma.$transaction([
+    prisma.transaction.updateMany({ where: { itemId: id }, data: { itemId: null } }),
+    prisma.recurringRule.updateMany({ where: { itemId: id }, data: { itemId: null } }),
+    prisma.item.delete({ where: { id } }),
+  ]);
 }

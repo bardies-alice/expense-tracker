@@ -6,6 +6,7 @@ export interface TransactionFilters {
   categoryId?: string;
   itemId?: string;
   type?: "EXPENSE" | "INCOME";
+  notes?: string;
   from?: Date;
   to?: Date;
 }
@@ -16,6 +17,7 @@ export function listTransactions(filters: TransactionFilters = {}) {
       categoryId: filters.categoryId,
       itemId: filters.itemId,
       type: filters.type,
+      notes: filters.notes,
       date: {
         gte: filters.from,
         lte: filters.to,

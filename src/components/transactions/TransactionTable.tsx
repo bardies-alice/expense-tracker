@@ -1,4 +1,5 @@
 import type { Category, ExpenseLine, Item, Subcategory, Transaction } from "@prisma/client";
+import Link from "next/link";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { formatDate, formatEUR } from "@/lib/format";
 import { DeleteTransactionButton } from "./DeleteTransactionButton";
@@ -62,7 +63,15 @@ export function TransactionTable({
               <tr key={t.id}>
                 <td className="px-4 py-2">{t.category.name}{t.subcategory ? ` · ${t.subcategory.name}` : ""}</td>
                 <td className="px-4 py-2 text-gray-500">{t.item?.name ?? "—"}</td>
-                <td className="px-4 py-2 text-gray-500">{t.notes ?? (t.lines.length ? `${t.lines.length} productos` : "—")}</td>
+                <td className="px-4 py-2 text-gray-500">
+                  {t.notes ? (
+                    <Link href={`/comercios/${encodeURIComponent(t.notes)}`} className="hover:text-indigo-600 hover:underline">
+                      {t.notes}
+                    </Link>
+                  ) : (
+                    t.lines.length ? `${t.lines.length} productos` : "—"
+                  )}
+                </td>
                 <td className={`px-4 py-2 text-right font-medium ${t.type === "INCOME" ? "text-emerald-600" : "text-gray-900"}`}>
                   {t.type === "INCOME" ? "+" : "-"}{formatEUR(t.amount)}
                 </td>
