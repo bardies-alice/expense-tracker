@@ -56,6 +56,10 @@ const CATEGORY_KEYWORDS: Record<string, RegExp> = {
   viajes: /booking|ryanair|vueling|iberia|renfe|omio|airbnb|hotel|ouigo|kiwi\.com/i,
 };
 
+export function normalizeMerchant(descripcion: string): string {
+  return descripcion.trim().toLowerCase();
+}
+
 function guessCategory(descripcion: string): { categorySlug: string | null; subcategoryName: string | null } {
   for (const rule of SUBCATEGORY_RULES) {
     if (rule.pattern.test(descripcion)) return { categorySlug: rule.categorySlug, subcategoryName: rule.subcategoryName };

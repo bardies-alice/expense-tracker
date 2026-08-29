@@ -2,8 +2,8 @@
 
 import { useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import type { Category, Subcategory } from "@prisma/client";
-import { parseRevolutCsv, type ParsedImportRow } from "@/lib/import/revolut";
+import type { Category, ImportMerchantRule, Subcategory } from "@prisma/client";
+import { normalizeMerchant, parseRevolutCsv, type ParsedImportRow } from "@/lib/import/revolut";
 import { importTransactionsAction } from "@/lib/actions/imports";
 import { Button } from "@/components/ui/Button";
 import { Select } from "@/components/ui/Select";
@@ -16,6 +16,8 @@ interface EditableRow extends ParsedImportRow {
   included: boolean;
   categoryId: string;
   subcategoryId: string;
+  remember: boolean;
+  alreadyRemembered: boolean;
 }
 
 const PAGE_SIZE = 50;
@@ -25,13 +27,19 @@ function toDate(fechaInicio: string) {
   return fechaInicio.replace(" ", "T");
 }
 
-export function ImportCsvClient({ categories }: { categories: CategoryWithSub[] }) {
+export function ImportCsvClient({
+  categories,
+  merchantRules,
+}: {
+  categories: CategoryWithSub[];
+  merchantRules: ImportMerchantRule[];
+}) {
   const router = useRouter();
   const [rows, setRows] = useState<EditableRow[] | null>(null);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(0);
   const [pending, setPending] = useState(false);
-  const [result, setResult] = useState<{ imported: number; skipped: number } | null>(null);
+  const [result, setResult] = useState<{ imported: number; skipped: number; remembered: number } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   function categoryBySlug(slug: string | null) {
@@ -39,11 +47,24 @@ export function ImportCsvClient({ categories }: { categories: CategoryWithSub[] 
     return categories.find((c) => c.slug === slug) ?? null;
   }
 
+  const merchantRuleMap = useMemo(() => new Map(merchantRules.map((r) => [r.matchText, r])), [merchantRules]);
+
   async function handleFile(file: File) {
     const text = await file.text();
     const parsed = parseRevolutCsv(text);
     setRows(
       parsed.map((r) => {
+        const saved = merchantRuleMap.get(normalizeMerchant(r.descripcion));
+        if (saved) {
+          return {
+            ...r,
+            included: !r.internal,
+            categoryId: saved.categoryId,
+            subcategoryId: saved.subcategoryId ?? "",
+            remember: false,
+            alreadyRemembered: true,
+          };
+        }
         const category = categoryBySlug(r.guessedCategorySlug);
         const subcategory = category && r.guessedSubcategoryName
           ? category.subcategories.find((s) => s.name === r.guessedSubcategoryName)
@@ -53,6 +74,8 @@ export function ImportCsvClient({ categories }: { categories: CategoryWithSub[] 
           included: !r.internal,
           categoryId: category?.id ?? "",
           subcategoryId: subcategory?.id ?? "",
+          remember: false,
+          alreadyRemembered: false,
         };
       })
     );
@@ -92,6 +115,7 @@ export function ImportCsvClient({ categories }: { categories: CategoryWithSub[] 
           notes: r.descripcion,
           categoryId: r.categoryId,
           subcategoryId: r.subcategoryId || undefined,
+          rememberMatchText: r.remember ? normalizeMerchant(r.descripcion) : undefined,
         }));
       const res = await importTransactionsAction(payload);
       setResult(res);
@@ -143,7 +167,8 @@ export function ImportCsvClient({ categories }: { categories: CategoryWithSub[] 
 
       {result && (
         <p className="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm text-emerald-700">
-          {result.imported} movimientos importados{result.skipped > 0 ? `, ${result.skipped} ya existían (omitidos)` : ""}.
+          {result.imported} movimientos importados{result.skipped > 0 ? `, ${result.skipped} ya existían (omitidos)` : ""}
+          {result.remembered > 0 ? `. ${result.remembered} comercios recordados para próximas importaciones` : ""}.
         </p>
       )}
 
@@ -157,6 +182,7 @@ export function ImportCsvClient({ categories }: { categories: CategoryWithSub[] 
               <th className="px-3 py-2 text-right">Importe</th>
               <th className="px-3 py-2">Categoría</th>
               <th className="px-3 py-2">Subcategoría</th>
+              <th className="px-3 py-2">Recordar</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
@@ -201,6 +227,21 @@ export function ImportCsvClient({ categories }: { categories: CategoryWithSub[] 
                           </option>
                         ))}
                       </Select>
+                    )}
+                  </td>
+                  <td className="px-3 py-2 text-center">
+                    {r.alreadyRemembered ? (
+                      <span className="text-xs text-gray-400" title="Ya guardado de una importación anterior">
+                        ✓ guardado
+                      </span>
+                    ) : (
+                      <input
+                        type="checkbox"
+                        checked={r.remember}
+                        disabled={!r.categoryId}
+                        title="Recordar este comercio para futuras importaciones"
+                        onChange={(e) => updateRow(r.externalRef, { remember: e.target.checked })}
+                      />
                     )}
                   </td>
                 </tr>

@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
+import { upsertImportMerchantRule } from "@/lib/core/importRuleService";
 
 const importRowSchema = z.object({
   externalRef: z.string().min(1),
@@ -12,6 +13,7 @@ const importRowSchema = z.object({
   notes: z.string().optional(),
   categoryId: z.string().min(1),
   subcategoryId: z.string().optional(),
+  rememberMatchText: z.string().optional(),
 });
 
 export async function importTransactionsAction(rows: z.infer<typeof importRowSchema>[]) {
@@ -26,12 +28,26 @@ export async function importTransactionsAction(rows: z.infer<typeof importRowSch
 
   if (toInsert.length > 0) {
     await prisma.transaction.createMany({
-      data: toInsert.map((r) => ({ ...r, source: "IMPORT" as const })),
+      data: toInsert.map((r) => ({
+        externalRef: r.externalRef,
+        type: r.type,
+        amount: r.amount,
+        date: r.date,
+        notes: r.notes,
+        categoryId: r.categoryId,
+        subcategoryId: r.subcategoryId,
+        source: "IMPORT" as const,
+      })),
     });
+  }
+
+  const toRemember = parsed.filter((r) => r.rememberMatchText);
+  for (const r of toRemember) {
+    await upsertImportMerchantRule(r.rememberMatchText!, r.categoryId, r.subcategoryId);
   }
 
   revalidatePath("/gastos");
   revalidatePath("/");
 
-  return { imported: toInsert.length, skipped: parsed.length - toInsert.length };
+  return { imported: toInsert.length, skipped: parsed.length - toInsert.length, remembered: toRemember.length };
 }

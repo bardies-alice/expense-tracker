@@ -19,10 +19,11 @@ model Category {
   isCustom  Boolean  @default(false)
   createdAt DateTime @default(now())
 
-  subcategories  Subcategory[]
-  items          Item[]
-  transactions   Transaction[]
-  recurringRules RecurringRule[]
+  subcategories       Subcategory[]
+  items               Item[]
+  transactions        Transaction[]
+  recurringRules      RecurringRule[]
+  importMerchantRules ImportMerchantRule[]
 }
 
 model Subcategory {
@@ -31,8 +32,9 @@ model Subcategory {
   categoryId String
   category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 
-  transactions   Transaction[]
-  recurringRules RecurringRule[]
+  transactions        Transaction[]
+  recurringRules      RecurringRule[]
+  importMerchantRules ImportMerchantRule[]
 
   @@unique([categoryId, name])
 }
@@ -170,6 +172,16 @@ model RecurringRule {
 
   @@index([categoryId])
   @@index([nextRunDate])
+}
+
+model ImportMerchantRule {
+  id            String       @id @default(cuid())
+  matchText     String       @unique
+  categoryId    String
+  category      Category     @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  subcategoryId String?
+  subcategory   Subcategory? @relation(fields: [subcategoryId], references: [id])
+  createdAt     DateTime     @default(now())
 }
 
 model Trip {
