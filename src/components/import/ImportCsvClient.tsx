@@ -4,7 +4,7 @@ import { useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Category, ImportMerchantRule, Subcategory } from "@prisma/client";
 import { normalizeMerchant, parseRevolutCsv, type ParsedImportRow } from "@/lib/import/revolut";
-import { importTransactionsAction } from "@/lib/actions/imports";
+import { getExistingExternalRefsAction, importTransactionsAction } from "@/lib/actions/imports";
 import { Button } from "@/components/ui/Button";
 import { Select } from "@/components/ui/Select";
 import { Input } from "@/components/ui/Input";
@@ -18,7 +18,10 @@ interface EditableRow extends ParsedImportRow {
   subcategoryId: string;
   remember: boolean;
   alreadyRemembered: boolean;
+  alreadyImported: boolean;
 }
+
+type Tab = "pendientes" | "listas" | "importadas" | "todos";
 
 const PAGE_SIZE = 50;
 
@@ -38,7 +41,9 @@ export function ImportCsvClient({
   const [rows, setRows] = useState<EditableRow[] | null>(null);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(0);
+  const [tab, setTab] = useState<Tab>("pendientes");
   const [pending, setPending] = useState(false);
+  const [loadingFile, setLoadingFile] = useState(false);
   const [result, setResult] = useState<{ imported: number; skipped: number; remembered: number } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -50,55 +55,83 @@ export function ImportCsvClient({
   const merchantRuleMap = useMemo(() => new Map(merchantRules.map((r) => [r.matchText, r])), [merchantRules]);
 
   async function handleFile(file: File) {
-    const text = await file.text();
-    const parsed = parseRevolutCsv(text);
-    setRows(
-      parsed.map((r) => {
-        const saved = merchantRuleMap.get(normalizeMerchant(r.descripcion));
-        if (saved) {
+    setLoadingFile(true);
+    try {
+      const text = await file.text();
+      const parsed = parseRevolutCsv(text);
+      const realExternalRefs = parsed.filter((r) => !r.internal).map((r) => r.externalRef);
+      const existingRefs = new Set(await getExistingExternalRefsAction(realExternalRefs));
+
+      setRows(
+        parsed.map((r) => {
+          const alreadyImported = existingRefs.has(r.externalRef);
+          const saved = merchantRuleMap.get(normalizeMerchant(r.descripcion));
+          if (saved) {
+            return {
+              ...r,
+              included: !r.internal && !alreadyImported,
+              categoryId: saved.categoryId,
+              subcategoryId: saved.subcategoryId ?? "",
+              remember: false,
+              alreadyRemembered: true,
+              alreadyImported,
+            };
+          }
+          const category = categoryBySlug(r.guessedCategorySlug);
+          const subcategory = category && r.guessedSubcategoryName
+            ? category.subcategories.find((s) => s.name === r.guessedSubcategoryName)
+            : null;
           return {
             ...r,
-            included: !r.internal,
-            categoryId: saved.categoryId,
-            subcategoryId: saved.subcategoryId ?? "",
+            included: !r.internal && !alreadyImported,
+            categoryId: category?.id ?? "",
+            subcategoryId: subcategory?.id ?? "",
             remember: false,
-            alreadyRemembered: true,
+            alreadyRemembered: false,
+            alreadyImported,
           };
-        }
-        const category = categoryBySlug(r.guessedCategorySlug);
-        const subcategory = category && r.guessedSubcategoryName
-          ? category.subcategories.find((s) => s.name === r.guessedSubcategoryName)
-          : null;
-        return {
-          ...r,
-          included: !r.internal,
-          categoryId: category?.id ?? "",
-          subcategoryId: subcategory?.id ?? "",
-          remember: false,
-          alreadyRemembered: false,
-        };
-      })
-    );
-    setResult(null);
-    setPage(0);
+        })
+      );
+      setResult(null);
+      setPage(0);
+      setTab("pendientes");
+    } finally {
+      setLoadingFile(false);
+    }
   }
 
   const realRows = useMemo(() => rows?.filter((r) => !r.internal) ?? [], [rows]);
   const internalCount = (rows?.length ?? 0) - realRows.length;
 
-  const filteredRows = useMemo(() => {
-    if (!search.trim()) return realRows;
-    const q = search.toLowerCase();
-    return realRows.filter((r) => r.descripcion.toLowerCase().includes(q));
-  }, [realRows, search]);
+  const pendientesRows = useMemo(() => realRows.filter((r) => !r.alreadyImported && !r.categoryId), [realRows]);
+  const listasRows = useMemo(() => realRows.filter((r) => !r.alreadyImported && r.categoryId), [realRows]);
+  const importadasRows = useMemo(() => realRows.filter((r) => r.alreadyImported), [realRows]);
 
-  const includedRows = realRows.filter((r) => r.included);
-  const missingCategory = includedRows.filter((r) => !r.categoryId).length;
+  const TAB_ROWS: Record<Tab, EditableRow[]> = {
+    pendientes: pendientesRows,
+    listas: listasRows,
+    importadas: importadasRows,
+    todos: realRows,
+  };
+  const tabRows = TAB_ROWS[tab];
+
+  const filteredRows = useMemo(() => {
+    if (!search.trim()) return tabRows;
+    const q = search.toLowerCase();
+    return tabRows.filter((r) => r.descripcion.toLowerCase().includes(q));
+  }, [tabRows, search]);
+
+  const includedRows = realRows.filter((r) => r.included && !r.alreadyImported);
   const pageRows = filteredRows.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
   const totalPages = Math.max(1, Math.ceil(filteredRows.length / PAGE_SIZE));
 
   function updateRow(externalRef: string, patch: Partial<EditableRow>) {
     setRows((prev) => prev?.map((r) => (r.externalRef === externalRef ? { ...r, ...patch } : r)) ?? null);
+  }
+
+  function changeTab(next: Tab) {
+    setTab(next);
+    setPage(0);
   }
 
   async function handleImport() {
@@ -139,7 +172,9 @@ export function ImportCsvClient({
           className="hidden"
           onChange={(e) => e.target.files?.[0] && handleFile(e.target.files[0])}
         />
-        <Button onClick={() => fileInputRef.current?.click()}>Seleccionar CSV</Button>
+        <Button onClick={() => fileInputRef.current?.click()} disabled={loadingFile}>
+          {loadingFile ? "Analizando..." : "Seleccionar CSV"}
+        </Button>
       </div>
     );
   }
@@ -156,7 +191,6 @@ export function ImportCsvClient({
         <span className="text-gray-600">
           <strong className="text-gray-900">{includedRows.length}</strong> incluidos para importar
         </span>
-        {missingCategory > 0 && <span className="font-medium text-amber-600">{missingCategory} sin categoría</span>}
         <div className="ml-auto flex items-center gap-2">
           <Input placeholder="Buscar descripción..." value={search} onChange={(e) => { setSearch(e.target.value); setPage(0); }} className="w-56" />
           <Button onClick={handleImport} disabled={pending || includedRows.length === 0}>
@@ -171,6 +205,27 @@ export function ImportCsvClient({
           {result.remembered > 0 ? `. ${result.remembered} comercios recordados para próximas importaciones` : ""}.
         </p>
       )}
+
+      <div className="flex gap-1 border-b border-gray-200">
+        {(
+          [
+            ["pendientes", "Sin categoría", pendientesRows.length],
+            ["listas", "Listas para importar", listasRows.length],
+            ["importadas", "Ya importadas", importadasRows.length],
+            ["todos", "Todos", realRows.length],
+          ] as [Tab, string, number][]
+        ).map(([value, label, count]) => (
+          <button
+            key={value}
+            onClick={() => changeTab(value)}
+            className={`px-4 py-2 text-sm font-medium border-b-2 -mb-px ${
+              tab === value ? "border-indigo-600 text-indigo-600" : "border-transparent text-gray-500 hover:text-gray-700"
+            }`}
+          >
+            {label} <span className="text-xs text-gray-400">({count})</span>
+          </button>
+        ))}
+      </div>
 
       <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white">
         <table className="min-w-full divide-y divide-gray-200 text-sm">
@@ -189,13 +244,19 @@ export function ImportCsvClient({
             {pageRows.map((r) => {
               const category = categories.find((c) => c.id === r.categoryId);
               return (
-                <tr key={r.externalRef} className={r.included ? "" : "opacity-40"}>
+                <tr key={r.externalRef} className={r.included && !r.alreadyImported ? "" : "opacity-40"}>
                   <td className="px-3 py-2">
-                    <input
-                      type="checkbox"
-                      checked={r.included}
-                      onChange={(e) => updateRow(r.externalRef, { included: e.target.checked })}
-                    />
+                    {r.alreadyImported ? (
+                      <span className="text-xs text-gray-400" title="Ya está en tus transacciones">
+                        ✓ importado
+                      </span>
+                    ) : (
+                      <input
+                        type="checkbox"
+                        checked={r.included}
+                        onChange={(e) => updateRow(r.externalRef, { included: e.target.checked })}
+                      />
+                    )}
                   </td>
                   <td className="whitespace-nowrap px-3 py-2 text-gray-500">{r.fechaInicio.slice(0, 10)}</td>
                   <td className="px-3 py-2 text-gray-800">{r.descripcion}</td>

@@ -16,6 +16,14 @@ const importRowSchema = z.object({
   rememberMatchText: z.string().optional(),
 });
 
+export async function getExistingExternalRefsAction(externalRefs: string[]) {
+  const existing = await prisma.transaction.findMany({
+    where: { externalRef: { in: externalRefs } },
+    select: { externalRef: true },
+  });
+  return existing.map((e) => e.externalRef);
+}
+
 export async function importTransactionsAction(rows: z.infer<typeof importRowSchema>[]) {
   const parsed = rows.map((r) => importRowSchema.parse(r));
 
