@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import * as categoryService from "@/lib/core/categoryService";
-import { categorySchema, subcategorySchema } from "@/lib/validation/schemas";
+import { categorySchema, categoryUpdateSchema, subcategorySchema } from "@/lib/validation/schemas";
 
 export async function createCategoryAction(formData: FormData) {
   const input = categorySchema.parse({
@@ -12,6 +12,18 @@ export async function createCategoryAction(formData: FormData) {
   });
   const category = await categoryService.createCategory(input);
   revalidatePath("/categorias");
+  return category;
+}
+
+export async function updateCategoryAction(id: string, formData: FormData) {
+  const input = categoryUpdateSchema.parse({
+    name: formData.get("name") || undefined,
+    icon: formData.get("icon") || undefined,
+    color: formData.get("color") || undefined,
+  });
+  const category = await categoryService.updateCategory(id, input);
+  revalidatePath("/categorias");
+  revalidatePath(`/categorias/${category.slug}`);
   return category;
 }
 

@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import type { z } from "zod";
-import type { categorySchema, subcategorySchema } from "@/lib/validation/schemas";
+import type { categorySchema, categoryUpdateSchema, subcategorySchema } from "@/lib/validation/schemas";
 import { slugify } from "@/lib/slug";
 
 export function listCategories() {
@@ -50,6 +50,17 @@ export function createCategory(input: z.infer<typeof categorySchema>) {
       icon: input.icon,
       color: input.color,
       isCustom: true,
+    },
+  });
+}
+
+export function updateCategory(id: string, input: z.infer<typeof categoryUpdateSchema>) {
+  return prisma.category.update({
+    where: { id },
+    data: {
+      ...(input.name !== undefined && { name: input.name, slug: slugify(input.name) }),
+      ...(input.icon !== undefined && { icon: input.icon }),
+      ...(input.color !== undefined && { color: input.color }),
     },
   });
 }

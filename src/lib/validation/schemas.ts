@@ -6,6 +6,8 @@ export const categorySchema = z.object({
   color: z.string().optional(),
 });
 
+export const categoryUpdateSchema = categorySchema.partial();
+
 export const subcategorySchema = z.object({
   name: z.string().min(1),
   categoryId: z.string().min(1),
