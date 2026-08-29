@@ -140,6 +140,18 @@ export function ImportCsvClient({
     setRows((prev) => prev?.map((r) => (r.externalRef === externalRef ? { ...r, ...patch } : r)) ?? null);
   }
 
+  // Setting the category/subcategory on one row applies it to every other row for the same
+  // merchant in this list too, so you don't have to repeat it for every "Metro de Madrid" etc.
+  function updateCategoryForMerchant(externalRef: string, patch: { categoryId: string; subcategoryId: string }) {
+    setRows((prev) => {
+      if (!prev) return null;
+      const target = prev.find((r) => r.externalRef === externalRef);
+      if (!target) return prev;
+      const key = normalizeMerchant(target.descripcion);
+      return prev.map((r) => (!r.alreadyImported && normalizeMerchant(r.descripcion) === key ? { ...r, ...patch } : r));
+    });
+  }
+
   function changeTab(next: Tab) {
     setTab(next);
     setPinnedRefs(snapshotFor(next, rows ?? []));
@@ -281,7 +293,7 @@ export function ImportCsvClient({
                   <td className="px-3 py-2">
                     <Select
                       value={r.categoryId}
-                      onChange={(e) => updateRow(r.externalRef, { categoryId: e.target.value, subcategoryId: "" })}
+                      onChange={(e) => updateCategoryForMerchant(r.externalRef, { categoryId: e.target.value, subcategoryId: "" })}
                       className={!r.categoryId && r.included ? "border-amber-400" : ""}
                     >
                       <option value="">(sin categoría)</option>
@@ -294,7 +306,10 @@ export function ImportCsvClient({
                   </td>
                   <td className="px-3 py-2">
                     {category && category.subcategories.length > 0 && (
-                      <Select value={r.subcategoryId} onChange={(e) => updateRow(r.externalRef, { subcategoryId: e.target.value })}>
+                      <Select
+                        value={r.subcategoryId}
+                        onChange={(e) => updateCategoryForMerchant(r.externalRef, { categoryId: r.categoryId, subcategoryId: e.target.value })}
+                      >
                         <option value="">(ninguna)</option>
                         {category.subcategories.map((s) => (
                           <option key={s.id} value={s.id}>
