@@ -1,6 +1,7 @@
 "use client";
 
-import { Calendar, dateFnsLocalizer, type EventProps } from "react-big-calendar";
+import { useState } from "react";
+import { Calendar, dateFnsLocalizer, type EventProps, type View } from "react-big-calendar";
 import { format, parse, startOfWeek, getDay } from "date-fns";
 import { es } from "date-fns/locale";
 import "react-big-calendar/lib/css/react-big-calendar.css";
@@ -39,6 +40,9 @@ const MESSAGES = {
 };
 
 export function AppCalendar({ events }: { events: CalendarEvent[] }) {
+  const [date, setDate] = useState(new Date());
+  const [view, setView] = useState<View>("month");
+
   return (
     <div className="h-[650px] rounded-lg border border-gray-200 bg-white p-3">
       <Calendar
@@ -50,6 +54,10 @@ export function AppCalendar({ events }: { events: CalendarEvent[] }) {
         culture="es"
         messages={MESSAGES}
         components={{ event: EventItem }}
+        date={date}
+        view={view}
+        onNavigate={setDate}
+        onView={setView}
         eventPropGetter={(event: CalendarEvent) => ({
           style: { backgroundColor: KIND_COLOR[event.kind], border: "none" },
         })}
