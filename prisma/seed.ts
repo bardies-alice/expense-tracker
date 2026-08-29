@@ -36,6 +36,7 @@ async function main() {
         categoryId: cocheCategory.id,
         type: "CAR",
         name: "Ibiza 2018",
+        slug: "ibiza-2018",
         metadata: { brand: "Seat", model: "Ibiza", year: 2018, currentKm: 68000 },
       },
     });
@@ -68,6 +69,7 @@ async function main() {
         categoryId: casaCategory.id,
         type: "HOUSE",
         name: "Piso Centro",
+        slug: "piso-centro",
         metadata: { address: "Calle Mayor 12, Madrid", builtYear: 2005 },
       },
     });

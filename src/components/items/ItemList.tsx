@@ -12,7 +12,7 @@ export function ItemList({ items }: { items: Item[] }) {
       {items.map((item) => (
         <Link
           key={item.id}
-          href={`/items/${item.id}`}
+          href={`/items/${item.slug}`}
           className="rounded-lg border border-gray-200 bg-white p-4 transition-shadow hover:shadow-md"
         >
           <p className="text-sm font-medium text-gray-900">{item.name}</p>

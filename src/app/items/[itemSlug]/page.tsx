@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getItemById } from "@/lib/core/itemService";
+import { getItemBySlug } from "@/lib/core/itemService";
 import { listTransactions } from "@/lib/core/transactionService";
 import { computeComponentStatus } from "@/lib/maintenance/computeStatus";
 import { getComponentDefinitions } from "@/lib/maintenance/rules";
@@ -10,9 +10,9 @@ import { ItemExpensesPanel } from "@/components/items/ItemExpensesPanel";
 import type { CarMetadata, HouseMetadata } from "@/types";
 import type { VisualComponent } from "@/components/items/visual-card/VisualCard";
 
-export default async function ItemDetailPage({ params }: { params: Promise<{ itemId: string }> }) {
-  const { itemId } = await params;
-  const item = await getItemById(itemId);
+export default async function ItemDetailPage({ params }: { params: Promise<{ itemSlug: string }> }) {
+  const { itemSlug } = await params;
+  const item = await getItemBySlug(itemSlug);
   if (!item) notFound();
 
   const metadata = (item.metadata as (CarMetadata & HouseMetadata) | null) ?? undefined;

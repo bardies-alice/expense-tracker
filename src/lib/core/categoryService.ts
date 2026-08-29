@@ -1,15 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import type { z } from "zod";
 import type { categorySchema, subcategorySchema } from "@/lib/validation/schemas";
-
-function slugify(name: string) {
-  return name
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
-}
+import { slugify } from "@/lib/slug";
 
 export function listCategories() {
   return prisma.category.findMany({

@@ -49,6 +49,7 @@ model Item {
   category   Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   type       ItemType
   name       String
+  slug       String    @unique
   metadata   Json?
   visualKind String?
   archivedAt DateTime?

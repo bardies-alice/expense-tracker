@@ -28,7 +28,8 @@ export async function updateItemKmAction(itemId: string, categoryId: string, cur
   const item = await itemService.getItemById(itemId);
   const metadata = { ...(item?.metadata as Record<string, unknown> | undefined), currentKm };
   await itemService.updateItemMetadata(itemId, metadata);
-  revalidatePath(`/items/${itemId}`);
+  const itemSlug = await itemService.getItemSlug(itemId);
+  if (itemSlug) revalidatePath(`/items/${itemSlug}`);
   const slug = await getCategorySlug(categoryId);
   if (slug) revalidatePath(`/categorias/${slug}`);
 }

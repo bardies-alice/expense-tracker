@@ -64,7 +64,7 @@ export default async function DashboardPage() {
           <ul className="divide-y divide-gray-100 rounded-lg border border-gray-200 bg-white">
             {attentionNeeded.map((c) => (
               <li key={c.id} className="flex items-center justify-between px-4 py-2 text-sm">
-                <Link href={`/items/${c.itemId}`} className="text-gray-800 hover:text-indigo-600">
+                <Link href={`/items/${c.item.slug}`} className="text-gray-800 hover:text-indigo-600">
                   {c.label} · {c.item.name}
                 </Link>
                 <StatusBadge status={c.status} />
