@@ -11,7 +11,7 @@ const LINKS = [
 export function NavBar() {
   return (
     <header className="border-b border-gray-200 bg-white">
-      <nav className="mx-auto flex max-w-5xl items-center gap-6 px-4 py-3">
+      <nav className="mx-auto flex max-w-[1400px] items-center gap-6 px-6 py-3">
         <span className="text-sm font-semibold text-gray-900">Mis Gastos</span>
         <div className="flex gap-4">
           {LINKS.map((l) => (
