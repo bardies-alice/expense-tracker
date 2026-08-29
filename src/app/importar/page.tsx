@@ -2,6 +2,8 @@ import { listCategoriesWithItems } from "@/lib/core/categoryService";
 import { listImportMerchantRules } from "@/lib/core/importRuleService";
 import { ImportCsvClient } from "@/components/import/ImportCsvClient";
 
+export const dynamic = "force-dynamic";
+
 export default async function ImportarPage() {
   const [categories, merchantRules] = await Promise.all([listCategoriesWithItems(), listImportMerchantRules()]);
 

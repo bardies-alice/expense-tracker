@@ -3,6 +3,8 @@ import { listAllComponentsWithLatestEvent } from "@/lib/core/maintenanceService"
 import { buildCalendarEvents } from "@/lib/calendar/buildCalendarEvents";
 import { AppCalendar } from "@/components/calendar/AppCalendar";
 
+export const dynamic = "force-dynamic";
+
 export default async function CalendarioPage() {
   const [transactions, components] = await Promise.all([
     listTransactions(),
