@@ -70,6 +70,17 @@ export const transactionSchema = z.object({
 
 export const transactionUpdateSchema = transactionSchema.partial();
 
+export const recurringRuleSchema = z.object({
+  type: z.enum(["EXPENSE", "INCOME"]),
+  amount: z.number().positive(),
+  notes: z.string().optional(),
+  categoryId: z.string().min(1),
+  subcategoryId: z.string().optional(),
+  itemId: z.string().optional(),
+  frequency: z.enum(["WEEKLY", "MONTHLY", "YEARLY"]),
+  startDate: z.coerce.date(),
+});
+
 export const tripSchema = z.object({
   countryCode: z.string().min(1),
   countryName: z.string().min(1),

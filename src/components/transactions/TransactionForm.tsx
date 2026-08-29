@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import type { Category, Item, Subcategory } from "@prisma/client";
 import { createTransactionAction, updateTransactionAction } from "@/lib/actions/transactions";
+import { createRecurringRuleAction } from "@/lib/actions/recurring";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
@@ -41,6 +42,8 @@ export function TransactionForm({
   const [categoryId, setCategoryId] = useState(initial?.categoryId ?? defaultCategoryId ?? categories[0]?.id ?? "");
   const [lines, setLines] = useState<ExpenseLineDraft[]>(initial?.lines ?? []);
   const [amount, setAmount] = useState<string>(initial?.amount != null ? String(initial.amount) : "");
+  const [repeat, setRepeat] = useState(false);
+  const [frequency, setFrequency] = useState<"WEEKLY" | "MONTHLY" | "YEARLY">("MONTHLY");
 
   function handleLinesChange(next: ExpenseLineDraft[]) {
     setLines(next);
@@ -67,6 +70,10 @@ export function TransactionForm({
     try {
       if (initial?.id) {
         await updateTransactionAction(initial.id, formData);
+      } else if (repeat) {
+        formData.set("startDate", formData.get("date") as string);
+        formData.set("frequency", frequency);
+        await createRecurringRuleAction(formData);
       } else {
         await createTransactionAction(formData);
       }
@@ -124,10 +131,26 @@ export function TransactionForm({
 
       <Input name="notes" placeholder="Notas (opcional)" defaultValue={initial?.notes ?? ""} />
 
-      <TransactionLinesEditor lines={lines} onChange={handleLinesChange} />
+      {!initial?.id && (
+        <div className="flex items-center gap-3 rounded-md border border-gray-200 px-3 py-2.5">
+          <label className="flex items-center gap-2 text-sm text-gray-700">
+            <input type="checkbox" checked={repeat} onChange={(e) => setRepeat(e.target.checked)} className="h-4 w-4 rounded border-gray-300" />
+            Repetir automáticamente
+          </label>
+          {repeat && (
+            <Select value={frequency} onChange={(e) => setFrequency(e.target.value as typeof frequency)} className="w-auto">
+              <option value="WEEKLY">Semanal</option>
+              <option value="MONTHLY">Mensual</option>
+              <option value="YEARLY">Anual</option>
+            </Select>
+          )}
+        </div>
+      )}
+
+      {!repeat && <TransactionLinesEditor lines={lines} onChange={handleLinesChange} />}
 
       <Button type="submit" disabled={pending} className="w-full">
-        {pending ? "Guardando..." : initial?.id ? "Guardar cambios" : "Crear gasto"}
+        {pending ? "Guardando..." : initial?.id ? "Guardar cambios" : repeat ? "Crear regla recurrente" : "Crear gasto"}
       </Button>
     </form>
   );

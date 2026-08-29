@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { NavBar } from "@/components/ui/NavBar";
+import { runDueRecurringRules } from "@/lib/core/recurringService";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -18,7 +19,9 @@ export const metadata: Metadata = {
   description: "Gestión de gastos personales",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  await runDueRecurringRules();
+
   return (
     <html
       lang="es"

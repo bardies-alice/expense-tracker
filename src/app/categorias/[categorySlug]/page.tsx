@@ -2,10 +2,12 @@ import { notFound } from "next/navigation";
 import { getCategoryBySlug, listCategoriesWithItems } from "@/lib/core/categoryService";
 import { listTransactions } from "@/lib/core/transactionService";
 import { listTrips } from "@/lib/core/tripService";
+import { listRecurringRules } from "@/lib/core/recurringService";
 import { ItemList } from "@/components/items/ItemList";
 import { ItemForm } from "@/components/items/ItemForm";
 import { TransactionTable } from "@/components/transactions/TransactionTable";
 import { TransactionModal } from "@/components/transactions/TransactionModal";
+import { RecurringRuleList } from "@/components/transactions/RecurringRuleList";
 import { TravelMap } from "@/components/trips/TravelMap";
 import { TripStats } from "@/components/trips/TripStats";
 import { TripForm } from "@/components/trips/TripForm";
@@ -21,6 +23,7 @@ export default async function CategoriaDetailPage({ params }: { params: Promise<
   if (!category) notFound();
 
   const transactions = await listTransactions({ categoryId: category.id });
+  const recurringRules = await listRecurringRules(category.id);
   const itemsEnabled = category.slug in DEFAULT_ITEM_TYPE;
   const isTravel = category.slug === "viajes";
   const trips = isTravel ? await listTrips() : [];
@@ -49,7 +52,11 @@ export default async function CategoriaDetailPage({ params }: { params: Promise<
         <div className="flex gap-2">
           {itemsEnabled && <ItemForm categoryId={category.id} defaultType={DEFAULT_ITEM_TYPE[category.slug]} />}
           {isTravel && <TripForm categoryId={category.id} />}
-          <TransactionModal categories={categories} defaultCategoryId={category.id} />
+          <TransactionModal
+            categories={categories}
+            defaultCategoryId={category.id}
+            trigger={category.slug === "salario" ? "Nuevo ingreso" : "Nuevo gasto"}
+          />
         </div>
       </div>
 
@@ -68,6 +75,8 @@ export default async function CategoriaDetailPage({ params }: { params: Promise<
           <ItemList items={category.items} />
         </section>
       )}
+
+      <RecurringRuleList rules={recurringRules} categoryId={category.id} />
 
       <section>
         <h2 className="mb-3 text-sm font-medium text-gray-500">Transacciones</h2>

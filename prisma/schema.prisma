@@ -19,9 +19,10 @@ model Category {
   isCustom  Boolean  @default(false)
   createdAt DateTime @default(now())
 
-  subcategories Subcategory[]
-  items         Item[]
-  transactions  Transaction[]
+  subcategories  Subcategory[]
+  items          Item[]
+  transactions   Transaction[]
+  recurringRules RecurringRule[]
 }
 
 model Subcategory {
@@ -30,7 +31,8 @@ model Subcategory {
   categoryId String
   category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 
-  transactions Transaction[]
+  transactions   Transaction[]
+  recurringRules RecurringRule[]
 
   @@unique([categoryId, name])
 }
@@ -53,8 +55,9 @@ model Item {
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
 
-  components   MaintenanceComponent[]
-  transactions Transaction[]
+  components     MaintenanceComponent[]
+  transactions   Transaction[]
+  recurringRules RecurringRule[]
 }
 
 enum MaintenanceRuleType {
@@ -123,6 +126,8 @@ model Transaction {
   item            Item?             @relation(fields: [itemId], references: [id])
   source          TransactionSource @default(MANUAL)
   receiptImageUrl String?
+  recurringRuleId String?
+  recurringRule   RecurringRule?    @relation(fields: [recurringRuleId], references: [id])
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
 
@@ -132,6 +137,36 @@ model Transaction {
   @@index([categoryId])
   @@index([itemId])
   @@index([date])
+  @@index([recurringRuleId])
+}
+
+enum RecurrenceFrequency {
+  WEEKLY
+  MONTHLY
+  YEARLY
+}
+
+model RecurringRule {
+  id            String              @id @default(cuid())
+  type          TransactionType
+  amount        Float
+  notes         String?
+  categoryId    String
+  category      Category            @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  subcategoryId String?
+  subcategory   Subcategory?        @relation(fields: [subcategoryId], references: [id])
+  itemId        String?
+  item          Item?               @relation(fields: [itemId], references: [id])
+  frequency     RecurrenceFrequency
+  startDate     DateTime
+  nextRunDate   DateTime
+  active        Boolean             @default(true)
+  createdAt     DateTime            @default(now())
+
+  transactions Transaction[]
+
+  @@index([categoryId])
+  @@index([nextRunDate])
 }
 
 model Trip {
