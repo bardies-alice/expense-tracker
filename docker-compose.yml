@@ -1,0 +1,13 @@
+services:
+  app:
+    build: .
+    container_name: expense-tracker
+    restart: unless-stopped
+    ports:
+      - "8095:3000"
+    environment:
+      DATABASE_URL: "file:/app/data/app.db"
+      CRON_SECRET: ${CRON_SECRET}
+    volumes:
+      - ./data:/app/data
+      - ./uploads:/app/public/uploads
