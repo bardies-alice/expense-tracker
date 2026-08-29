@@ -322,7 +322,17 @@ export function ImportCsvClient({
       </div>
 
       <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white">
-        <table className="min-w-full divide-y divide-gray-200 text-sm">
+        <table className="w-full table-fixed divide-y divide-gray-200 text-sm">
+          <colgroup>
+            <col className="w-16" />
+            <col className="w-24" />
+            <col />
+            <col className="w-24" />
+            <col className="w-40" />
+            <col className="w-40" />
+            <col className="w-20" />
+            <col className="w-28" />
+          </colgroup>
           <thead className="bg-gray-50 text-left text-xs font-medium uppercase text-gray-500">
             <tr>
               <th className="px-3 py-2">Incluir</th>
