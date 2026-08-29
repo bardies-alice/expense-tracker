@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { updateMaintenanceComponentAction } from "@/lib/actions/maintenance";
+import { deleteMaintenanceComponentAction, updateMaintenanceComponentAction } from "@/lib/actions/maintenance";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
@@ -24,6 +24,7 @@ export function MaintenanceComponentEditForm({
   onClose: () => void;
 }) {
   const [pending, setPending] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
 
   async function handleSubmit(formData: FormData) {
@@ -33,6 +34,18 @@ export function MaintenanceComponentEditForm({
       onClose();
     } finally {
       setPending(false);
+    }
+  }
+
+  async function handleDelete() {
+    if (!component) return;
+    if (!confirm(`¿Eliminar "${component.label}"? Se borrará también su historial de mantenimiento.`)) return;
+    setDeleting(true);
+    try {
+      await deleteMaintenanceComponentAction(component.id, itemId);
+      onClose();
+    } finally {
+      setDeleting(false);
     }
   }
 
@@ -60,6 +73,14 @@ export function MaintenanceComponentEditForm({
           <Button type="submit" disabled={pending} className="w-full">
             {pending ? "Guardando..." : "Guardar cambios"}
           </Button>
+          <button
+            type="button"
+            onClick={handleDelete}
+            disabled={deleting}
+            className="w-full text-center text-xs text-red-500 hover:text-red-700 disabled:opacity-50"
+          >
+            {deleting ? "Eliminando..." : "Eliminar componente"}
+          </button>
         </form>
       )}
     </Modal>

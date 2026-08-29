@@ -27,6 +27,11 @@ export async function createMaintenanceComponentAction(formData: FormData) {
   return component;
 }
 
+export async function deleteMaintenanceComponentAction(componentId: string, itemId: string) {
+  await maintenanceService.deleteMaintenanceComponent(componentId);
+  await revalidateItem(itemId);
+}
+
 export async function updateMaintenanceComponentAction(formData: FormData) {
   const itemId = formData.get("itemId") as string;
   const componentId = formData.get("componentId") as string;
