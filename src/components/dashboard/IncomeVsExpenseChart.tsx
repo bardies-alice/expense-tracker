@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 export interface MonthlySummaryPoint {
@@ -9,8 +10,14 @@ export interface MonthlySummaryPoint {
 }
 
 export function IncomeVsExpenseChart({ data }: { data: MonthlySummaryPoint[] }) {
+  const router = useRouter();
+
   if (data.length === 0) {
     return <p className="text-sm text-gray-400">Sin datos suficientes todavía.</p>;
+  }
+
+  function goToMonth(item: { payload?: MonthlySummaryPoint }) {
+    if (item.payload?.month) router.push(`/gastos?month=${item.payload.month}`);
   }
 
   return (
@@ -21,8 +28,8 @@ export function IncomeVsExpenseChart({ data }: { data: MonthlySummaryPoint[] }) 
         <YAxis tick={{ fontSize: 12 }} />
         <Tooltip />
         <Legend />
-        <Bar dataKey="income" name="Ingresos" fill="#10b981" radius={[4, 4, 0, 0]} />
-        <Bar dataKey="expense" name="Gastos" fill="#ef4444" radius={[4, 4, 0, 0]} />
+        <Bar dataKey="income" name="Ingresos" fill="#10b981" radius={[4, 4, 0, 0]} cursor="pointer" onClick={goToMonth} />
+        <Bar dataKey="expense" name="Gastos" fill="#ef4444" radius={[4, 4, 0, 0]} cursor="pointer" onClick={goToMonth} />
       </BarChart>
     </ResponsiveContainer>
   );
