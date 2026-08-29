@@ -19,11 +19,13 @@ export interface ParsedImportRow extends RawImportRow {
 const INTERNAL_TRANSFER_PATTERN = /fondos monetarios flexibles|retirada del pocket|al pocket|closing transaction/i;
 
 const CATEGORY_KEYWORDS: Record<string, RegExp> = {
-  comida: /carrefour|mercadona|lidl|d[ií]a %|alcampo|eroski|restaurante|\bbar\b|cafe|cafeter[ií]a|asador|pizzer[ií]a|kebab|sushi|glovo|uber eats|just eat|panader[ií]a|pasteler[ií]a|hamburgues/i,
-  coche: /cepsa|repsol|\bshell\b|\bbp\b|galp|gasolinera|parking|\bitv\b|taller|neum[aá]tico/i,
-  casa: /allianz|mapfre|mutua|endesa|iberdrola|naturgy|comunidad|alquiler|hipoteca|agua|gas natural/i,
-  ocio: /netflix|spotify|\bhbo\b|disney|steam|playstation|\bcine\b|bershka|\bzara\b|primark|amazon|temu|aliexpress|corte ingl[eé]s/i,
-  viajes: /booking|ryanair|vueling|iberia|renfe|omio|airbnb|hotel/i,
+  comida:
+    /carrefour|mercadona|lidl|d[ií]a %|alcampo|eroski|restaurante|\bbar\b|cafe|cafeter[ií]a|asador|pizzer[ií]a|pizza|kebab|sushi|glovo|uber eats|just eat|panader[ií]a|pasteler[ií]a|hamburgues|mcdonald|burger king|\bkfc\b|taco bell|helader[ií]a|gelato|marisqueria|freiduria|ristorante|trattoria|\btapa|bagueteria|izakaya|supermercado|alimentacion|mini ?market|kiosko|z[aá]bka|žabka|colvin|bm supermercados|starbucks|tabern|bodega|mes[oó]n\b/i,
+  coche: /cepsa|repsol|\bshell\b|\bbp\b|galp|gasolinera|parking|\bitv\b|taller|neum[aá]tico|autopista|\bcabify\b|\buber\b(?! eats)|\btaxi\b|gas lac|norauto|plenergy/i,
+  casa: /allianz|mapfre|mutua|endesa|iberdrola|naturgy|comunidad|alquiler|hipoteca|\bagua\b|gas natural|leroy merlin|\bikea\b|obramat|\bdigi\b|movistar|vodafone|\borange\b|telecom/i,
+  ocio:
+    /netflix|spotify|\bhbo\b|disney|steam|playstation|\bcine\b|multicines|odeon|cinesa|bershka|\bzara\b|primark|amazon|temu|aliexpress|corte ingl[eé]s|\bapple\b|\bclaude\b|\bcursor\b|peluqueria|basic-?fit|gimnasio|pull ?& ?bear|stradivarius|\bwallapop\b|\bebay\b|back market|kinguin|toysplanet|pc componentes|microsoft store|flying tiger|\bdecathlon\b|zeeman|estanco|tabacos|jd sports|\bprimor\b/i,
+  viajes: /booking|ryanair|vueling|iberia|renfe|omio|airbnb|hotel|ouigo|kiwi\.com/i,
 };
 
 function guessCategorySlug(descripcion: string): string | null {
