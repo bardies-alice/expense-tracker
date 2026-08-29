@@ -1,10 +1,13 @@
 import Link from "next/link";
 import { getCategoryMonthComparison, getMonthlySummary, getTopProducts, listTransactions } from "@/lib/core/transactionService";
 import { listAllComponentsWithLatestEvent } from "@/lib/core/maintenanceService";
+import { ensureMonthlySnapshots, getCurrentBalance, getMonthlyBalances } from "@/lib/core/balanceService";
 import { computeComponentStatus } from "@/lib/maintenance/computeStatus";
+import { BalanceCard } from "@/components/dashboard/BalanceCard";
 import { SummaryCards } from "@/components/dashboard/SummaryCards";
 import { IncomeVsExpenseChart } from "@/components/dashboard/IncomeVsExpenseChart";
 import { BalanceTrendChart } from "@/components/dashboard/BalanceTrendChart";
+import { MonthlyBalanceChart } from "@/components/dashboard/MonthlyBalanceChart";
 import { CategoryComparisonList } from "@/components/dashboard/CategoryComparisonList";
 import { TopProductsChart } from "@/components/dashboard/TopProductsChart";
 import { StatusBadge } from "@/components/ui/Badge";
@@ -27,13 +30,24 @@ export default async function DashboardPage({
   const monthStart = new Date(reference.getFullYear(), reference.getMonth(), 1);
   const monthEnd = new Date(reference.getFullYear(), reference.getMonth() + 1, 0, 23, 59, 59);
 
-  const [monthTransactions, monthlySummary, categoryComparison, topProducts, components] = await Promise.all([
-    listTransactions({ from: monthStart, to: monthEnd }),
-    getMonthlySummary(6),
-    getCategoryMonthComparison(reference),
-    getTopProducts(8, "comida"),
-    listAllComponentsWithLatestEvent(),
-  ]);
+  await ensureMonthlySnapshots();
+
+  const [monthTransactions, monthlySummary, categoryComparison, topProducts, components, balance, monthlyBalances] =
+    await Promise.all([
+      listTransactions({ from: monthStart, to: monthEnd }),
+      getMonthlySummary(6),
+      getCategoryMonthComparison(reference),
+      getTopProducts(8, "comida"),
+      listAllComponentsWithLatestEvent(),
+      getCurrentBalance(),
+      getMonthlyBalances(),
+    ]);
+
+  const currentMonthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+  const monthlyBalanceData = [
+    ...monthlyBalances.map((m) => ({ month: m.month, balance: m.balance })),
+    ...(balance ? [{ month: currentMonthKey, balance: balance.amount }] : []),
+  ];
 
   // Card refunds land as type INCOME in the purchase's own category (e.g. Amazon -> Ocio), not
   // as real income — netting them out of "Gastos" and excluding them from "Ingresos" keeps both
@@ -88,6 +102,7 @@ export default async function DashboardPage({
         )}
       </div>
 
+      <BalanceCard balance={balance} />
       <SummaryCards income={income} expense={expense} />
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
@@ -100,6 +115,11 @@ export default async function DashboardPage({
           <BalanceTrendChart data={monthlySummary} />
         </section>
       </div>
+
+      <section className="rounded-lg border border-gray-200 bg-white p-4">
+        <h2 className="mb-3 text-sm font-medium text-gray-500">Saldo por mes</h2>
+        <MonthlyBalanceChart data={monthlyBalanceData} />
+      </section>
 
       <section className="rounded-lg border border-gray-200 bg-white p-4">
         <h2 className="mb-4 text-sm font-medium text-gray-500">Gasto por categoría vs mes anterior</h2>

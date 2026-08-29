@@ -198,6 +198,20 @@ model Trip {
   @@index([countryCode])
 }
 
+model BalanceAnchor {
+  id        String   @id @default("singleton")
+  amount    Float
+  asOfDate  DateTime
+  updatedAt DateTime @updatedAt
+}
+
+model MonthlyBalance {
+  id        String   @id @default(cuid())
+  month     String   @unique
+  balance   Float
+  createdAt DateTime @default(now())
+}
+
 model ExpenseLine {
   id            String      @id @default(cuid())
   transactionId String
