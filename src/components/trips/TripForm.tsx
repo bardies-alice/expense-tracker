@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { Modal } from "@/components/ui/Modal";
+import { DatePicker } from "@/components/ui/DatePicker";
 
 export function TripForm({ categoryId }: { categoryId: string }) {
   const router = useRouter();
@@ -91,8 +92,8 @@ export function TripForm({ categoryId }: { categoryId: string }) {
           )}
 
           <div className="grid grid-cols-2 gap-3">
-            <Input name="startDate" type="date" required defaultValue={new Date().toISOString().slice(0, 10)} />
-            <Input name="endDate" type="date" />
+            <DatePicker name="startDate" required defaultValue={new Date().toISOString().slice(0, 10)} />
+            <DatePicker name="endDate" />
           </div>
 
           <Input name="notes" placeholder="Notas (opcional)" />

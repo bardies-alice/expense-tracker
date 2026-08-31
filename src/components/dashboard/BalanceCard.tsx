@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { setBalanceAnchorAction } from "@/lib/actions/balance";
 import { Input } from "@/components/ui/Input";
+import { DatePicker } from "@/components/ui/DatePicker";
 import { formatDate, formatEUR } from "@/lib/format";
 
 function todayInputValue() {
@@ -46,7 +47,7 @@ export function BalanceCard({ balance }: { balance: { amount: number; asOfDate: 
           </div>
           <div className="w-36">
             <label className="mb-1 block text-[11px] text-gray-400">A fecha de</label>
-            <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+            <DatePicker value={date} onChange={setDate} />
           </div>
           <button
             type="submit"

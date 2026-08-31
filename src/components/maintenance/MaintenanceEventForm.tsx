@@ -5,6 +5,7 @@ import { createMaintenanceEventAction } from "@/lib/actions/maintenance";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Modal } from "@/components/ui/Modal";
+import { DatePicker } from "@/components/ui/DatePicker";
 
 export function MaintenanceEventForm({
   open,
@@ -40,7 +41,7 @@ export function MaintenanceEventForm({
       <form ref={formRef} action={handleSubmit} className="space-y-3">
         <input type="hidden" name="itemId" value={itemId} />
         <input type="hidden" name="componentId" value={componentId} />
-        <Input name="date" type="date" defaultValue={new Date().toISOString().slice(0, 10)} required />
+        <DatePicker name="date" defaultValue={new Date().toISOString().slice(0, 10)} required />
         <Input name="mileageKm" type="number" placeholder="Kilometraje (opcional)" />
         <Input name="cost" type="number" step="0.01" placeholder="Coste € (opcional)" />
         <Input name="notes" placeholder="Notas (opcional)" />

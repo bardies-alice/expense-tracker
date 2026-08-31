@@ -28,13 +28,14 @@ export function SavingsChart({ data }: { data: MonthlySummaryPoint[] }) {
         <Bar dataKey="savings" name="Ahorro" radius={[4, 4, 4, 4]}>
           <LabelList
             dataKey="savings"
-            content={({ x, y, width, height, value }) => {
-              const negative = Number(value) < 0;
+            content={({ x, y, width, height, index }) => {
+              const value = points[Number(index)]?.savings ?? 0;
+              const negative = value < 0;
               const cx = Number(x) + Number(width) / 2;
               const cy = negative ? Number(y) + Number(height) + 14 : Number(y) - 6;
               return (
                 <text x={cx} y={cy} textAnchor="middle" fontSize={11} fill="#718096">
-                  {formatEUR(Number(value))}
+                  {formatEUR(value)}
                 </text>
               );
             }}

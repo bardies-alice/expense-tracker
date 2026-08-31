@@ -8,6 +8,7 @@ import { createRecurringRuleAction } from "@/lib/actions/recurring";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
+import { DatePicker } from "@/components/ui/DatePicker";
 import { TransactionLinesEditor, type ExpenseLineDraft } from "./TransactionLinesEditor";
 
 type CategoryWithRelations = Category & { subcategories: Subcategory[]; items: Item[] };
@@ -101,7 +102,7 @@ export function TransactionForm({
         <Input name="amount" type="number" step="0.01" placeholder="Importe" value={amount} onChange={(e) => setAmount(e.target.value)} required />
       </div>
 
-      <Input name="date" type="date" defaultValue={initial?.date?.slice(0, 10) ?? new Date().toISOString().slice(0, 10)} required />
+      <DatePicker name="date" defaultValue={initial?.date?.slice(0, 10) ?? new Date().toISOString().slice(0, 10)} required />
 
       <Select name="categoryId" value={categoryId} onChange={(e) => handleCategoryChange(e.target.value)}>
         {categories.map((c) => (
