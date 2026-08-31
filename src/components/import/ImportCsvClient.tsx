@@ -61,6 +61,7 @@ export function ImportCsvClient({
   const [pinnedRefs, setPinnedRefs] = useState<Set<string>>(new Set());
   const [pending, setPending] = useState(false);
   const [loadingFile, setLoadingFile] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<{ imported: number; skipped: number; remembered: number } | null>(null);
   const [propagation, setPropagation] = useState<{
     descripcion: string;
@@ -85,6 +86,7 @@ export function ImportCsvClient({
 
   async function handleFile(file: File) {
     setLoadingFile(true);
+    setError(null);
     try {
       const text = await file.text();
       const parsed = parseRevolutCsv(text);
@@ -125,8 +127,11 @@ export function ImportCsvClient({
       setResult(null);
       setPage(0);
       setTab("pendientes");
+    } catch {
+      setError("No se pudo leer el archivo. Comprueba que es un CSV de Revolut válido.");
     } finally {
       setLoadingFile(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
     }
   }
 
@@ -257,6 +262,7 @@ export function ImportCsvClient({
   async function handleImport() {
     if (!rows) return;
     setPending(true);
+    setError(null);
     try {
       const payload = includedRows
         .filter((r) => r.categoryId)
@@ -278,6 +284,8 @@ export function ImportCsvClient({
       setPinnedRefs((prev) => new Set([...prev].filter((ref) => !importedRefs.has(ref))));
       setResult(res);
       router.refresh();
+    } catch {
+      setError("No se pudo completar la importación. Inténtalo de nuevo.");
     } finally {
       setPending(false);
     }
@@ -303,6 +311,7 @@ export function ImportCsvClient({
         <Button onClick={() => fileInputRef.current?.click()} disabled={loadingFile}>
           {loadingFile ? "Analizando..." : "Seleccionar CSV"}
         </Button>
+        {error && <p className="text-sm text-red-600">{error}</p>}
       </div>
     );
   }
@@ -332,6 +341,10 @@ export function ImportCsvClient({
           {result.imported} movimientos importados{result.skipped > 0 ? `, ${result.skipped} ya existían (omitidos)` : ""}
           {result.remembered > 0 ? `. ${result.remembered} comercios recordados para próximas importaciones` : ""}.
         </p>
+      )}
+
+      {error && (
+        <p className="rounded-xl border border-red-200 bg-red-50 px-4 py-2 text-sm text-red-700">{error}</p>
       )}
 
       <div className="flex gap-1 border-b border-gray-200">

@@ -39,6 +39,7 @@ export function TransactionForm({
 }) {
   const router = useRouter();
   const [pending, setPending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [categoryId, setCategoryId] = useState(initial?.categoryId ?? defaultCategoryId ?? categories[0]?.id ?? "");
   const [lines, setLines] = useState<ExpenseLineDraft[]>(initial?.lines ?? []);
   const [amount, setAmount] = useState<string>(initial?.amount != null ? String(initial.amount) : "");
@@ -66,6 +67,7 @@ export function TransactionForm({
 
   async function handleSubmit(formData: FormData) {
     setPending(true);
+    setError(null);
     formData.set("lines", JSON.stringify(lines));
     try {
       if (initial?.id) {
@@ -82,6 +84,8 @@ export function TransactionForm({
       } else {
         router.push("/gastos");
       }
+    } catch {
+      setError("No se pudo guardar. Revisa los datos e inténtalo de nuevo.");
     } finally {
       setPending(false);
     }
@@ -148,6 +152,8 @@ export function TransactionForm({
       )}
 
       {!repeat && <TransactionLinesEditor lines={lines} onChange={handleLinesChange} />}
+
+      {error && <p className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>}
 
       <Button type="submit" disabled={pending} className="w-full">
         {pending ? "Guardando..." : initial?.id ? "Guardar cambios" : repeat ? "Crear regla recurrente" : "Crear gasto"}

@@ -9,6 +9,10 @@ export function MonthlyBalanceChart({ data }: { data: { month: string; balance: 
     return <p className="text-sm text-gray-400">Configura tu saldo actual para ver esta gráfica.</p>;
   }
 
+  if (data.length < 2) {
+    return <p className="text-sm text-gray-400">Necesitamos al menos dos meses de histórico para dibujar esta gráfica. Vuelve cuando pase el mes en curso.</p>;
+  }
+
   return (
     <ResponsiveContainer width="100%" height={280}>
       <BarChart data={data} margin={{ left: 4, right: 12 }}>
