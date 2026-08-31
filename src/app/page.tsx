@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getCategoryMonthComparison, getMonthlySummary, getTopProducts, listTransactions } from "@/lib/core/transactionService";
 import { listAllComponentsWithLatestEvent } from "@/lib/core/maintenanceService";
+import { listCategoriesWithItems } from "@/lib/core/categoryService";
 import { ensureMonthlySnapshots, getCurrentBalance, getMonthlyBalances } from "@/lib/core/balanceService";
 import { computeComponentStatus } from "@/lib/maintenance/computeStatus";
 import { BalanceCard } from "@/components/dashboard/BalanceCard";
@@ -10,6 +11,7 @@ import { BalanceTrendChart } from "@/components/dashboard/BalanceTrendChart";
 import { MonthlyBalanceChart } from "@/components/dashboard/MonthlyBalanceChart";
 import { CategoryComparisonList } from "@/components/dashboard/CategoryComparisonList";
 import { TopProductsChart } from "@/components/dashboard/TopProductsChart";
+import { TransactionModal } from "@/components/transactions/TransactionModal";
 import { StatusBadge } from "@/components/ui/Badge";
 import { PageHeading } from "@/components/ui/PageHeading";
 import type { CarMetadata } from "@/types";
@@ -33,7 +35,7 @@ export default async function DashboardPage({
 
   await ensureMonthlySnapshots();
 
-  const [monthTransactions, monthlySummary, categoryComparison, topProducts, components, balance, monthlyBalances] =
+  const [monthTransactions, monthlySummary, categoryComparison, topProducts, components, balance, monthlyBalances, categories] =
     await Promise.all([
       listTransactions({ from: monthStart, to: monthEnd }),
       getMonthlySummary(6),
@@ -42,6 +44,7 @@ export default async function DashboardPage({
       listAllComponentsWithLatestEvent(),
       getCurrentBalance(),
       getMonthlyBalances(),
+      listCategoriesWithItems(),
     ]);
 
   const currentMonthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
@@ -96,16 +99,19 @@ export default async function DashboardPage({
           }
           subtitle="Tu actividad financiera de un vistazo"
         />
-        {isFiltered && (
-          <div className="flex items-center gap-3 text-sm">
-            <Link href={`/gastos?month=${month}`} className="text-indigo-600 hover:text-indigo-800">
-              Ver transacciones →
-            </Link>
-            <Link href="/" className="text-gray-400 hover:text-gray-600">
-              Quitar filtro ✕
-            </Link>
-          </div>
-        )}
+        <div className="flex items-center gap-3 text-sm">
+          {isFiltered && (
+            <>
+              <Link href={`/gastos?month=${month}`} className="text-indigo-600 hover:text-indigo-800">
+                Ver transacciones →
+              </Link>
+              <Link href="/" className="text-gray-400 hover:text-gray-600">
+                Quitar filtro ✕
+              </Link>
+            </>
+          )}
+          <TransactionModal categories={categories} trigger="Nueva transacción" />
+        </div>
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
