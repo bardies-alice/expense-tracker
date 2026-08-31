@@ -17,6 +17,7 @@ import {
 import { es } from "date-fns/locale";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { CalendarEvent } from "@/lib/calendar/buildCalendarEvents";
+import { formatEUR } from "@/lib/format";
 
 const WEEKDAYS = ["L", "M", "X", "J", "V", "S", "D"];
 
@@ -42,6 +43,17 @@ function dayExpenseTotal(dayEvents: CalendarEvent[]) {
     if (e.kind !== "expense") continue;
     const match = e.title.match(/^-([\d.,]+)€/);
     if (match) total += parseFloat(match[1].replace(",", "."));
+  }
+  return total;
+}
+
+function dayNetTotal(dayEvents: CalendarEvent[]) {
+  let total = 0;
+  for (const e of dayEvents) {
+    const match = e.title.match(/^([+-])([\d.,]+)€/);
+    if (!match) continue;
+    const amount = parseFloat(match[2].replace(",", "."));
+    total += match[1] === "-" ? -amount : amount;
   }
   return total;
 }
@@ -89,6 +101,7 @@ export function AppCalendar({ events }: { events: CalendarEvent[] }) {
   }, [days, eventsByDay]);
 
   const selectedDayEvents = eventsByDay.get(dayKey(selectedDay)) ?? [];
+  const selectedDayNet = dayNetTotal(selectedDayEvents);
 
   return (
     <div className="grid grid-cols-1 items-start gap-4 lg:grid-cols-[minmax(0,1fr)_300px]">
@@ -172,9 +185,16 @@ export function AppCalendar({ events }: { events: CalendarEvent[] }) {
       </div>
 
       <div className="flex flex-col gap-2.5 rounded-2xl border border-gray-200 bg-white p-4">
-        <h3 className="m-0 text-[13.5px] font-semibold capitalize text-gray-700">
-          {format(selectedDay, "d 'de' MMMM", { locale: es })}
-        </h3>
+        <div className="flex items-center justify-between gap-2">
+          <h3 className="m-0 text-[13.5px] font-semibold capitalize text-gray-700">
+            {format(selectedDay, "d 'de' MMMM", { locale: es })}
+          </h3>
+          {selectedDayEvents.length > 0 && (
+            <span className={`text-xs font-bold ${selectedDayNet >= 0 ? "text-emerald-700" : "text-red-600"}`}>
+              {formatEUR(selectedDayNet)}
+            </span>
+          )}
+        </div>
         {selectedDayEvents.length === 0 ? (
           <p className="m-0 text-xs text-gray-400">Sin movimientos ese día.</p>
         ) : (
