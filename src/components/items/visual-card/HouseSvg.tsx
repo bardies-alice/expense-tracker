@@ -21,12 +21,12 @@ interface BadgeSpec {
 }
 
 const BADGES: BadgeSpec[] = [
-  { key: "roof", cx: 320, cy: 66, r: 19, componentType: "ROOF", leader: [320, 85, 320, 148] },
-  { key: "smoke-detector", cx: 460, cy: 92, r: 17, componentType: "SMOKE_DETECTOR", leader: [460, 109, 392, 178] },
-  { key: "home-insurance", cx: 560, cy: 160, r: 18, componentType: "HOME_INSURANCE", leader: [560, 178, 420, 226] },
-  { key: "alarm", cx: 500, cy: 300, r: 17, componentType: "ALARM", leader: [500, 300, 420, 300] },
-  { key: "boiler", cx: 90, cy: 260, r: 18, componentType: "BOILER", leader: [90, 278, 220, 270] },
-  { key: "water-heater", cx: 90, cy: 340, r: 17, componentType: "WATER_HEATER", leader: [90, 357, 220, 330] },
+  { key: "roof", cx: 340, cy: 96, r: 19, componentType: "ROOF", leader: [340, 115, 340, 150] },
+  { key: "smoke-detector", cx: 258, cy: 52, r: 17, componentType: "SMOKE_DETECTOR", leader: [258, 69, 275, 122] },
+  { key: "home-insurance", cx: 452, cy: 195, r: 18, componentType: "HOME_INSURANCE", leader: [452, 213, 398, 250] },
+  { key: "alarm", cx: 412, cy: 300, r: 17, componentType: "ALARM", leader: [412, 300, 380, 300] },
+  { key: "boiler", cx: 176, cy: 262, r: 18, componentType: "BOILER", leader: [176, 280, 245, 280] },
+  { key: "water-heater", cx: 176, cy: 335, r: 17, componentType: "WATER_HEATER", leader: [176, 352, 245, 322] },
 ];
 
 export function HouseSvg({ zoneStatuses, onZoneClick, hoveredZone, onZoneHover }: HouseSvgProps) {
@@ -38,29 +38,26 @@ export function HouseSvg({ zoneStatuses, onZoneClick, hoveredZone, onZoneHover }
       <ellipse cx="320" cy="378" rx="240" ry="12" fill="#e2e8f0" />
       <line x1="60" y1="378" x2="580" y2="378" stroke="#e2e8f0" strokeWidth="2" />
 
-      {/* tejado */}
-      <polygon points="220,148 320,68 420,148" fill="#94a3b8" stroke="#475569" strokeWidth="2" />
-      {/* chimenea */}
-      <rect x="368" y="92" width="20" height="46" fill="#94a3b8" stroke="#475569" strokeWidth="1.5" />
-
-      {/* fachada */}
-      <rect x="220" y="148" width="200" height="212" fill="#f1f5f9" stroke="#94a3b8" strokeWidth="2" />
-
-      {/* ventanas */}
-      <rect x="248" y="188" width="42" height="42" fill="#bcd4e6" stroke="#64748b" strokeWidth="1.5" pointerEvents="none" />
-      <line x1="269" y1="188" x2="269" y2="230" stroke="#64748b" strokeWidth="1.2" pointerEvents="none" />
-      <line x1="248" y1="209" x2="290" y2="209" stroke="#64748b" strokeWidth="1.2" pointerEvents="none" />
-
-      <rect x="350" y="188" width="42" height="42" fill="#bcd4e6" stroke="#64748b" strokeWidth="1.5" pointerEvents="none" />
-      <line x1="371" y1="188" x2="371" y2="230" stroke="#64748b" strokeWidth="1.2" pointerEvents="none" />
-      <line x1="350" y1="209" x2="392" y2="209" stroke="#64748b" strokeWidth="1.2" pointerEvents="none" />
-
-      {/* puerta */}
-      <rect x="300" y="270" width="40" height="90" fill="#8a9bb0" stroke="#475569" strokeWidth="1.5" pointerEvents="none" />
-      <circle cx="332" cy="318" r="2.5" fill="#334155" pointerEvents="none" />
-
-      {/* caseta utilidades (caldera / termo), en el lateral de la fachada */}
-      <rect x="220" y="255" width="20" height="90" fill="#e2e8f0" stroke="#94a3b8" strokeWidth="1.5" pointerEvents="none" />
+      <g transform="translate(183.6,87.2) scale(0.55)" fill="#f1f5f9" stroke="#94a3b8" strokeWidth="3.5" strokeLinejoin="round">
+        <path d="M496,272v-24L462.416,96H160V48h16V0H64v48h16v48H33.584L0.192,246.264L0,272h32v176H16v48h464v-48h-16V272H496z M80,16
+          h80v16H80V16z M144,48v48H96V48H144z M144,480H32v-16h112V480z M48,448V272h113.528c-0.96,5.2-1.528,10.528-1.528,16v160H48z
+          M336,480H160v-16h176V480z M192,328v120h-16V288c0-39.704,32.304-72,72-72s72,32.296,72,72v160h-16V328H192z M288,344v104h-80
+          V344H288z M334.472,272H448v176H336V288C336,282.528,335.432,277.2,334.472,272z M464,480H352v-16h112V480z M329.888,256
+          c-12.84-32.728-44.664-56-81.888-56s-69.048,23.272-81.888,56H16v-7.128L46.416,112h403.168L480,248.872V256H329.888z" />
+        <path
+          fill="#bcd4e6"
+          stroke="#64748b"
+          strokeWidth="2"
+          d="M64,392h80v-96H64V392z M112,312h16v24h-16V312z M112,352h16v24h-16V352z M80,312h16v24H80V312z M80,352h16v24H80V352z"
+        />
+        <path
+          fill="#bcd4e6"
+          stroke="#64748b"
+          strokeWidth="2"
+          d="M432,296h-80v96h80V296z M384,376h-16v-24h16V376z M384,336h-16v-24h16V336z M416,376h-16v-24h16V376z M416,336h-16v-24
+          h16V336z"
+        />
+      </g>
 
       {BADGES.map((b) => {
         const status = zone(b.key);

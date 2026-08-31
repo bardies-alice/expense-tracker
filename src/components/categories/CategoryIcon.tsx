@@ -1,5 +1,4 @@
 import {
-  Home,
   Car,
   PartyPopper,
   Plane,
@@ -22,11 +21,12 @@ import {
   Wrench,
   Folder,
   TrendingUp,
-  type LucideIcon,
 } from "lucide-react";
+import type { ComponentType } from "react";
+import { HouseIcon } from "./icons/HouseIcon";
 
-export const ICONS: Record<string, LucideIcon> = {
-  Home,
+export const ICONS: Record<string, ComponentType<{ className?: string }>> = {
+  Home: HouseIcon,
   Car,
   PartyPopper,
   Plane,

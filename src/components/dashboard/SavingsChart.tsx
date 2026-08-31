@@ -28,11 +28,14 @@ export function SavingsChart({ data }: { data: MonthlySummaryPoint[] }) {
         <Bar dataKey="savings" name="Ahorro" radius={[4, 4, 4, 4]}>
           <LabelList
             dataKey="savings"
-            content={({ x, y, width, height, index }) => {
+            content={({ x, y, width, index }) => {
+              // Recharts gives a negative `height` for below-zero bars, with `y` already at
+              // the bar's far (bottom) edge — so the label only needs to clear that edge,
+              // not y + height (which lands back up inside the bar).
               const value = points[Number(index)]?.savings ?? 0;
               const negative = value < 0;
               const cx = Number(x) + Number(width) / 2;
-              const cy = negative ? Number(y) + Number(height) + 14 : Number(y) - 6;
+              const cy = negative ? Number(y) + 14 : Number(y) - 6;
               return (
                 <text x={cx} y={cy} textAnchor="middle" fontSize={11} fill="#718096">
                   {formatEUR(value)}
