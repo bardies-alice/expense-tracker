@@ -2,6 +2,7 @@ import { listTransactions } from "@/lib/core/transactionService";
 import { listAllComponentsWithLatestEvent } from "@/lib/core/maintenanceService";
 import { buildCalendarEvents } from "@/lib/calendar/buildCalendarEvents";
 import { AppCalendar } from "@/components/calendar/AppCalendar";
+import { PageHeading } from "@/components/ui/PageHeading";
 
 export const dynamic = "force-dynamic";
 
@@ -15,7 +16,7 @@ export default async function CalendarioPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-xl font-semibold text-gray-900">Calendario</h1>
+      <PageHeading title="Calendario" subtitle="Tus movimientos día a día" />
       <AppCalendar events={events} />
     </div>
   );

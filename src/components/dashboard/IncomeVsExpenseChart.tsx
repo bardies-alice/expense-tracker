@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, Legend, ResponsiveContainer, Tooltip, XAxis } from "recharts";
 import { formatEUR, formatMonthShort } from "@/lib/format";
 
 export interface MonthlySummaryPoint {
@@ -22,15 +22,23 @@ export function IncomeVsExpenseChart({ data }: { data: MonthlySummaryPoint[] }) 
   }
 
   return (
-    <ResponsiveContainer width="100%" height={280}>
-      <BarChart data={data}>
-        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
-        <XAxis dataKey="month" tick={{ fontSize: 12 }} tickFormatter={formatMonthShort} />
-        <YAxis tick={{ fontSize: 12 }} />
-        <Tooltip formatter={(value) => formatEUR(Number(value))} labelFormatter={formatMonthShort} />
-        <Legend />
-        <Bar dataKey="income" name="Ingresos" fill="#10b981" radius={[4, 4, 0, 0]} cursor="pointer" onClick={goToMonth} />
-        <Bar dataKey="expense" name="Gastos" fill="#ef4444" radius={[4, 4, 0, 0]} cursor="pointer" onClick={goToMonth} />
+    <ResponsiveContainer width="100%" height={200}>
+      <BarChart data={data} barGap={3} margin={{ top: 8 }}>
+        <XAxis
+          dataKey="month"
+          tick={{ fontSize: 11, fill: "#a0aec0", fontWeight: 500 }}
+          tickFormatter={formatMonthShort}
+          axisLine={false}
+          tickLine={false}
+        />
+        <Tooltip formatter={(value) => formatEUR(Number(value))} labelFormatter={formatMonthShort} cursor={{ fill: "rgba(99,102,241,0.06)" }} />
+        <Legend
+          iconType="square"
+          iconSize={8}
+          wrapperStyle={{ fontSize: 11.5, color: "#718096" }}
+        />
+        <Bar dataKey="income" name="Ingresos" fill="#a7f3d0" radius={[4, 4, 0, 0]} cursor="pointer" onClick={goToMonth} />
+        <Bar dataKey="expense" name="Gastos" fill="#fecaca" radius={[4, 4, 0, 0]} cursor="pointer" onClick={goToMonth} />
       </BarChart>
     </ResponsiveContainer>
   );

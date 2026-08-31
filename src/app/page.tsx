@@ -11,6 +11,7 @@ import { MonthlyBalanceChart } from "@/components/dashboard/MonthlyBalanceChart"
 import { CategoryComparisonList } from "@/components/dashboard/CategoryComparisonList";
 import { TopProductsChart } from "@/components/dashboard/TopProductsChart";
 import { StatusBadge } from "@/components/ui/Badge";
+import { PageHeading } from "@/components/ui/PageHeading";
 import type { CarMetadata } from "@/types";
 
 const MONTH_LABEL = new Intl.DateTimeFormat("es-ES", { month: "long", year: "numeric" });
@@ -82,14 +83,19 @@ export default async function DashboardPage({
   return (
     <div className="space-y-8">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold text-gray-900">
-          Resumen
-          {isFiltered && (
-            <span className="ml-2 font-normal text-gray-400">
-              — {MONTH_LABEL.format(reference).replace(/^./, (c) => c.toUpperCase())}
-            </span>
-          )}
-        </h1>
+        <PageHeading
+          title={
+            <>
+              Resumen
+              {isFiltered && (
+                <span className="ml-2 font-normal text-gray-400">
+                  — {MONTH_LABEL.format(reference).replace(/^./, (c) => c.toUpperCase())}
+                </span>
+              )}
+            </>
+          }
+          subtitle="Tu actividad financiera de un vistazo"
+        />
         {isFiltered && (
           <div className="flex items-center gap-3 text-sm">
             <Link href={`/gastos?month=${month}`} className="text-indigo-600 hover:text-indigo-800">

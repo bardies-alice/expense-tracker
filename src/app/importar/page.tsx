@@ -1,6 +1,7 @@
 import { listCategoriesWithItems } from "@/lib/core/categoryService";
 import { listImportMerchantRules } from "@/lib/core/importRuleService";
 import { ImportCsvClient } from "@/components/import/ImportCsvClient";
+import { PageHeading } from "@/components/ui/PageHeading";
 
 export const dynamic = "force-dynamic";
 
@@ -9,7 +10,7 @@ export default async function ImportarPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-xl font-semibold text-gray-900">Importar movimientos</h1>
+      <PageHeading title="Importar" subtitle="Sube un extracto y añade transacciones en bloque" />
       <ImportCsvClient categories={categories} merchantRules={merchantRules} />
     </div>
   );

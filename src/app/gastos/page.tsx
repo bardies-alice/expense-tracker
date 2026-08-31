@@ -3,6 +3,7 @@ import { listCategoriesWithItems } from "@/lib/core/categoryService";
 import { listTransactions } from "@/lib/core/transactionService";
 import { TransactionTable } from "@/components/transactions/TransactionTable";
 import { TransactionModal } from "@/components/transactions/TransactionModal";
+import { PageHeading } from "@/components/ui/PageHeading";
 
 const MONTH_LABEL = new Intl.DateTimeFormat("es-ES", { month: "long", year: "numeric" });
 
@@ -29,7 +30,7 @@ export default async function GastosPage({
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold text-gray-900">Gastos e ingresos</h1>
+        <PageHeading title="Gastos" subtitle="Todas tus transacciones registradas" />
         <TransactionModal categories={categories} trigger="Nuevo" />
       </div>
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { Area, AreaChart, CartesianGrid, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis } from "recharts";
 import { formatEUR, formatMonthShort } from "@/lib/format";
 import type { MonthlySummaryPoint } from "./IncomeVsExpenseChart";
 
@@ -17,20 +17,23 @@ export function BalanceTrendChart({ data }: { data: MonthlySummaryPoint[] }) {
   }, []);
 
   return (
-    <ResponsiveContainer width="100%" height={280}>
-      <AreaChart data={points} margin={{ left: 4, right: 12 }}>
+    <ResponsiveContainer width="100%" height={200}>
+      <AreaChart data={points} margin={{ top: 8 }}>
         <defs>
           <linearGradient id="balanceFill" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#6366f1" stopOpacity={0.25} />
+            <stop offset="0%" stopColor="#6366f1" stopOpacity={0.2} />
             <stop offset="100%" stopColor="#6366f1" stopOpacity={0} />
           </linearGradient>
         </defs>
-        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
-        <XAxis dataKey="month" tick={{ fontSize: 12 }} tickFormatter={formatMonthShort} />
-        <YAxis tick={{ fontSize: 12 }} tickFormatter={(v) => formatEUR(v)} width={80} />
-        <ReferenceLine y={0} stroke="#cbd5e1" strokeDasharray="4 4" />
+        <XAxis
+          dataKey="month"
+          tick={{ fontSize: 11, fill: "#a0aec0", fontWeight: 500 }}
+          tickFormatter={formatMonthShort}
+          axisLine={false}
+          tickLine={false}
+        />
         <Tooltip formatter={(value) => formatEUR(Number(value))} labelFormatter={formatMonthShort} />
-        <Area type="monotone" dataKey="balance" name="Balance acumulado" stroke="#4f46e5" strokeWidth={2} fill="url(#balanceFill)" dot={{ r: 3, fill: "#4f46e5" }} />
+        <Area type="monotone" dataKey="balance" name="Balance acumulado" stroke="#6366f1" strokeWidth={2.5} fill="url(#balanceFill)" dot={false} activeDot={{ r: 4, fill: "#6366f1" }} />
       </AreaChart>
     </ResponsiveContainer>
   );
