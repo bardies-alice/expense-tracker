@@ -4,7 +4,6 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { upsertImportMerchantRule } from "@/lib/core/importRuleService";
-import { normalizeSalaryDate } from "@/lib/core/salary";
 
 const importRowSchema = z.object({
   externalRef: z.string().min(1),
@@ -36,14 +35,12 @@ export async function importTransactionsAction(rows: z.infer<typeof importRowSch
   const toInsert = parsed.filter((r) => !existingRefs.has(r.externalRef));
 
   if (toInsert.length > 0) {
-    const salaryCategory = await prisma.category.findUnique({ where: { slug: "salario" }, select: { id: true } });
-
     await prisma.transaction.createMany({
       data: toInsert.map((r) => ({
         externalRef: r.externalRef,
         type: r.type,
         amount: r.amount,
-        date: r.categoryId === salaryCategory?.id ? normalizeSalaryDate(r.date) : r.date,
+        date: r.date,
         notes: r.notes,
         categoryId: r.categoryId,
         subcategoryId: r.subcategoryId,

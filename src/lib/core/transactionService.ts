@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import type { z } from "zod";
 import type { transactionSchema, transactionUpdateSchema } from "@/lib/validation/schemas";
-import { normalizeSalaryDate } from "./salary";
+import { budgetMonthKey } from "./salary";
 
 export interface TransactionFilters {
   categoryId?: string;
@@ -36,12 +36,8 @@ export function getTransactionById(id: string) {
   });
 }
 
-export async function createTransaction(input: z.infer<typeof transactionSchema>) {
+export function createTransaction(input: z.infer<typeof transactionSchema>) {
   const { lines, ...data } = input;
-  if (data.date) {
-    const category = await prisma.category.findUnique({ where: { id: data.categoryId }, select: { slug: true } });
-    if (category?.slug === "salario") data.date = normalizeSalaryDate(data.date);
-  }
   return prisma.transaction.create({
     data: {
       ...data,
@@ -51,12 +47,8 @@ export async function createTransaction(input: z.infer<typeof transactionSchema>
   });
 }
 
-export async function updateTransaction(id: string, input: z.infer<typeof transactionUpdateSchema>) {
+export function updateTransaction(id: string, input: z.infer<typeof transactionUpdateSchema>) {
   const { lines, ...data } = input;
-  if (data.date && data.categoryId) {
-    const category = await prisma.category.findUnique({ where: { id: data.categoryId }, select: { slug: true } });
-    if (category?.slug === "salario") data.date = normalizeSalaryDate(data.date);
-  }
   return prisma.$transaction(async (tx) => {
     if (lines) {
       await tx.expenseLine.deleteMany({ where: { transactionId: id } });
@@ -78,15 +70,17 @@ export function deleteTransaction(id: string) {
 
 export async function getMonthlySummary(monthsBack = 6) {
   const since = new Date();
-  since.setMonth(since.getMonth() - monthsBack);
+  since.setMonth(since.getMonth() - monthsBack - 1);
   const transactions = await prisma.transaction.findMany({
     where: { date: { gte: since } },
-    select: { type: true, amount: true, date: true },
+    select: { type: true, amount: true, date: true, category: { select: { slug: true } } },
   });
 
+  const cutoffKey = budgetMonthKey(new Date(new Date().getFullYear(), new Date().getMonth() - monthsBack, 1), null);
   const byMonth = new Map<string, { income: number; expense: number }>();
   for (const t of transactions) {
-    const key = `${t.date.getFullYear()}-${String(t.date.getMonth() + 1).padStart(2, "0")}`;
+    const key = budgetMonthKey(t.date, t.category.slug);
+    if (key < cutoffKey) continue;
     const entry = byMonth.get(key) ?? { income: 0, expense: 0 };
     if (t.type === "INCOME") entry.income += t.amount;
     else entry.expense += t.amount;

@@ -39,8 +39,11 @@ export async function getCurrentBalance() {
   const anchor = await getBalanceAnchor();
   if (!anchor) return null;
 
-  const amount = await getBalanceAt(new Date());
-  return { amount: amount!, asOfDate: anchor.asOfDate };
+  const now = new Date();
+  const amount = await getBalanceAt(now);
+  // The amount is walked forward to right now, not frozen at the anchor's date — the label
+  // shown alongside it should say so, or it reads as a stale balance from whenever it was set.
+  return { amount: amount!, asOfDate: now };
 }
 
 function monthKey(date: Date) {

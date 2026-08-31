@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getCategoryMonthComparison, getMonthlySummary, getTopProducts, listTransactions } from "@/lib/core/transactionService";
+import { budgetMonthKey } from "@/lib/core/salary";
 import { listAllComponentsWithLatestEvent } from "@/lib/core/maintenanceService";
 import { listCategoriesWithItems } from "@/lib/core/categoryService";
 import { ensureMonthlySnapshots, getCurrentBalance, getMonthlyBalances } from "@/lib/core/balanceService";
@@ -9,6 +10,7 @@ import { SummaryCards } from "@/components/dashboard/SummaryCards";
 import { IncomeVsExpenseChart } from "@/components/dashboard/IncomeVsExpenseChart";
 import { BalanceTrendChart } from "@/components/dashboard/BalanceTrendChart";
 import { MonthlyBalanceChart } from "@/components/dashboard/MonthlyBalanceChart";
+import { SavingsChart } from "@/components/dashboard/SavingsChart";
 import { CategoryComparisonList } from "@/components/dashboard/CategoryComparisonList";
 import { TopProductsChart } from "@/components/dashboard/TopProductsChart";
 import { TransactionModal } from "@/components/transactions/TransactionModal";
@@ -35,9 +37,13 @@ export default async function DashboardPage({
 
   await ensureMonthlySnapshots();
 
+  // Widened a month back so late-month salary (attributed to the following budget month)
+  // is captured even though its real transaction date falls in the prior calendar month.
+  const salaryLookbackStart = new Date(monthStart.getFullYear(), monthStart.getMonth() - 1, 1);
+
   const [monthTransactions, monthlySummary, categoryComparison, topProducts, components, balance, monthlyBalances, categories] =
     await Promise.all([
-      listTransactions({ from: monthStart, to: monthEnd }),
+      listTransactions({ from: salaryLookbackStart, to: monthEnd }),
       getMonthlySummary(6),
       getCategoryMonthComparison(reference),
       getTopProducts(8, "comida"),
@@ -53,16 +59,22 @@ export default async function DashboardPage({
     ...(balance ? [{ month: currentMonthKey, balance: balance.amount }] : []),
   ];
 
+  const targetMonthKey = `${reference.getFullYear()}-${String(reference.getMonth() + 1).padStart(2, "0")}`;
+
+  // Salary is attributed to the month it's meant to cover, not the real day it lands (see
+  // budgetMonthKey) — a payday on Aug 31 counts as September's income, not August's.
+  const income = monthTransactions
+    .filter((t) => t.type === "INCOME" && t.category.slug === "salario" && budgetMonthKey(t.date, t.category.slug) === targetMonthKey)
+    .reduce((sum, t) => sum + t.amount, 0);
   // Card refunds land as type INCOME in the purchase's own category (e.g. Amazon -> Ocio), not
   // as real income — netting them out of "Gastos" and excluding them from "Ingresos" keeps both
   // cards showing actual money in/out rather than gross purchase + gross refund.
-  const income = monthTransactions
-    .filter((t) => t.type === "INCOME" && t.category.slug === "salario")
-    .reduce((sum, t) => sum + t.amount, 0);
   const refunds = monthTransactions
-    .filter((t) => t.type === "INCOME" && t.category.slug !== "salario")
+    .filter((t) => t.type === "INCOME" && t.category.slug !== "salario" && t.date >= monthStart && t.date <= monthEnd)
     .reduce((sum, t) => sum + t.amount, 0);
-  const expense = monthTransactions.filter((t) => t.type === "EXPENSE").reduce((sum, t) => sum + t.amount, 0) - refunds;
+  const expense = monthTransactions
+    .filter((t) => t.type === "EXPENSE" && t.date >= monthStart && t.date <= monthEnd)
+    .reduce((sum, t) => sum + t.amount, 0) - refunds;
 
   const attentionNeeded = components
     .map((c) => {
@@ -129,6 +141,11 @@ export default async function DashboardPage({
           <BalanceTrendChart data={monthlySummary} />
         </section>
       </div>
+
+      <section className="rounded-2xl border border-gray-200 bg-white p-4">
+        <h2 className="mb-3 text-sm font-medium text-gray-500">Ahorro por mes (6 meses)</h2>
+        <SavingsChart data={monthlySummary} />
+      </section>
 
       <section className="rounded-2xl border border-gray-200 bg-white p-4">
         <h2 className="mb-3 text-sm font-medium text-gray-500">Saldo por mes</h2>
