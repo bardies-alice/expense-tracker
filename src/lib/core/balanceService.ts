@@ -60,11 +60,17 @@ export async function ensureMonthlySnapshots() {
   const existing = await prisma.monthlyBalance.findMany({ select: { month: true } });
   const done = new Set(existing.map((e) => e.month));
 
+  const earliestTransaction = await prisma.transaction.findFirst({ orderBy: { date: "asc" }, select: { date: true } });
+  if (!earliestTransaction) return;
+
   const now = new Date();
   const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
   const lookbackStart = new Date(currentMonthStart.getFullYear(), currentMonthStart.getMonth() - SNAPSHOT_LOOKBACK_MONTHS, 1);
   const anchorMonthStart = new Date(anchor.asOfDate.getFullYear(), anchor.asOfDate.getMonth(), 1);
-  const cursor = new Date(Math.min(lookbackStart.getTime(), anchorMonthStart.getTime()));
+  const earliestMonthStart = new Date(earliestTransaction.date.getFullYear(), earliestTransaction.date.getMonth(), 1);
+  // Never backfill earlier than the oldest transaction on record — there's nothing to
+  // reconstruct a balance from before that, and a flat line there would look like real data.
+  const cursor = new Date(Math.max(Math.min(lookbackStart.getTime(), anchorMonthStart.getTime()), earliestMonthStart.getTime()));
 
   while (cursor < currentMonthStart) {
     const key = monthKey(cursor);

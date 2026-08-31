@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import type { z } from "zod";
 import type { transactionSchema, transactionUpdateSchema } from "@/lib/validation/schemas";
+import { normalizeSalaryDate } from "./salary";
 
 export interface TransactionFilters {
   categoryId?: string;
@@ -35,8 +36,12 @@ export function getTransactionById(id: string) {
   });
 }
 
-export function createTransaction(input: z.infer<typeof transactionSchema>) {
+export async function createTransaction(input: z.infer<typeof transactionSchema>) {
   const { lines, ...data } = input;
+  if (data.date) {
+    const category = await prisma.category.findUnique({ where: { id: data.categoryId }, select: { slug: true } });
+    if (category?.slug === "salario") data.date = normalizeSalaryDate(data.date);
+  }
   return prisma.transaction.create({
     data: {
       ...data,
@@ -46,8 +51,12 @@ export function createTransaction(input: z.infer<typeof transactionSchema>) {
   });
 }
 
-export function updateTransaction(id: string, input: z.infer<typeof transactionUpdateSchema>) {
+export async function updateTransaction(id: string, input: z.infer<typeof transactionUpdateSchema>) {
   const { lines, ...data } = input;
+  if (data.date && data.categoryId) {
+    const category = await prisma.category.findUnique({ where: { id: data.categoryId }, select: { slug: true } });
+    if (category?.slug === "salario") data.date = normalizeSalaryDate(data.date);
+  }
   return prisma.$transaction(async (tx) => {
     if (lines) {
       await tx.expenseLine.deleteMany({ where: { transactionId: id } });
