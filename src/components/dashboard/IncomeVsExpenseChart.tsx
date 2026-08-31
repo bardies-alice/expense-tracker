@@ -37,8 +37,8 @@ export function IncomeVsExpenseChart({ data }: { data: MonthlySummaryPoint[] }) 
           iconSize={8}
           wrapperStyle={{ fontSize: 11.5, color: "#718096" }}
         />
-        <Bar dataKey="income" name="Ingresos" fill="#a7f3d0" radius={[4, 4, 0, 0]} cursor="pointer" onClick={goToMonth} />
-        <Bar dataKey="expense" name="Gastos" fill="#fecaca" radius={[4, 4, 0, 0]} cursor="pointer" onClick={goToMonth} />
+        <Bar dataKey="income" name="Ingresos" fill="#6ee7b7" radius={[4, 4, 0, 0]} cursor="pointer" onClick={goToMonth} />
+        <Bar dataKey="expense" name="Gastos" fill="#fca5a5" radius={[4, 4, 0, 0]} cursor="pointer" onClick={goToMonth} />
       </BarChart>
     </ResponsiveContainer>
   );
