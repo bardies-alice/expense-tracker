@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { formatEUR } from "@/lib/format";
+import { formatEUR, formatMonthShort } from "@/lib/format";
 
 export interface MonthlySummaryPoint {
   month: string;
@@ -25,9 +25,9 @@ export function IncomeVsExpenseChart({ data }: { data: MonthlySummaryPoint[] }) 
     <ResponsiveContainer width="100%" height={280}>
       <BarChart data={data}>
         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
-        <XAxis dataKey="month" tick={{ fontSize: 12 }} />
+        <XAxis dataKey="month" tick={{ fontSize: 12 }} tickFormatter={formatMonthShort} />
         <YAxis tick={{ fontSize: 12 }} />
-        <Tooltip formatter={(value) => formatEUR(Number(value))} />
+        <Tooltip formatter={(value) => formatEUR(Number(value))} labelFormatter={formatMonthShort} />
         <Legend />
         <Bar dataKey="income" name="Ingresos" fill="#10b981" radius={[4, 4, 0, 0]} cursor="pointer" onClick={goToMonth} />
         <Bar dataKey="expense" name="Gastos" fill="#ef4444" radius={[4, 4, 0, 0]} cursor="pointer" onClick={goToMonth} />

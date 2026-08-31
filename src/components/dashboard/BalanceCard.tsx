@@ -71,11 +71,11 @@ export function BalanceCard({ balance }: { balance: { amount: number; asOfDate: 
 
   return (
     <div
-      className="rounded-2xl p-5 text-white shadow-[0_4px_14px_rgba(102,126,234,0.28)]"
+      className="flex flex-col gap-2 rounded-2xl p-4 text-white shadow-[0_4px_14px_rgba(102,126,234,0.28)]"
       style={{ background: "linear-gradient(135deg,#667eea 0%,#764ba2 100%)" }}
     >
       <div className="flex items-center justify-between">
-        <p className="text-xs font-semibold text-white/80">Saldo actual</p>
+        <span className="text-xs font-semibold text-white/80">Saldo actual</span>
         <button
           onClick={() => setEditing(true)}
           className="rounded-md bg-white/20 px-2 py-1 text-[11px] font-semibold text-white hover:bg-white/30"
@@ -83,8 +83,10 @@ export function BalanceCard({ balance }: { balance: { amount: number; asOfDate: 
           Editar
         </button>
       </div>
-      <p className="mt-3.5 text-2xl font-extrabold tracking-tight">{formatEUR(current!.amount)}</p>
-      <p className="mt-0.5 text-xs text-white/75">a {formatDate(current!.asOfDate)}</p>
+      <div>
+        <p className="text-xl font-extrabold tracking-tight">{formatEUR(current!.amount)}</p>
+        <p className="mt-0.5 text-xs text-white/75">a {formatDate(current!.asOfDate)}</p>
+      </div>
     </div>
   );
 }

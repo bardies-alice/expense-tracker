@@ -102,8 +102,10 @@ export default async function DashboardPage({
         )}
       </div>
 
-      <BalanceCard balance={balance} />
-      <SummaryCards income={income} expense={expense} />
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <BalanceCard balance={balance} />
+        <SummaryCards income={income} expense={expense} />
+      </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <section className="rounded-2xl border border-gray-200 bg-white p-4">

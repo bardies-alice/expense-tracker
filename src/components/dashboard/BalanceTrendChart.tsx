@@ -1,7 +1,7 @@
 "use client";
 
 import { Area, AreaChart, CartesianGrid, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { formatEUR } from "@/lib/format";
+import { formatEUR, formatMonthShort } from "@/lib/format";
 import type { MonthlySummaryPoint } from "./IncomeVsExpenseChart";
 
 export function BalanceTrendChart({ data }: { data: MonthlySummaryPoint[] }) {
@@ -26,10 +26,10 @@ export function BalanceTrendChart({ data }: { data: MonthlySummaryPoint[] }) {
           </linearGradient>
         </defs>
         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
-        <XAxis dataKey="month" tick={{ fontSize: 12 }} />
+        <XAxis dataKey="month" tick={{ fontSize: 12 }} tickFormatter={formatMonthShort} />
         <YAxis tick={{ fontSize: 12 }} tickFormatter={(v) => formatEUR(v)} width={80} />
         <ReferenceLine y={0} stroke="#cbd5e1" strokeDasharray="4 4" />
-        <Tooltip formatter={(value) => formatEUR(Number(value))} />
+        <Tooltip formatter={(value) => formatEUR(Number(value))} labelFormatter={formatMonthShort} />
         <Area type="monotone" dataKey="balance" name="Balance acumulado" stroke="#4f46e5" strokeWidth={2} fill="url(#balanceFill)" dot={{ r: 3, fill: "#4f46e5" }} />
       </AreaChart>
     </ResponsiveContainer>
