@@ -23,22 +23,22 @@ export default async function GraficosPage() {
       <p className="-mt-4 text-sm text-gray-400">Últimos 12 meses</p>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <section className="rounded-lg border border-gray-200 bg-white p-4">
+        <section className="rounded-2xl border border-gray-200 bg-white p-4">
           <h2 className="mb-3 text-sm font-medium text-gray-500">Gasto por categoría</h2>
           <CategoryPieChart data={categoryBreakdown} />
         </section>
-        <section className="rounded-lg border border-gray-200 bg-white p-4">
+        <section className="rounded-2xl border border-gray-200 bg-white p-4">
           <h2 className="mb-3 text-sm font-medium text-gray-500">Top comercios</h2>
           <MerchantRankingChart data={merchantRanking} />
         </section>
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <section className="rounded-lg border border-gray-200 bg-white p-4">
+        <section className="rounded-2xl border border-gray-200 bg-white p-4">
           <h2 className="mb-3 text-sm font-medium text-gray-500">Gasto por día de la semana</h2>
           <WeekdayPatternChart data={weekdayPattern} />
         </section>
-        <section className="rounded-lg border border-gray-200 bg-white p-4">
+        <section className="rounded-2xl border border-gray-200 bg-white p-4">
           <h2 className="mb-3 text-sm font-medium text-gray-500">Gasto por elemento (coche, casa...)</h2>
           <ItemSpendingChart data={itemSpending} />
         </section>
