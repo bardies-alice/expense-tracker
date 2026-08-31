@@ -21,6 +21,7 @@ import {
   Shirt,
   Wrench,
   Folder,
+  TrendingUp,
   type LucideIcon,
 } from "lucide-react";
 
@@ -47,6 +48,7 @@ export const ICONS: Record<string, LucideIcon> = {
   Shirt,
   Wrench,
   Folder,
+  TrendingUp,
 };
 
 export const ICON_NAMES = Object.keys(ICONS);

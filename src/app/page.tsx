@@ -72,8 +72,10 @@ export default async function DashboardPage({
   const refunds = monthTransactions
     .filter((t) => t.type === "INCOME" && t.category.slug !== "salario" && t.date >= monthStart && t.date <= monthEnd)
     .reduce((sum, t) => sum + t.amount, 0);
+  // Investment purchases move money out of checking (so they still count against saldo actual)
+  // but they're not consumption — netting them out of "Gastos" keeps that card about spending.
   const expense = monthTransactions
-    .filter((t) => t.type === "EXPENSE" && t.date >= monthStart && t.date <= monthEnd)
+    .filter((t) => t.type === "EXPENSE" && t.category.slug !== "inversiones" && t.date >= monthStart && t.date <= monthEnd)
     .reduce((sum, t) => sum + t.amount, 0) - refunds;
 
   const attentionNeeded = components

@@ -5,4 +5,5 @@ export const DEFAULT_CATEGORIES = [
   { name: "Ocio", slug: "ocio", icon: "PartyPopper", color: "#f59e0b", subcategories: ["Restaurantes", "Suscripciones", "Eventos"] },
   { name: "Viajes", slug: "viajes", icon: "Plane", color: "#10b981", subcategories: ["Transporte", "Alojamiento", "Actividades"] },
   { name: "Comida", slug: "comida", icon: "ShoppingCart", color: "#ef4444", subcategories: ["Supermercado", "Delivery"] },
+  { name: "Inversiones", slug: "inversiones", icon: "TrendingUp", color: "#8b5cf6", subcategories: ["Acciones", "Fondos", "Cripto"] },
 ] as const;
