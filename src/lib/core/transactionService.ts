@@ -157,6 +157,82 @@ export async function getCategoryMonthComparison(reference = new Date()) {
     .sort((a, b) => b.thisMonth - a.thisMonth);
 }
 
+export async function getCategoryBreakdown(monthsBack = 12) {
+  const since = new Date();
+  since.setMonth(since.getMonth() - monthsBack);
+  const transactions = await prisma.transaction.findMany({
+    where: { type: "EXPENSE", date: { gte: since } },
+    select: { amount: true, category: { select: { name: true, color: true } } },
+  });
+
+  const byCategory = new Map<string, { name: string; color: string; total: number }>();
+  for (const t of transactions) {
+    const key = t.category.name;
+    const entry = byCategory.get(key) ?? { name: t.category.name, color: t.category.color ?? "#6366f1", total: 0 };
+    entry.total += t.amount;
+    byCategory.set(key, entry);
+  }
+  return Array.from(byCategory.values()).sort((a, b) => b.total - a.total);
+}
+
+export async function getMerchantRanking(limit = 10, monthsBack = 12) {
+  const since = new Date();
+  since.setMonth(since.getMonth() - monthsBack);
+  const transactions = await prisma.transaction.findMany({
+    where: { type: "EXPENSE", date: { gte: since }, notes: { not: null } },
+    select: { amount: true, notes: true },
+  });
+
+  const byMerchant = new Map<string, { total: number; count: number }>();
+  for (const t of transactions) {
+    const key = t.notes as string;
+    const entry = byMerchant.get(key) ?? { total: 0, count: 0 };
+    entry.total += t.amount;
+    entry.count += 1;
+    byMerchant.set(key, entry);
+  }
+  return Array.from(byMerchant.entries())
+    .map(([merchant, stats]) => ({ merchant, ...stats }))
+    .sort((a, b) => b.total - a.total)
+    .slice(0, limit);
+}
+
+const WEEKDAY_LABELS = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+
+export async function getWeekdayPattern(monthsBack = 12) {
+  const since = new Date();
+  since.setMonth(since.getMonth() - monthsBack);
+  const transactions = await prisma.transaction.findMany({
+    where: { type: "EXPENSE", date: { gte: since } },
+    select: { amount: true, date: true },
+  });
+
+  const totals = Array(7).fill(0) as number[];
+  for (const t of transactions) {
+    totals[t.date.getDay()] += t.amount;
+  }
+  return WEEKDAY_LABELS.map((label, i) => ({ weekday: label, total: totals[i] }));
+}
+
+export async function getItemSpending(limit = 10, monthsBack = 12) {
+  const since = new Date();
+  since.setMonth(since.getMonth() - monthsBack);
+  const transactions = await prisma.transaction.findMany({
+    where: { type: "EXPENSE", date: { gte: since }, itemId: { not: null } },
+    select: { amount: true, item: { select: { name: true } } },
+  });
+
+  const byItem = new Map<string, number>();
+  for (const t of transactions) {
+    const key = t.item!.name;
+    byItem.set(key, (byItem.get(key) ?? 0) + t.amount);
+  }
+  return Array.from(byItem.entries())
+    .map(([itemName, total]) => ({ itemName, total }))
+    .sort((a, b) => b.total - a.total)
+    .slice(0, limit);
+}
+
 export async function getTopProducts(limit = 10, categorySlug?: string) {
   const lines = await prisma.expenseLine.findMany({
     where: categorySlug

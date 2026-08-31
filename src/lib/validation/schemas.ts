@@ -23,7 +23,7 @@ export const itemSchema = z.object({
 export const maintenanceComponentSchema = z.object({
   itemId: z.string().min(1),
   componentType: z.string().min(1),
-  zoneKey: z.string().min(1),
+  zoneKey: z.string().optional(),
   label: z.string().min(1),
   ruleType: z.enum(["DISTANCE", "TIME", "DISTANCE_OR_TIME"]),
   intervalKm: z.number().int().positive().optional(),

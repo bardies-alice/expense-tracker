@@ -3,7 +3,9 @@ import type { z } from "zod";
 import type { maintenanceComponentSchema, maintenanceComponentUpdateSchema, maintenanceEventSchema } from "@/lib/validation/schemas";
 
 export function createMaintenanceComponent(input: z.infer<typeof maintenanceComponentSchema>) {
-  return prisma.maintenanceComponent.create({ data: input });
+  return prisma.maintenanceComponent.create({
+    data: { ...input, zoneKey: input.zoneKey || `custom-${crypto.randomUUID()}` },
+  });
 }
 
 export function updateMaintenanceComponent(id: string, input: z.infer<typeof maintenanceComponentUpdateSchema>) {

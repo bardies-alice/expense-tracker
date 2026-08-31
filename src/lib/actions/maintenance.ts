@@ -14,7 +14,7 @@ export async function createMaintenanceComponentAction(formData: FormData) {
   const input = maintenanceComponentSchema.parse({
     itemId: formData.get("itemId"),
     componentType: formData.get("componentType"),
-    zoneKey: formData.get("zoneKey"),
+    zoneKey: formData.get("zoneKey") || undefined,
     label: formData.get("label"),
     ruleType: formData.get("ruleType"),
     intervalKm: numOrUndef(formData.get("intervalKm")),

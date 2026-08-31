@@ -4,6 +4,7 @@ const LINKS = [
   { href: "/", label: "Resumen" },
   { href: "/categorias", label: "Categorías" },
   { href: "/gastos", label: "Gastos" },
+  { href: "/graficos", label: "Gráficos" },
   { href: "/calendario", label: "Calendario" },
   { href: "/importar", label: "Importar" },
 ];

@@ -1,7 +1,9 @@
 "use client";
 
 import { useRef, useState } from "react";
+import type { ItemType } from "@prisma/client";
 import type { ComponentTypeDefinition } from "@/lib/constants/componentTypes";
+import { SVG_ZONES } from "@/lib/constants/componentTypes";
 import { createMaintenanceComponentAction } from "@/lib/actions/maintenance";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -14,11 +16,24 @@ const RULE_LABELS: Record<string, string> = {
   DISTANCE_OR_TIME: "Por km o tiempo (lo que llegue antes)",
 };
 
-export function MaintenanceComponentForm({ itemId, catalog }: { itemId: string; catalog: ComponentTypeDefinition[] }) {
+const NO_ZONE = "";
+
+export function MaintenanceComponentForm({
+  itemId,
+  itemType,
+  catalog,
+}: {
+  itemId: string;
+  itemType: ItemType;
+  catalog: ComponentTypeDefinition[];
+}) {
   const [open, setOpen] = useState(false);
   const [pending, setPending] = useState(false);
   const [selected, setSelected] = useState<ComponentTypeDefinition | undefined>(catalog[0]);
+  const [isCustom, setIsCustom] = useState(false);
+  const [zoneKey, setZoneKey] = useState<string>(catalog[0]?.zoneKey ?? NO_ZONE);
   const formRef = useRef<HTMLFormElement>(null);
+  const zones = SVG_ZONES[itemType] ?? [];
 
   async function handleSubmit(formData: FormData) {
     setPending(true);
@@ -40,7 +55,12 @@ export function MaintenanceComponentForm({ itemId, catalog }: { itemId: string; 
         <form ref={formRef} action={handleSubmit} className="space-y-3">
           <input type="hidden" name="itemId" value={itemId} />
           <Select
-            onChange={(e) => setSelected(catalog.find((c) => c.componentType === e.target.value))}
+            onChange={(e) => {
+              const c = catalog.find((c) => c.componentType === e.target.value);
+              setSelected(c);
+              setIsCustom(!c);
+              setZoneKey(c?.zoneKey ?? NO_ZONE);
+            }}
             defaultValue={selected?.componentType}
           >
             {catalog.map((c) => (
@@ -52,7 +72,22 @@ export function MaintenanceComponentForm({ itemId, catalog }: { itemId: string; 
           </Select>
           <input type="hidden" name="componentType" value={selected?.componentType ?? "CUSTOM"} />
           <Input name="label" placeholder="Etiqueta" defaultValue={selected?.label} required />
-          <Input name="zoneKey" placeholder="Zona SVG (ej. engine)" defaultValue={selected?.zoneKey ?? ""} required />
+          <div>
+            <input type="hidden" name="zoneKey" value={zoneKey} />
+            <Select value={zoneKey} onChange={(e) => setZoneKey(e.target.value)} disabled={!isCustom}>
+              <option value={NO_ZONE}>Sin marcador en el dibujo (solo en la lista)</option>
+              {zones.map((z) => (
+                <option key={z.zoneKey} value={z.zoneKey}>
+                  {z.label}
+                </option>
+              ))}
+            </Select>
+            <p className="mt-1 text-xs text-gray-400">
+              {isCustom
+                ? "Dónde aparece el marcador en el dibujo. Si no eliges ninguna, el componente se mostrará igualmente en la lista de abajo."
+                : "Este componente ya tiene marcador asignado en el dibujo."}
+            </p>
+          </div>
           <Select name="ruleType" defaultValue={selected?.ruleType ?? "TIME"}>
             {Object.entries(RULE_LABELS).map(([value, label]) => (
               <option key={value} value={value}>

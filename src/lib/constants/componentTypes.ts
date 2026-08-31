@@ -11,6 +11,36 @@ export interface ComponentTypeDefinition {
   warningDays?: number;
 }
 
+export interface SvgZoneDefinition {
+  zoneKey: string;
+  label: string;
+}
+
+// Debe coincidir con las claves de BADGES/wheel() en CarSvg.tsx y HouseSvg.tsx.
+// Un componente cuya zoneKey no esté en esta lista no tendrá marcador en el dibujo
+// (solo aparecerá en la lista de componentes de abajo).
+export const SVG_ZONES: Record<ItemType, SvgZoneDefinition[]> = {
+  CAR: [
+    { zoneKey: "engine", label: "Motor" },
+    { zoneKey: "battery", label: "Batería" },
+    { zoneKey: "itv-sticker", label: "Pegatina ITV (parabrisas)" },
+    { zoneKey: "insurance-doc", label: "Seguro (parabrisas)" },
+    { zoneKey: "tires-fr", label: "Rueda delantera" },
+    { zoneKey: "tires-rl", label: "Rueda trasera" },
+    { zoneKey: "brakes-front", label: "Frenos delanteros" },
+    { zoneKey: "brakes-rear", label: "Frenos traseros" },
+  ],
+  HOUSE: [
+    { zoneKey: "roof", label: "Tejado" },
+    { zoneKey: "smoke-detector", label: "Detector de humo" },
+    { zoneKey: "home-insurance", label: "Seguro hogar" },
+    { zoneKey: "alarm", label: "Alarma" },
+    { zoneKey: "boiler", label: "Caldera" },
+    { zoneKey: "water-heater", label: "Termo de agua" },
+  ],
+  GENERIC: [],
+};
+
 export const COMPONENT_CATALOG: Record<ItemType, ComponentTypeDefinition[]> = {
   CAR: [
     { componentType: "OIL", zoneKey: "engine", label: "Aceite de motor", ruleType: "DISTANCE_OR_TIME", intervalKm: 10000, intervalDays: 365, warningKm: 1000, warningDays: 30 },

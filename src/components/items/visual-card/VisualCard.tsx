@@ -88,7 +88,10 @@ export function VisualCard({
             <ZoneTooltip info={hoveredInfo ? toTooltipInfo(hoveredInfo) : null} />
           </div>
 
-          <div className="mt-3.5 grid grid-cols-3 gap-px overflow-hidden rounded-lg bg-gray-200 sm:grid-cols-6">
+          <p className="mt-3.5 text-[10px] uppercase tracking-wide text-gray-400">
+            Todos los componentes {isCar ? "(con o sin marcador en el coche)" : "(con o sin marcador en el dibujo)"}
+          </p>
+          <div className="mt-1.5 grid grid-cols-3 gap-px overflow-hidden rounded-lg bg-gray-200 sm:grid-cols-6">
             {components.map((c) => {
               const active = isActive(c.status);
               const color = statusColor(c.status);

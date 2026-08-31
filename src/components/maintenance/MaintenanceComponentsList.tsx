@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import type { ItemType } from "@prisma/client";
 import type { ComponentTypeDefinition } from "@/lib/constants/componentTypes";
 import { MaintenanceComponentForm } from "./MaintenanceComponentForm";
 import { MaintenanceComponentEditForm } from "./MaintenanceComponentEditForm";
@@ -17,11 +18,13 @@ function ruleSummary(c: VisualComponent) {
 
 export function MaintenanceComponentsList({
   itemId,
+  itemType,
   components,
   catalog,
   onSelect,
 }: {
   itemId: string;
+  itemType: ItemType;
   components: VisualComponent[];
   catalog: ComponentTypeDefinition[];
   onSelect?: (componentId: string) => void;
@@ -33,7 +36,7 @@ export function MaintenanceComponentsList({
     <div className="mt-5 rounded-xl border border-gray-200 bg-white shadow-sm">
       <div className="flex items-center justify-between border-b border-gray-200 px-5 py-4">
         <h2 className="text-[13px] font-semibold text-gray-800">Componentes de mantenimiento</h2>
-        <MaintenanceComponentForm itemId={itemId} catalog={catalog} />
+        <MaintenanceComponentForm itemId={itemId} itemType={itemType} catalog={catalog} />
       </div>
       <div>
         {components.map((c) => (
