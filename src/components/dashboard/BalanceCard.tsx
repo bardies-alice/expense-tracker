@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { setBalanceAnchorAction } from "@/lib/actions/balance";
 import { Input } from "@/components/ui/Input";
-import { formatEUR } from "@/lib/format";
+import { formatDate, formatEUR } from "@/lib/format";
 
 function todayInputValue() {
   return new Date().toISOString().slice(0, 10);
@@ -37,7 +37,7 @@ export function BalanceCard({ balance }: { balance: { amount: number; asOfDate: 
 
   if (editing) {
     return (
-      <div className="rounded-lg border border-gray-200 bg-white p-4">
+      <div className="rounded-2xl border border-gray-200 bg-white p-4">
         <p className="mb-2 text-xs font-medium text-gray-500">Saldo actual</p>
         <form onSubmit={handleSubmit} className="flex flex-wrap items-end gap-2.5">
           <div className="w-32">
@@ -70,16 +70,21 @@ export function BalanceCard({ balance }: { balance: { amount: number; asOfDate: 
   }
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-4">
+    <div
+      className="rounded-2xl p-5 text-white shadow-[0_4px_14px_rgba(102,126,234,0.28)]"
+      style={{ background: "linear-gradient(135deg,#667eea 0%,#764ba2 100%)" }}
+    >
       <div className="flex items-center justify-between">
-        <p className="text-xs font-medium text-gray-500">Saldo actual</p>
-        <button onClick={() => setEditing(true)} className="text-xs text-indigo-600 hover:text-indigo-800">
+        <p className="text-xs font-semibold text-white/80">Saldo actual</p>
+        <button
+          onClick={() => setEditing(true)}
+          className="rounded-md bg-white/20 px-2 py-1 text-[11px] font-semibold text-white hover:bg-white/30"
+        >
           Editar
         </button>
       </div>
-      <p className={`mt-1 text-2xl font-semibold ${current!.amount >= 0 ? "text-emerald-600" : "text-red-600"}`}>
-        {formatEUR(current!.amount)}
-      </p>
+      <p className="mt-3.5 text-2xl font-extrabold tracking-tight">{formatEUR(current!.amount)}</p>
+      <p className="mt-0.5 text-xs text-white/75">a {formatDate(current!.asOfDate)}</p>
     </div>
   );
 }

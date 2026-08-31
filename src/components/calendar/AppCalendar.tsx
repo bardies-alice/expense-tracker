@@ -44,7 +44,7 @@ export function AppCalendar({ events }: { events: CalendarEvent[] }) {
   const [view, setView] = useState<View>("month");
 
   return (
-    <div className="h-[650px] rounded-lg border border-gray-200 bg-white p-3">
+    <div className="h-[650px] rounded-2xl border border-gray-200 bg-white p-3">
       <Calendar
         localizer={localizer}
         events={events}

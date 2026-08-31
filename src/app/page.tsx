@@ -106,27 +106,27 @@ export default async function DashboardPage({
       <SummaryCards income={income} expense={expense} />
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <section className="rounded-lg border border-gray-200 bg-white p-4">
+        <section className="rounded-2xl border border-gray-200 bg-white p-4">
           <h2 className="mb-3 text-sm font-medium text-gray-500">Ingresos vs gastos (6 meses)</h2>
           <IncomeVsExpenseChart data={monthlySummary} />
         </section>
-        <section className="rounded-lg border border-gray-200 bg-white p-4">
+        <section className="rounded-2xl border border-gray-200 bg-white p-4">
           <h2 className="mb-3 text-sm font-medium text-gray-500">Balance acumulado (6 meses)</h2>
           <BalanceTrendChart data={monthlySummary} />
         </section>
       </div>
 
-      <section className="rounded-lg border border-gray-200 bg-white p-4">
+      <section className="rounded-2xl border border-gray-200 bg-white p-4">
         <h2 className="mb-3 text-sm font-medium text-gray-500">Saldo por mes</h2>
         <MonthlyBalanceChart data={monthlyBalanceData} />
       </section>
 
-      <section className="rounded-lg border border-gray-200 bg-white p-4">
+      <section className="rounded-2xl border border-gray-200 bg-white p-4">
         <h2 className="mb-4 text-sm font-medium text-gray-500">Gasto por categoría vs mes anterior</h2>
         <CategoryComparisonList rows={categoryComparison} />
       </section>
 
-      <section className="rounded-lg border border-gray-200 bg-white p-4">
+      <section className="rounded-2xl border border-gray-200 bg-white p-4">
         <h2 className="mb-3 text-sm font-medium text-gray-500">Productos más comprados (comida)</h2>
         <TopProductsChart data={topProducts} />
       </section>
@@ -134,7 +134,7 @@ export default async function DashboardPage({
       {attentionNeeded.length > 0 && (
         <section>
           <h2 className="mb-3 text-sm font-medium text-gray-500">Necesitan atención</h2>
-          <ul className="divide-y divide-gray-100 rounded-lg border border-gray-200 bg-white">
+          <ul className="divide-y divide-gray-100 rounded-2xl border border-gray-200 bg-white">
             {attentionNeeded.map((c) => (
               <li key={c.id} className="flex items-center justify-between px-4 py-2 text-sm">
                 <Link href={`/items/${c.item.slug}`} className="text-gray-800 hover:text-indigo-600">

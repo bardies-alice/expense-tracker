@@ -11,6 +11,7 @@ import { Select } from "@/components/ui/Select";
 import { Input } from "@/components/ui/Input";
 import { Modal } from "@/components/ui/Modal";
 import { formatEUR } from "@/lib/format";
+import { UploadCloud } from "lucide-react";
 
 type CategoryWithSub = Category & { subcategories: Subcategory[] };
 
@@ -284,8 +285,11 @@ export function ImportCsvClient({
 
   if (!rows) {
     return (
-      <div className="rounded-lg border border-dashed border-gray-300 bg-white p-10 text-center">
-        <p className="mb-4 text-sm text-gray-500">
+      <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-gray-300 bg-white p-12 text-center">
+        <span className="flex h-[52px] w-[52px] items-center justify-center rounded-2xl bg-indigo-50">
+          <UploadCloud size={22} className="text-indigo-600" />
+        </span>
+        <p className="mb-2 max-w-sm text-sm text-gray-500">
           Extracto CSV de Revolut. Los movimientos internos (Pocket, cambio de divisa) se detectan y excluyen
           automáticamente.
         </p>
@@ -305,7 +309,7 @@ export function ImportCsvClient({
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-center gap-4 rounded-lg border border-gray-200 bg-white p-4 text-sm">
+      <div className="flex flex-wrap items-center gap-4 rounded-2xl border border-gray-200 bg-white p-4 text-sm">
         <span className="text-gray-600">
           <strong className="text-gray-900">{realRows.length}</strong> movimientos reales
         </span>
@@ -324,7 +328,7 @@ export function ImportCsvClient({
       </div>
 
       {result && (
-        <p className="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm text-emerald-700">
+        <p className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm text-emerald-700">
           {result.imported} movimientos importados{result.skipped > 0 ? `, ${result.skipped} ya existían (omitidos)` : ""}
           {result.remembered > 0 ? `. ${result.remembered} comercios recordados para próximas importaciones` : ""}.
         </p>
@@ -351,7 +355,7 @@ export function ImportCsvClient({
         ))}
       </div>
 
-      <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white">
+      <div className="overflow-x-auto rounded-2xl border border-gray-200 bg-white">
         <table className="w-full table-fixed divide-y divide-gray-200 text-sm">
           <colgroup>
             <col className="w-16" />

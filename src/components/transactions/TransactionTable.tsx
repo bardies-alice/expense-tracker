@@ -1,6 +1,7 @@
 import type { Category, ExpenseLine, Item, Subcategory, Transaction } from "@prisma/client";
 import Link from "next/link";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { CategoryIcon } from "@/components/categories/CategoryIcon";
 import { formatDate, formatEUR } from "@/lib/format";
 import { DeleteTransactionButton } from "./DeleteTransactionButton";
 import { TransactionModal } from "./TransactionModal";
@@ -41,66 +42,68 @@ export function TransactionTable({
   }
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white">
-      <table className="min-w-full divide-y divide-gray-200 text-sm">
-        <thead className="bg-gray-50 text-left text-xs font-medium uppercase text-gray-500">
-          <tr>
-            <th className="px-4 py-2">Categoría</th>
-            <th className="px-4 py-2">Item</th>
-            <th className="px-4 py-2">Notas</th>
-            <th className="px-4 py-2 text-right">Importe</th>
-            <th className="px-4 py-2" />
-          </tr>
-        </thead>
-        {groups.map((group) => (
-          <tbody key={group.key} className="divide-y divide-gray-100">
-            <tr className="bg-gray-50">
-              <th colSpan={5} className="px-4 py-1.5 text-left text-xs font-semibold text-gray-500">
-                {formatDate(group.date)}
-              </th>
-            </tr>
-            {group.items.map((t) => (
-              <tr key={t.id}>
-                <td className="px-4 py-2">{t.category.name}{t.subcategory ? ` · ${t.subcategory.name}` : ""}</td>
-                <td className="px-4 py-2 text-gray-500">{t.item?.name ?? "—"}</td>
-                <td className="px-4 py-2 text-gray-500">
-                  {t.notes ? (
-                    <Link href={`/comercios/${encodeURIComponent(t.notes)}`} className="hover:text-indigo-600 hover:underline">
-                      {t.notes}
-                    </Link>
-                  ) : (
-                    t.lines.length ? `${t.lines.length} productos` : "—"
-                  )}
-                </td>
-                <td className={`px-4 py-2 text-right font-medium ${t.type === "INCOME" ? "text-emerald-600" : "text-gray-900"}`}>
-                  {t.type === "INCOME" ? "+" : "-"}{formatEUR(t.amount)}
-                </td>
-                <td className="px-4 py-2 text-right">
-                  <div className="flex justify-end gap-3">
-                    <TransactionModal
-                      categories={categories}
-                      trigger="Editar"
-                      variant="secondary"
-                      initial={{
-                        id: t.id,
-                        type: t.type,
-                        amount: t.amount,
-                        date: t.date.toISOString(),
-                        notes: t.notes,
-                        categoryId: t.categoryId,
-                        subcategoryId: t.subcategoryId,
-                        itemId: t.itemId,
-                        lines: t.lines.map((l) => ({ productName: l.productName, quantity: l.quantity, totalPrice: l.totalPrice })),
-                      }}
-                    />
-                    <DeleteTransactionButton id={t.id} />
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        ))}
-      </table>
+    <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white">
+      {groups.map((group) => (
+        <div key={group.key}>
+          <div className="border-b border-gray-200 bg-gray-50 px-5 py-2.5 text-[11.5px] font-bold uppercase tracking-wide text-gray-400">
+            {formatDate(group.date)}
+          </div>
+          {group.items.map((t) => {
+            const color = t.category.color ?? "#6366f1";
+            return (
+              <div
+                key={t.id}
+                className="flex items-center gap-3.5 border-b border-gray-100 px-5 py-3.5 last:border-b-0"
+              >
+                <span
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px]"
+                  style={{ backgroundColor: `${color}1a`, color }}
+                >
+                  <CategoryIcon name={t.category.icon} className="h-4 w-4" />
+                </span>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-[13.5px] font-medium text-gray-800">
+                    {t.notes ? (
+                      <Link href={`/comercios/${encodeURIComponent(t.notes)}`} className="hover:text-indigo-600 hover:underline">
+                        {t.notes}
+                      </Link>
+                    ) : (
+                      t.item?.name ?? (t.lines.length ? `${t.lines.length} productos` : t.category.name)
+                    )}
+                  </p>
+                  <p className="mt-0.5 truncate text-xs text-gray-400">
+                    {t.category.name}
+                    {t.subcategory ? ` · ${t.subcategory.name}` : ""}
+                  </p>
+                </div>
+                <span className={`text-sm font-semibold ${t.type === "INCOME" ? "text-emerald-600" : "text-gray-900"}`}>
+                  {t.type === "INCOME" ? "+" : "-"}
+                  {formatEUR(t.amount)}
+                </span>
+                <div className="flex shrink-0 gap-3 pl-1">
+                  <TransactionModal
+                    categories={categories}
+                    trigger="Editar"
+                    variant="secondary"
+                    initial={{
+                      id: t.id,
+                      type: t.type,
+                      amount: t.amount,
+                      date: t.date.toISOString(),
+                      notes: t.notes,
+                      categoryId: t.categoryId,
+                      subcategoryId: t.subcategoryId,
+                      itemId: t.itemId,
+                      lines: t.lines.map((l) => ({ productName: l.productName, quantity: l.quantity, totalPrice: l.totalPrice })),
+                    }}
+                  />
+                  <DeleteTransactionButton id={t.id} />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      ))}
     </div>
   );
 }
