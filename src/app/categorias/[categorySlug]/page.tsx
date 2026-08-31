@@ -11,6 +11,7 @@ import { RecurringRuleList } from "@/components/transactions/RecurringRuleList";
 import { TravelMap } from "@/components/trips/TravelMap";
 import { TripStats } from "@/components/trips/TripStats";
 import { TripForm } from "@/components/trips/TripForm";
+import { CategoryStats } from "@/components/categories/CategoryStats";
 
 const DEFAULT_ITEM_TYPE: Record<string, "CAR" | "HOUSE"> = {
   coche: "CAR",
@@ -28,6 +29,7 @@ export default async function CategoriaDetailPage({ params }: { params: Promise<
   const isTravel = category.slug === "viajes";
   const trips = isTravel ? await listTrips() : [];
   const totalExpense = transactions.reduce((sum, t) => sum + (t.type === "EXPENSE" ? t.amount : 0), 0);
+  const totalIncome = transactions.reduce((sum, t) => sum + (t.type === "INCOME" ? t.amount : 0), 0);
 
   return (
     <div className="space-y-8">
@@ -60,13 +62,15 @@ export default async function CategoriaDetailPage({ params }: { params: Promise<
         </div>
       </div>
 
-      {isTravel && (
+      {isTravel ? (
         <>
           <TripStats trips={trips} totalExpense={totalExpense} />
           <section>
             <TravelMap trips={trips} categoryId={category.id} />
           </section>
         </>
+      ) : (
+        <CategoryStats totalExpense={totalExpense} totalIncome={totalIncome} count={transactions.length} />
       )}
 
       {itemsEnabled && (
