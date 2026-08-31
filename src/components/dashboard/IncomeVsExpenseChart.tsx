@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { Bar, BarChart, Legend, ResponsiveContainer, Tooltip, XAxis } from "recharts";
 import { formatEUR, formatMonthShort } from "@/lib/format";
+import { chartColors } from "@/components/charts/chartTheme";
 
 export interface MonthlySummaryPoint {
   month: string;
@@ -37,8 +38,8 @@ export function IncomeVsExpenseChart({ data }: { data: MonthlySummaryPoint[] }) 
           iconSize={8}
           wrapperStyle={{ fontSize: 11.5, color: "#718096" }}
         />
-        <Bar dataKey="income" name="Ingresos" fill="#34d399" radius={[4, 4, 0, 0]} cursor="pointer" onClick={goToMonth} />
-        <Bar dataKey="expense" name="Gastos" fill="#f87171" radius={[4, 4, 0, 0]} cursor="pointer" onClick={goToMonth} />
+        <Bar dataKey="income" name="Ingresos" fill={chartColors.income} radius={[4, 4, 0, 0]} cursor="pointer" onClick={goToMonth} />
+        <Bar dataKey="expense" name="Gastos" fill={chartColors.expense} radius={[4, 4, 0, 0]} cursor="pointer" onClick={goToMonth} />
       </BarChart>
     </ResponsiveContainer>
   );

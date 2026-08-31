@@ -28,7 +28,7 @@ export function WeekdayPatternChart({ data }: { data: WeekdayPoint[] }) {
         />
         <YAxis tick={chartTickStyle} axisLine={false} tickLine={false} width={0} hide />
         <Tooltip content={<ChartTooltip />} cursor={{ fill: "rgba(42,120,214,0.06)" }} />
-        <Bar dataKey="total" name="Gastado" fill={chartColors.series1} barSize={32} radius={[4, 4, 0, 0]}>
+        <Bar dataKey="total" name="Gastado" fill={chartColors.expense} barSize={32} radius={[4, 4, 0, 0]}>
           <LabelList
             dataKey="total"
             position="top"

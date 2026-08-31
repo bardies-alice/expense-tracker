@@ -2,6 +2,7 @@
 
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { formatEUR, formatMonthShort } from "@/lib/format";
+import { chartColors } from "@/components/charts/chartTheme";
 
 export function MonthlyBalanceChart({ data }: { data: { month: string; balance: number }[] }) {
   if (data.length === 0) {
@@ -15,7 +16,7 @@ export function MonthlyBalanceChart({ data }: { data: { month: string; balance: 
         <XAxis dataKey="month" tick={{ fontSize: 12 }} tickFormatter={formatMonthShort} />
         <YAxis tick={{ fontSize: 12 }} tickFormatter={(v) => formatEUR(v)} width={80} />
         <Tooltip formatter={(value) => formatEUR(Number(value))} labelFormatter={formatMonthShort} />
-        <Bar dataKey="balance" name="Saldo" fill="#10b981" radius={[4, 4, 0, 0]} maxBarSize={60} />
+        <Bar dataKey="balance" name="Saldo" fill={chartColors.income} radius={[4, 4, 0, 0]} maxBarSize={60} />
       </BarChart>
     </ResponsiveContainer>
   );

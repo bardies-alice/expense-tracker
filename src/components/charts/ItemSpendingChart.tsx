@@ -30,7 +30,7 @@ export function ItemSpendingChart({ data }: { data: ItemSpendingPoint[] }) {
           tickFormatter={(v: string) => (v.length > 14 ? `${v.slice(0, 13)}…` : v)}
         />
         <Tooltip content={<ChartTooltip />} cursor={{ fill: "rgba(27,175,122,0.06)" }} />
-        <Bar dataKey="total" name="Gastado" fill={chartColors.series2} barSize={18} radius={[0, 4, 4, 0]}>
+        <Bar dataKey="total" name="Gastado" fill={chartColors.expense} barSize={18} radius={[0, 4, 4, 0]}>
           <LabelList
             dataKey="total"
             position="right"

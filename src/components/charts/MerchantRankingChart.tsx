@@ -37,7 +37,7 @@ export function MerchantRankingChart({ data }: { data: MerchantPoint[] }) {
         <Bar
           dataKey="total"
           name="Gastado"
-          fill={chartColors.series1}
+          fill={chartColors.expense}
           barSize={18}
           radius={[0, 4, 4, 0]}
           cursor="pointer"

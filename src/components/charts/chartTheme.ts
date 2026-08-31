@@ -6,7 +6,8 @@ export const chartColors = {
   primaryText: "#2d3748",
   series1: "#6366f1",
   series1Hover: "#4f46e5",
-  series2: "#10b981",
+  income: "#34d399",
+  expense: "#f87171",
 };
 
 export const chartTickStyle = { fontSize: 12, fill: chartColors.mutedText };
