@@ -12,7 +12,7 @@ export function CategoriesBoard({ categories }: { categories: (Category & { subc
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <PageHeading title="Categorías" subtitle="Organiza dónde va tu dinero" />
         <div className="flex items-center gap-2">
           <Button variant={editMode ? "secondary" : "ghost"} onClick={() => setEditMode((v) => !v)}>

@@ -33,7 +33,7 @@ export default async function CategoriaDetailPage({ params }: { params: Promise<
 
   return (
     <div className="space-y-8">
-      <div className="flex items-center justify-between gap-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
         {isTravel ? (
           <div className="flex items-center gap-3.5">
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
@@ -51,7 +51,7 @@ export default async function CategoriaDetailPage({ params }: { params: Promise<
         ) : (
           <h1 className="text-xl font-semibold text-gray-900">{category.name}</h1>
         )}
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           {itemsEnabled && <ItemForm categoryId={category.id} defaultType={DEFAULT_ITEM_TYPE[category.slug]} />}
           {isTravel && <TripForm categoryId={category.id} />}
           <TransactionModal

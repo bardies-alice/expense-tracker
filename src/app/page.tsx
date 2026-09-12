@@ -99,7 +99,7 @@ export default async function DashboardPage({
 
   return (
     <div className="space-y-8">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <PageHeading
           title={
             <>
@@ -113,7 +113,7 @@ export default async function DashboardPage({
           }
           subtitle="Tu actividad financiera de un vistazo"
         />
-        <div className="flex items-center gap-3 text-sm">
+        <div className="flex flex-wrap items-center gap-3 text-sm">
           {isFiltered && (
             <>
               <Link href={`/gastos?month=${month}`} className="text-indigo-600 hover:text-indigo-800">

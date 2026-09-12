@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { Pencil } from "lucide-react";
 import type { Category, Item, Subcategory } from "@prisma/client";
 import { Button } from "@/components/ui/Button";
 import { Modal } from "@/components/ui/Modal";
@@ -35,8 +36,13 @@ export function TransactionModal({
   return (
     <>
       {variant === "secondary" ? (
-        <button onClick={() => setOpen(true)} className="text-xs text-indigo-600 hover:text-indigo-800">
-          {trigger}
+        <button
+          onClick={() => setOpen(true)}
+          title={trigger}
+          className="flex items-center gap-1 text-xs text-indigo-600 hover:text-indigo-800"
+        >
+          <Pencil className="h-3.5 w-3.5" />
+          <span className="hidden sm:inline">{trigger}</span>
         </button>
       ) : (
         <Button onClick={() => setOpen(true)}>{trigger}</Button>

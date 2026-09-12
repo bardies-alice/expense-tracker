@@ -53,7 +53,7 @@ export function TransactionTable({
             return (
               <div
                 key={t.id}
-                className="flex items-center gap-3.5 border-b border-gray-100 px-5 py-3.5 last:border-b-0"
+                className="flex items-center gap-2.5 border-b border-gray-100 px-3.5 py-3.5 last:border-b-0 sm:gap-3.5 sm:px-5"
               >
                 <span
                   className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px]"
@@ -80,7 +80,7 @@ export function TransactionTable({
                   {t.type === "INCOME" ? "+" : "-"}
                   {formatEUR(t.amount)}
                 </span>
-                <div className="flex shrink-0 gap-3 pl-1">
+                <div className="flex shrink-0 gap-2.5 pl-1">
                   <TransactionModal
                     categories={categories}
                     trigger="Editar"
