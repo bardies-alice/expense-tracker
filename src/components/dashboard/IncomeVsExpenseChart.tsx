@@ -32,7 +32,7 @@ export function IncomeVsExpenseChart({ data }: { data: MonthlySummaryPoint[] }) 
           axisLine={false}
           tickLine={false}
         />
-        <Tooltip formatter={(value) => formatEUR(Number(value))} labelFormatter={formatMonthShort} cursor={{ fill: "rgba(99,102,241,0.06)" }} />
+        <Tooltip formatter={(value) => formatEUR(Number(value))} labelFormatter={(label) => formatMonthShort(String(label))} cursor={{ fill: "rgba(99,102,241,0.06)" }} />
         <Legend
           iconType="square"
           iconSize={8}

@@ -24,7 +24,7 @@ export function SavingsChart({ data }: { data: MonthlySummaryPoint[] }) {
           dy={8}
         />
         <ReferenceLine y={0} stroke="#e2e8f0" />
-        <Tooltip formatter={(value) => formatEUR(Number(value))} labelFormatter={formatMonthShort} cursor={{ fill: "rgba(99,102,241,0.06)" }} />
+        <Tooltip formatter={(value) => formatEUR(Number(value))} labelFormatter={(label) => formatMonthShort(String(label))} cursor={{ fill: "rgba(99,102,241,0.06)" }} />
         <Bar dataKey="savings" name="Ahorro" radius={[4, 4, 4, 4]}>
           <LabelList
             dataKey="savings"

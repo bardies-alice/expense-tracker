@@ -32,7 +32,7 @@ export function BalanceTrendChart({ data }: { data: MonthlySummaryPoint[] }) {
           axisLine={false}
           tickLine={false}
         />
-        <Tooltip formatter={(value) => formatEUR(Number(value))} labelFormatter={formatMonthShort} />
+        <Tooltip formatter={(value) => formatEUR(Number(value))} labelFormatter={(label) => formatMonthShort(String(label))} />
         <Area type="monotone" dataKey="balance" name="Balance acumulado" stroke="#6366f1" strokeWidth={2.5} fill="url(#balanceFill)" dot={false} activeDot={{ r: 4, fill: "#6366f1" }} />
       </AreaChart>
     </ResponsiveContainer>

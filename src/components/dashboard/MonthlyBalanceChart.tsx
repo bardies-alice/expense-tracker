@@ -19,7 +19,7 @@ export function MonthlyBalanceChart({ data }: { data: { month: string; balance: 
         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
         <XAxis dataKey="month" tick={{ fontSize: 12 }} tickFormatter={formatMonthShort} />
         <YAxis tick={{ fontSize: 12 }} tickFormatter={(v) => formatEUR(v)} width={80} />
-        <Tooltip formatter={(value) => formatEUR(Number(value))} labelFormatter={formatMonthShort} />
+        <Tooltip formatter={(value) => formatEUR(Number(value))} labelFormatter={(label) => formatMonthShort(String(label))} />
         <Bar dataKey="balance" name="Saldo" fill={chartColors.income} radius={[4, 4, 0, 0]} maxBarSize={60} />
       </BarChart>
     </ResponsiveContainer>
