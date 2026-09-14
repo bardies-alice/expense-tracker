@@ -1,14 +1,35 @@
 services:
+  db:
+    image: postgres:16-alpine
+    container_name: expense-tracker-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-expense_tracker}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-expense_tracker}
+      POSTGRES_DB: ${POSTGRES_DB:-expense_tracker}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-expense_tracker}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
   app:
     build: .
     container_name: expense-tracker
     restart: unless-stopped
     user: "1000:1000"
+    depends_on:
+      db:
+        condition: service_healthy
     ports:
       - "8095:3000"
     environment:
-      DATABASE_URL: "file:/app/data/app.db"
+      DATABASE_URL: "postgresql://${POSTGRES_USER:-expense_tracker}:${POSTGRES_PASSWORD:-expense_tracker}@db:5432/${POSTGRES_DB:-expense_tracker}"
       CRON_SECRET: ${CRON_SECRET}
     volumes:
-      - ./data:/app/data
       - ./uploads:/app/public/uploads
+
+volumes:
+  db-data:

@@ -1,6 +1,6 @@
 # Mis Gastos
 
-App de gestión de gastos personales (Next.js + Prisma + SQLite). Single-user, sin login.
+App de gestión de gastos personales (Next.js + Prisma + PostgreSQL). Single-user, sin login.
 
 ## Desarrollo
 
