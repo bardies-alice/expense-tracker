@@ -17,7 +17,7 @@ export function CategoryComparisonList({ rows }: { rows: CategoryComparisonRow[]
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
 
   if (rows.length === 0) {
-    return <p className="text-sm text-gray-400">Sin gastos todavía este mes o el anterior.</p>;
+    return <p className="text-sm text-muted">Sin gastos todavía este mes o el anterior.</p>;
   }
 
   const max = Math.max(...rows.map((r) => r.thisMonth), 1);
@@ -40,7 +40,7 @@ export function CategoryComparisonList({ rows }: { rows: CategoryComparisonRow[]
             <button
               onClick={() => toggle(r.categoryId)}
               disabled={r.topExpenses.length === 0}
-              className="flex w-full items-center gap-3 rounded-md py-2 text-left hover:bg-gray-50 disabled:hover:bg-transparent"
+              className="flex w-full items-center gap-3 rounded-md py-2 text-left hover:bg-surface disabled:hover:bg-transparent"
             >
               <svg
                 width="12"
@@ -49,22 +49,22 @@ export function CategoryComparisonList({ rows }: { rows: CategoryComparisonRow[]
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="2.5"
-                className={`shrink-0 text-gray-400 transition-transform ${isOpen ? "rotate-90" : ""} ${r.topExpenses.length === 0 ? "invisible" : ""}`}
+                className={`shrink-0 text-muted transition-transform ${isOpen ? "rotate-90" : ""} ${r.topExpenses.length === 0 ? "invisible" : ""}`}
               >
                 <path d="M9 18l6-6-6-6" />
               </svg>
               <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: r.color }} />
-              <span className="w-16 shrink-0 truncate text-sm text-gray-700 sm:w-24">{r.name}</span>
+              <span className="w-16 shrink-0 truncate text-sm text-ink sm:w-24">{r.name}</span>
               <div className="h-2 min-w-6 flex-1 rounded-full bg-gray-100">
                 <div
                   className="h-2 rounded-full"
                   style={{ width: `${(r.thisMonth / max) * 100}%`, background: r.color }}
                 />
               </div>
-              <span className="w-16 shrink-0 text-right text-sm font-medium text-gray-900 sm:w-20">{formatEUR(r.thisMonth)}</span>
+              <span className="w-16 shrink-0 text-right text-sm font-medium text-ink sm:w-20">{formatEUR(r.thisMonth)}</span>
               <span
                 className={`hidden w-28 shrink-0 text-right text-xs font-medium sm:block ${
-                  r.delta > 0 ? "text-red-600" : r.delta < 0 ? "text-emerald-600" : "text-gray-400"
+                  r.delta > 0 ? "text-red-600" : r.delta < 0 ? "text-emerald-600" : "text-muted"
                 }`}
               >
                 {r.delta === 0 ? "sin cambio" : `${r.delta > 0 ? "+" : ""}${formatEUR(r.delta)} vs mes ant.`}
@@ -72,13 +72,13 @@ export function CategoryComparisonList({ rows }: { rows: CategoryComparisonRow[]
             </button>
 
             {isOpen && (
-              <ul className="mb-2 ml-4 space-y-1 border-l border-gray-100 pl-3 sm:ml-9 sm:pl-4">
+              <ul className="mb-2 ml-4 space-y-1 border-l border-border pl-3 sm:ml-9 sm:pl-4">
                 {r.topExpenses.map((e, i) => (
                   <li key={i} className="flex items-center justify-between gap-2 text-xs text-gray-500">
                     <span className="min-w-0 truncate">
                       {e.notes ?? "(sin notas)"} · {formatDate(e.date)}
                     </span>
-                    <span className="shrink-0 font-medium text-gray-700">{formatEUR(e.amount)}</span>
+                    <span className="shrink-0 font-medium text-ink">{formatEUR(e.amount)}</span>
                   </li>
                 ))}
               </ul>

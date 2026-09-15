@@ -5,8 +5,7 @@ import { listAllComponentsWithLatestEvent } from "@/lib/core/maintenanceService"
 import { listCategoriesWithItems } from "@/lib/core/categoryService";
 import { ensureMonthlySnapshots, getCurrentBalance, getMonthlyBalances } from "@/lib/core/balanceService";
 import { computeComponentStatus } from "@/lib/maintenance/computeStatus";
-import { BalanceCard } from "@/components/dashboard/BalanceCard";
-import { SummaryCards } from "@/components/dashboard/SummaryCards";
+import { BalanceHero } from "@/components/dashboard/BalanceHero";
 import { IncomeVsExpenseChart } from "@/components/dashboard/IncomeVsExpenseChart";
 import { BalanceTrendChart } from "@/components/dashboard/BalanceTrendChart";
 import { MonthlyBalanceChart } from "@/components/dashboard/MonthlyBalanceChart";
@@ -15,7 +14,6 @@ import { CategoryComparisonList } from "@/components/dashboard/CategoryCompariso
 import { TopProductsChart } from "@/components/dashboard/TopProductsChart";
 import { TransactionModal } from "@/components/transactions/TransactionModal";
 import { StatusBadge } from "@/components/ui/Badge";
-import { PageHeading } from "@/components/ui/PageHeading";
 import type { CarMetadata } from "@/types";
 
 const MONTH_LABEL = new Intl.DateTimeFormat("es-ES", { month: "long", year: "numeric" });
@@ -98,79 +96,16 @@ export default async function DashboardPage({
     .slice(0, 5);
 
   return (
-    <div className="space-y-8">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <PageHeading
-          title={
-            <>
-              Resumen
-              {isFiltered && (
-                <span className="ml-2 font-normal text-gray-400">
-                  — {MONTH_LABEL.format(reference).replace(/^./, (c) => c.toUpperCase())}
-                </span>
-              )}
-            </>
-          }
-          subtitle="Tu actividad financiera de un vistazo"
-        />
-        <div className="flex flex-wrap items-center gap-3 text-sm">
-          {isFiltered && (
-            <>
-              <Link href={`/gastos?month=${month}`} className="inline-block py-2 text-indigo-600 hover:text-indigo-800">
-                Ver transacciones →
-              </Link>
-              <Link href="/" className="inline-block py-2 text-gray-400 hover:text-gray-600">
-                Quitar filtro ✕
-              </Link>
-            </>
-          )}
-          <TransactionModal categories={categories} trigger="Nueva transacción" />
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <BalanceCard balance={balance} />
-        <SummaryCards income={income} expense={expense} />
-      </div>
-
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <section className="rounded-2xl border border-gray-200 bg-white p-4">
-          <h2 className="mb-3 text-sm font-medium text-gray-500">Ingresos vs gastos (6 meses)</h2>
-          <IncomeVsExpenseChart data={monthlySummary} />
-        </section>
-        <section className="rounded-2xl border border-gray-200 bg-white p-4">
-          <h2 className="mb-3 text-sm font-medium text-gray-500">Balance acumulado (6 meses)</h2>
-          <BalanceTrendChart data={monthlySummary} />
-        </section>
-      </div>
-
-      <section className="rounded-2xl border border-gray-200 bg-white p-4">
-        <h2 className="mb-3 text-sm font-medium text-gray-500">Ahorro por mes (6 meses)</h2>
-        <SavingsChart data={monthlySummary} />
-      </section>
-
-      <section className="rounded-2xl border border-gray-200 bg-white p-4">
-        <h2 className="mb-3 text-sm font-medium text-gray-500">Saldo por mes</h2>
-        <MonthlyBalanceChart data={monthlyBalanceData} />
-      </section>
-
-      <section className="rounded-2xl border border-gray-200 bg-white p-4">
-        <h2 className="mb-4 text-sm font-medium text-gray-500">Gasto por categoría vs mes anterior</h2>
-        <CategoryComparisonList rows={categoryComparison} />
-      </section>
-
-      <section className="rounded-2xl border border-gray-200 bg-white p-4">
-        <h2 className="mb-3 text-sm font-medium text-gray-500">Productos más comprados (comida)</h2>
-        <TopProductsChart data={topProducts} />
-      </section>
+    <div className="space-y-6">
+      <BalanceHero balance={balance} income={income} expense={expense} trend={monthlyBalanceData} />
 
       {attentionNeeded.length > 0 && (
         <section>
-          <h2 className="mb-3 text-sm font-medium text-gray-500">Necesitan atención</h2>
-          <ul className="divide-y divide-gray-100 rounded-2xl border border-gray-200 bg-white">
+          <h2 className="mb-3 text-sm font-medium text-muted">Necesitan atención</h2>
+          <ul className="divide-y divide-border rounded-lg border border-border bg-card">
             {attentionNeeded.map((c) => (
               <li key={c.id} className="flex items-center justify-between gap-2 px-4 py-2 text-sm">
-                <Link href={`/items/${c.item.slug}`} className="min-w-0 truncate text-gray-800 hover:text-indigo-600">
+                <Link href={`/items/${c.item.slug}`} className="min-w-0 truncate text-ink hover:text-accent">
                   {c.label} · {c.item.name}
                 </Link>
                 <StatusBadge status={c.status} className="shrink-0" />
@@ -179,6 +114,56 @@ export default async function DashboardPage({
           </ul>
         </section>
       )}
+
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        {isFiltered ? (
+          <div className="flex flex-wrap items-center gap-3 text-sm">
+            <span className="font-display text-base font-semibold text-ink">
+              {MONTH_LABEL.format(reference).replace(/^./, (c) => c.toUpperCase())}
+            </span>
+            <Link href={`/gastos?month=${month}`} className="inline-block py-2 text-accent hover:opacity-80">
+              Ver transacciones →
+            </Link>
+            <Link href="/" className="inline-block py-2 text-muted hover:text-ink">
+              Quitar filtro ✕
+            </Link>
+          </div>
+        ) : (
+          <span />
+        )}
+        <TransactionModal categories={categories} trigger="Nueva transacción" />
+      </div>
+
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <section className="rounded-lg border border-border bg-card p-4">
+          <h2 className="mb-3 text-sm font-medium text-muted">Ingresos vs gastos (6 meses)</h2>
+          <IncomeVsExpenseChart data={monthlySummary} />
+        </section>
+        <section className="rounded-lg border border-border bg-card p-4">
+          <h2 className="mb-3 text-sm font-medium text-muted">Balance acumulado (6 meses)</h2>
+          <BalanceTrendChart data={monthlySummary} />
+        </section>
+      </div>
+
+      <section className="rounded-lg border border-border bg-card p-4">
+        <h2 className="mb-3 text-sm font-medium text-muted">Ahorro por mes (6 meses)</h2>
+        <SavingsChart data={monthlySummary} />
+      </section>
+
+      <section className="rounded-lg border border-border bg-card p-4">
+        <h2 className="mb-3 text-sm font-medium text-muted">Saldo por mes</h2>
+        <MonthlyBalanceChart data={monthlyBalanceData} />
+      </section>
+
+      <section className="rounded-lg border border-border bg-card p-4">
+        <h2 className="mb-4 text-sm font-medium text-muted">Gasto por categoría vs mes anterior</h2>
+        <CategoryComparisonList rows={categoryComparison} />
+      </section>
+
+      <section className="rounded-lg border border-border bg-card p-4">
+        <h2 className="mb-3 text-sm font-medium text-muted">Productos más comprados (comida)</h2>
+        <TopProductsChart data={topProducts} />
+      </section>
     </div>
   );
 }
