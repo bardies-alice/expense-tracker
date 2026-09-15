@@ -19,7 +19,7 @@ export function NavBar() {
   return (
     <nav
       className="fixed inset-x-0 bottom-0 z-50 flex justify-between border-t border-border bg-card"
-      style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+      style={{ paddingBottom: "max(0.75rem, env(safe-area-inset-bottom))" }}
     >
       {LINKS.map((l) => {
         const active = l.href === "/" ? pathname === "/" : pathname.startsWith(l.href);
@@ -29,12 +29,12 @@ export function NavBar() {
             key={l.href}
             href={l.href}
             title={l.label}
-            className={`relative flex flex-1 flex-col items-center gap-0.5 px-1 py-2.5 text-[9.5px] font-semibold transition-colors sm:flex-none sm:px-4 sm:text-[10.5px] ${
+            className={`relative flex flex-1 flex-col items-center gap-1 px-1 py-3 text-[9.5px] font-semibold transition-colors sm:flex-none sm:px-4 sm:text-[10.5px] ${
               active ? "text-accent" : "text-muted hover:text-ink"
             }`}
           >
             {active && <span className="absolute inset-x-3 top-0 h-0.5 rounded-full bg-accent" />}
-            <Icon size={18} />
+            <Icon size={20} />
             <span className="whitespace-nowrap">{l.label}</span>
           </Link>
         );
