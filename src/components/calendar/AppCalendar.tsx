@@ -105,19 +105,19 @@ export function AppCalendar({ events }: { events: CalendarEvent[] }) {
 
   return (
     <div className="grid grid-cols-1 items-start gap-4 lg:grid-cols-[minmax(0,1fr)_300px]">
-      <div className="min-w-0 rounded-2xl border border-gray-200 bg-white p-3 sm:p-5">
+      <div className="min-w-0 rounded-lg border border-border bg-card p-3 sm:p-5">
         <div className="mb-4 flex items-center justify-between">
-          <span className="text-sm font-semibold capitalize text-gray-800">{format(month, "MMMM yyyy", { locale: es })}</span>
+          <span className="text-sm font-semibold capitalize text-ink">{format(month, "MMMM yyyy", { locale: es })}</span>
           <div className="flex gap-1">
             <button
               onClick={() => setMonth((m) => subMonths(m, 1))}
-              className="flex h-10 w-10 items-center justify-center rounded-md border border-gray-200 text-gray-500 hover:bg-gray-50 sm:h-7 sm:w-7"
+              className="flex h-10 w-10 items-center justify-center rounded-md border border-border text-muted hover:bg-surface sm:h-7 sm:w-7"
             >
               <ChevronLeft size={16} />
             </button>
             <button
               onClick={() => setMonth((m) => addMonths(m, 1))}
-              className="flex h-10 w-10 items-center justify-center rounded-md border border-gray-200 text-gray-500 hover:bg-gray-50 sm:h-7 sm:w-7"
+              className="flex h-10 w-10 items-center justify-center rounded-md border border-border text-muted hover:bg-surface sm:h-7 sm:w-7"
             >
               <ChevronRight size={16} />
             </button>
@@ -126,7 +126,7 @@ export function AppCalendar({ events }: { events: CalendarEvent[] }) {
 
         <div className="mb-2 grid grid-cols-7 gap-1 sm:gap-2">
           {WEEKDAYS.map((wd) => (
-            <span key={wd} className="text-center text-[11px] font-bold uppercase text-gray-400">
+            <span key={wd} className="text-center text-[11px] font-bold uppercase text-muted">
               {wd}
             </span>
           ))}
@@ -151,21 +151,21 @@ export function AppCalendar({ events }: { events: CalendarEvent[] }) {
                 title={expenseTotal > 0 ? `${expenseTotal.toFixed(2)}€ gastados` : undefined}
                 className={`flex aspect-square flex-col items-center justify-center gap-1 rounded-[10px] border p-1 ${
                   selected
-                    ? "border-indigo-600 bg-indigo-50"
+                    ? "border-ink bg-accent/10"
                     : heat
                       ? "border-red-200"
-                      : "border-gray-200 bg-white hover:bg-gray-50"
+                      : "border-border bg-card hover:bg-surface"
                 } ${!inMonth ? "opacity-40" : ""}`}
               >
                 <span
                   className={`text-[13px] ${
                     selected
-                      ? "font-bold text-indigo-700"
+                      ? "font-bold text-accent"
                       : darkHeat && heat
                         ? "font-bold text-white"
                         : isToday(d)
-                          ? "font-bold text-gray-900"
-                          : "font-medium text-gray-700"
+                          ? "font-bold text-ink"
+                          : "font-medium text-ink"
                   }`}
                 >
                   {format(d, "d")}
@@ -184,9 +184,9 @@ export function AppCalendar({ events }: { events: CalendarEvent[] }) {
         </div>
       </div>
 
-      <div className="flex flex-col gap-2.5 rounded-2xl border border-gray-200 bg-white p-4">
+      <div className="flex flex-col gap-2.5 rounded-lg border border-border bg-card p-4">
         <div className="flex items-center justify-between gap-2">
-          <h3 className="m-0 text-[13.5px] font-semibold capitalize text-gray-700">
+          <h3 className="m-0 text-[13.5px] font-semibold capitalize text-ink">
             {format(selectedDay, "d 'de' MMMM", { locale: es })}
           </h3>
           {selectedDayEvents.length > 0 && (
@@ -196,10 +196,10 @@ export function AppCalendar({ events }: { events: CalendarEvent[] }) {
           )}
         </div>
         {selectedDayEvents.length === 0 ? (
-          <p className="m-0 text-xs text-gray-400">Sin movimientos ese día.</p>
+          <p className="m-0 text-xs text-muted">Sin movimientos ese día.</p>
         ) : (
           selectedDayEvents.map((e) => (
-            <div key={e.id} className="flex min-w-0 items-center gap-2 border-b border-gray-100 py-2 last:border-0">
+            <div key={e.id} className="flex min-w-0 items-center gap-2 border-b border-border py-2 last:border-0">
               <span className={`h-[6px] w-[6px] shrink-0 rounded-full ${KIND_DOT[e.kind]}`} />
               <span className={`min-w-0 truncate text-xs font-medium ${KIND_TEXT_COLOR[e.kind]}`}>{e.title}</span>
             </div>
