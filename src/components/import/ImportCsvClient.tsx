@@ -293,11 +293,11 @@ export function ImportCsvClient({
 
   if (!rows) {
     return (
-      <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-gray-300 bg-white p-6 text-center sm:p-12">
-        <span className="flex h-[52px] w-[52px] items-center justify-center rounded-2xl bg-indigo-50">
-          <UploadCloud size={22} className="text-indigo-600" />
+      <div className="flex flex-col items-center gap-3 rounded-lg border border-dashed border-border bg-card p-6 text-center sm:p-12">
+        <span className="flex h-[52px] w-[52px] items-center justify-center rounded-lg bg-surface">
+          <UploadCloud size={22} className="text-accent" />
         </span>
-        <p className="mb-2 max-w-sm text-sm text-gray-500">
+        <p className="mb-2 max-w-sm text-sm text-muted">
           Extracto CSV de Revolut. Los movimientos internos (Pocket, cambio de divisa) se detectan y excluyen
           automáticamente.
         </p>
@@ -318,15 +318,15 @@ export function ImportCsvClient({
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-center gap-4 rounded-2xl border border-gray-200 bg-white p-4 text-sm">
-        <span className="text-gray-600">
-          <strong className="text-gray-900">{realRows.length}</strong> movimientos reales
+      <div className="flex flex-wrap items-center gap-4 rounded-lg border border-border bg-card p-4 text-sm">
+        <span className="text-muted">
+          <strong className="text-ink">{realRows.length}</strong> movimientos reales
         </span>
-        <span className="text-gray-400">
+        <span className="text-muted">
           {internalCount} internos excluidos automáticamente (Pocket / cambio de divisa)
         </span>
-        <span className="text-gray-600">
-          <strong className="text-gray-900">{includedRows.length}</strong> incluidos para importar
+        <span className="text-muted">
+          <strong className="text-ink">{includedRows.length}</strong> incluidos para importar
         </span>
         <div className="ml-auto flex w-full flex-wrap items-center gap-2 sm:w-auto">
           <Input placeholder="Buscar descripción..." value={search} onChange={(e) => { setSearch(e.target.value); setPage(0); }} className="w-full sm:w-56" />
@@ -347,7 +347,7 @@ export function ImportCsvClient({
         <p className="rounded-xl border border-red-200 bg-red-50 px-4 py-2 text-sm text-red-700">{error}</p>
       )}
 
-      <div className="flex gap-1 overflow-x-auto border-b border-gray-200">
+      <div className="flex gap-1 overflow-x-auto border-b border-border">
         {(
           [
             ["pendientes", "Sin categoría", pendientesRows.length],
@@ -360,16 +360,16 @@ export function ImportCsvClient({
             key={value}
             onClick={() => changeTab(value)}
             className={`shrink-0 whitespace-nowrap border-b-2 -mb-px px-4 py-2 text-sm font-medium ${
-              tab === value ? "border-indigo-600 text-indigo-600" : "border-transparent text-gray-500 hover:text-gray-700"
+              tab === value ? "border-ink text-ink" : "border-transparent text-muted hover:text-ink"
             }`}
           >
-            {label} <span className="text-xs text-gray-400">({count})</span>
+            {label} <span className="text-xs text-muted">({count})</span>
           </button>
         ))}
       </div>
 
-      <div className="overflow-x-auto rounded-2xl border border-gray-200 bg-white">
-        <table className="w-full table-fixed divide-y divide-gray-200 text-sm">
+      <div className="overflow-x-auto rounded-lg border border-border bg-card">
+        <table className="w-full table-fixed divide-y divide-border text-sm">
           <colgroup>
             <col className="w-16" />
             <col className="w-24" />
@@ -380,7 +380,7 @@ export function ImportCsvClient({
             <col className="w-20" />
             <col className="w-28" />
           </colgroup>
-          <thead className="bg-gray-50 text-left text-xs font-medium uppercase text-gray-500">
+          <thead className="bg-surface text-left text-xs font-medium uppercase text-muted">
             <tr>
               <th className="px-3 py-2">Incluir</th>
               <th className="px-3 py-2">Fecha</th>
@@ -392,14 +392,14 @@ export function ImportCsvClient({
               <th className="px-3 py-2">Otras filas</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100">
+          <tbody className="divide-y divide-border">
             {pageRows.map((r) => {
               const category = categories.find((c) => c.id === r.categoryId);
               return (
                 <tr key={r.externalRef} className={r.included && !r.alreadyImported ? "" : "opacity-40"}>
                   <td className="px-3 py-2">
                     {r.alreadyImported ? (
-                      <span className="text-xs text-gray-400" title="Ya está en tus transacciones">
+                      <span className="text-xs text-muted" title="Ya está en tus transacciones">
                         ✓ importado
                       </span>
                     ) : (
@@ -411,9 +411,9 @@ export function ImportCsvClient({
                       />
                     )}
                   </td>
-                  <td className="whitespace-nowrap px-3 py-2 text-gray-500">{r.fechaInicio.slice(0, 10)}</td>
-                  <td className="max-w-[160px] truncate px-3 py-2 text-gray-800" title={r.descripcion}>{r.descripcion}</td>
-                  <td className={`whitespace-nowrap px-3 py-2 text-right font-medium ${r.type === "INCOME" ? "text-emerald-600" : "text-gray-900"}`}>
+                  <td className="whitespace-nowrap px-3 py-2 text-muted">{r.fechaInicio.slice(0, 10)}</td>
+                  <td className="max-w-[160px] truncate px-3 py-2 text-ink" title={r.descripcion}>{r.descripcion}</td>
+                  <td className={`whitespace-nowrap px-3 py-2 text-right font-medium ${r.type === "INCOME" ? "text-emerald-600" : "text-ink"}`}>
                     {r.type === "INCOME" ? "+" : "-"}
                     {formatEUR(Math.abs(r.importe))}
                   </td>
@@ -431,11 +431,11 @@ export function ImportCsvClient({
                         <button
                           onClick={() => submitNewCategory(r)}
                           disabled={creatingCat || !newCatName.trim()}
-                          className="p-2 text-xs text-indigo-600 hover:text-indigo-800 disabled:opacity-40"
+                          className="p-2 text-xs text-accent hover:opacity-80 disabled:opacity-40"
                         >
                           ✓
                         </button>
-                        <button onClick={() => setNewCatFor(null)} className="p-2 text-xs text-gray-400 hover:text-gray-600">
+                        <button onClick={() => setNewCatFor(null)} className="p-2 text-xs text-muted hover:text-ink">
                           ✕
                         </button>
                       </div>
@@ -469,11 +469,11 @@ export function ImportCsvClient({
                         <button
                           onClick={() => submitNewSubcategory(r)}
                           disabled={creatingSub || !newSubName.trim()}
-                          className="p-2 text-xs text-indigo-600 hover:text-indigo-800 disabled:opacity-40"
+                          className="p-2 text-xs text-accent hover:opacity-80 disabled:opacity-40"
                         >
                           ✓
                         </button>
-                        <button onClick={() => setNewSubFor(null)} className="p-2 text-xs text-gray-400 hover:text-gray-600">
+                        <button onClick={() => setNewSubFor(null)} className="p-2 text-xs text-muted hover:text-ink">
                           ✕
                         </button>
                       </div>
@@ -496,7 +496,7 @@ export function ImportCsvClient({
                   </td>
                   <td className="px-3 py-2 text-center">
                     {r.alreadyRemembered ? (
-                      <span className="text-xs text-gray-400" title="Ya guardado de una importación anterior">
+                      <span className="text-xs text-muted" title="Ya guardado de una importación anterior">
                         ✓ guardado
                       </span>
                     ) : (
@@ -512,7 +512,7 @@ export function ImportCsvClient({
                   </td>
                   <td className="px-3 py-2">
                     {r.categoryId && siblingsOf(r).length > 0 && (
-                      <button onClick={() => openPropagation(r)} className="whitespace-nowrap text-xs text-indigo-600 hover:text-indigo-800">
+                      <button onClick={() => openPropagation(r)} className="whitespace-nowrap text-xs text-accent hover:opacity-80">
                         Aplicar a otras ({siblingsOf(r).length})
                       </button>
                     )}
@@ -525,7 +525,7 @@ export function ImportCsvClient({
       </div>
 
       {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-3 text-sm text-gray-500">
+        <div className="flex items-center justify-center gap-3 text-sm text-muted">
           <button onClick={() => setPage((p) => Math.max(0, p - 1))} disabled={page === 0} className="px-3 py-2 disabled:opacity-30">
             ← Anterior
           </button>
@@ -541,21 +541,21 @@ export function ImportCsvClient({
       {propagation && (
         <Modal open onClose={() => setPropagation(null)} title={`Aplicar categoría a otras filas de "${propagation.descripcion}"`}>
           <div className="space-y-3">
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-muted">
               Elegí a cuáles de estas {propagation.siblings.length} filas también aplicar la categoría elegida.
             </p>
             <ul className="max-h-64 space-y-1 overflow-y-auto">
               {propagation.siblings.map((s) => (
                 <li key={s.externalRef}>
-                  <label className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-gray-50">
+                  <label className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-surface">
                     <input
                       type="checkbox"
                       checked={propagation.selected.has(s.externalRef)}
                       onChange={() => togglePropagationRow(s.externalRef)}
                       className="h-5 w-5"
                     />
-                    <span className="text-gray-500">{s.fechaInicio.slice(0, 10)}</span>
-                    <span className="ml-auto font-medium text-gray-900">{formatEUR(Math.abs(s.importe))}</span>
+                    <span className="text-muted">{s.fechaInicio.slice(0, 10)}</span>
+                    <span className="ml-auto font-medium text-ink">{formatEUR(Math.abs(s.importe))}</span>
                   </label>
                 </li>
               ))}
