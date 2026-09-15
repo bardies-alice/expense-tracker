@@ -34,13 +34,13 @@ export default async function GraficosPage({
     <div className="space-y-8">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <PageHeading title="Gráficos" subtitle={`Últimos ${months} meses`} />
-        <div className="flex gap-1.5 rounded-lg border border-gray-200 bg-white p-1">
+        <div className="flex gap-1.5 rounded-lg border border-border bg-card p-1">
           {RANGE_OPTIONS.map((m) => (
             <Link
               key={m}
               href={`/graficos?months=${m}`}
               className={`rounded-md px-3 py-2.5 text-sm font-medium transition-colors ${
-                m === months ? "bg-indigo-600 text-white" : "text-gray-500 hover:bg-gray-50"
+                m === months ? "bg-ink text-white" : "text-muted hover:bg-surface"
               }`}
             >
               {m}m
@@ -50,23 +50,23 @@ export default async function GraficosPage({
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <section className="rounded-2xl border border-gray-200 bg-white p-4">
-          <h2 className="mb-3 text-sm font-medium text-gray-500">Gasto por categoría</h2>
+        <section className="rounded-lg border border-border bg-card p-4">
+          <h2 className="mb-3 text-sm font-medium text-muted">Gasto por categoría</h2>
           <CategoryPieChart data={categoryBreakdown} />
         </section>
-        <section className="rounded-2xl border border-gray-200 bg-white p-4">
-          <h2 className="mb-3 text-sm font-medium text-gray-500">Top comercios</h2>
+        <section className="rounded-lg border border-border bg-card p-4">
+          <h2 className="mb-3 text-sm font-medium text-muted">Top comercios</h2>
           <MerchantRankingChart data={merchantRanking} />
         </section>
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <section className="rounded-2xl border border-gray-200 bg-white p-4">
-          <h2 className="mb-3 text-sm font-medium text-gray-500">Gasto por día de la semana</h2>
+        <section className="rounded-lg border border-border bg-card p-4">
+          <h2 className="mb-3 text-sm font-medium text-muted">Gasto por día de la semana</h2>
           <WeekdayPatternChart data={weekdayPattern} />
         </section>
-        <section className="rounded-2xl border border-gray-200 bg-white p-4">
-          <h2 className="mb-3 text-sm font-medium text-gray-500">Gasto por elemento (coche, casa...)</h2>
+        <section className="rounded-lg border border-border bg-card p-4">
+          <h2 className="mb-3 text-sm font-medium text-muted">Gasto por elemento (coche, casa...)</h2>
           <ItemSpendingChart data={itemSpending} />
         </section>
       </div>
