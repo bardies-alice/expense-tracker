@@ -35,14 +35,14 @@ export function Modal({
       onClick={onClose}
     >
       <div
-        className="flex max-h-[85vh] w-full max-w-md flex-col rounded-2xl bg-white shadow-xl"
+        className="flex max-h-[85vh] w-full max-w-md flex-col rounded-lg bg-card shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between px-5 pb-3 pt-5">
-          <h2 className="text-base font-semibold text-gray-900">{title}</h2>
+          <h2 className="font-display text-base font-semibold text-ink">{title}</h2>
           <button
             onClick={onClose}
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-muted hover:bg-black/5 hover:text-ink"
             aria-label="Cerrar"
           >
             ✕

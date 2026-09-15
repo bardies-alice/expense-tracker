@@ -25,7 +25,7 @@ export function StatusBadge({ status, className }: { status: ComponentStatus; cl
 
 export function Badge({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
-    <span className={clsx("inline-block rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-700", className)}>
+    <span className={clsx("inline-block rounded-full bg-surface px-2 py-0.5 text-xs font-medium text-ink", className)}>
       {children}
     </span>
   );

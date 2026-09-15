@@ -4,10 +4,10 @@ import clsx from "clsx";
 type Variant = "primary" | "secondary" | "danger" | "ghost";
 
 const VARIANT_CLASSES: Record<Variant, string> = {
-  primary: "bg-indigo-600 text-white hover:bg-indigo-500",
-  secondary: "bg-gray-100 text-gray-900 hover:bg-gray-200",
+  primary: "bg-ink text-white hover:opacity-90",
+  secondary: "border border-ink bg-transparent text-ink hover:bg-ink/5",
   danger: "bg-red-600 text-white hover:bg-red-500",
-  ghost: "bg-transparent text-gray-700 hover:bg-gray-100",
+  ghost: "bg-transparent text-muted hover:bg-black/5",
 };
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {

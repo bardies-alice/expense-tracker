@@ -84,34 +84,34 @@ export function DatePicker({
           setOpen((o) => !o);
         }}
         className={clsx(
-          "flex w-full items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2 text-left text-sm text-gray-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500",
+          "flex w-full items-center justify-between rounded-lg border border-border bg-white px-3 py-2 text-left text-sm text-ink shadow-sm focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent",
           className
         )}
       >
-        <span className={selectedDate ? "text-gray-900" : "text-gray-400"}>
+        <span className={selectedDate ? "text-ink" : "text-muted"}>
           {selectedDate ? format(selectedDate, "dd/MM/yyyy") : "Seleccionar fecha"}
         </span>
-        <CalendarIcon size={16} className="shrink-0 text-gray-400" />
+        <CalendarIcon size={16} className="shrink-0 text-muted" />
       </button>
 
       {name && <input type="hidden" name={name} value={selected} required={required} />}
 
       {open && (
-        <div className="absolute z-20 mt-1.5 w-[280px] max-w-[calc(100vw-2rem)] rounded-xl border border-gray-200 bg-white p-3 shadow-lg">
+        <div className="absolute z-20 mt-1.5 w-[280px] max-w-[calc(100vw-2rem)] rounded-xl border border-border bg-white p-3 shadow-lg">
           <div className="mb-2 flex items-center justify-between">
             <span className="text-sm font-semibold capitalize text-gray-800">{format(month, "MMMM yyyy", { locale: es })}</span>
             <div className="flex gap-1">
               <button
                 type="button"
                 onClick={() => setMonth((m) => subMonths(m, 1))}
-                className="flex h-8 w-8 items-center justify-center rounded-md border border-gray-200 text-gray-500 hover:bg-gray-50"
+                className="flex h-8 w-8 items-center justify-center rounded-md border border-border text-muted hover:bg-gray-50"
               >
                 <ChevronLeft size={13} />
               </button>
               <button
                 type="button"
                 onClick={() => setMonth((m) => addMonths(m, 1))}
-                className="flex h-8 w-8 items-center justify-center rounded-md border border-gray-200 text-gray-500 hover:bg-gray-50"
+                className="flex h-8 w-8 items-center justify-center rounded-md border border-border text-muted hover:bg-gray-50"
               >
                 <ChevronRight size={13} />
               </button>
@@ -137,8 +137,8 @@ export function DatePicker({
                   onClick={() => selectDay(d)}
                   className={clsx(
                     "flex h-9 w-9 items-center justify-center rounded-md text-xs",
-                    active ? "bg-indigo-600 font-semibold text-white" : isToday(d) ? "font-semibold text-indigo-600" : "text-gray-700 hover:bg-gray-100",
-                    !inMonth && !active && "text-gray-300"
+                    active ? "bg-ink font-semibold text-white" : isToday(d) ? "font-semibold text-accent" : "text-ink hover:bg-gray-100",
+                    !inMonth && !active && "text-muted/60"
                   )}
                 >
                   {format(d, "d")}
