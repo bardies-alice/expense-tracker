@@ -39,7 +39,7 @@ export function TransactionModal({
         <button
           onClick={() => setOpen(true)}
           title={trigger}
-          className="flex h-10 w-10 items-center justify-center gap-1 text-xs text-accent sm:h-auto sm:w-auto sm:px-2 sm:py-1"
+          className="flex h-10 w-10 items-center justify-center gap-1 text-xs text-accent hover:opacity-80 sm:h-auto sm:w-auto sm:px-2 sm:py-1"
         >
           <Pencil className="h-3.5 w-3.5" />
           <span className="hidden sm:inline">{trigger}</span>

@@ -9,7 +9,7 @@ export interface TopProductPoint {
 
 export function TopProductsChart({ data }: { data: TopProductPoint[] }) {
   if (data.length === 0) {
-    return <p className="text-sm text-gray-400">Añade gastos de comida con líneas de producto para ver el ranking.</p>;
+    return <p className="text-sm text-muted">Añade gastos de comida con líneas de producto para ver el ranking.</p>;
   }
 
   return (

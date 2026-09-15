@@ -160,7 +160,7 @@ export function AppCalendar({ events }: { events: CalendarEvent[] }) {
                 <span
                   className={`text-[13px] ${
                     selected
-                      ? "font-bold text-accent"
+                      ? "font-bold text-ink"
                       : darkHeat && heat
                         ? "font-bold text-white"
                         : isToday(d)

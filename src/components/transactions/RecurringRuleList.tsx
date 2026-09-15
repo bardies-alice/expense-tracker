@@ -41,7 +41,7 @@ export function RecurringRuleList({ rules, categoryId }: { rules: RecurringRule[
             <div className="flex shrink-0 items-center gap-1">
               <button
                 onClick={() => handleToggle(rule.id, rule.active)}
-                className="rounded-md px-2 py-2 text-xs text-accent"
+                className="rounded-md px-2 py-2 text-xs text-accent hover:opacity-80"
               >
                 {rule.active ? "Pausar" : "Reanudar"}
               </button>

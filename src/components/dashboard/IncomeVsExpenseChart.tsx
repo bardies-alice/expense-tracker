@@ -15,7 +15,7 @@ export function IncomeVsExpenseChart({ data }: { data: MonthlySummaryPoint[] }) 
   const router = useRouter();
 
   if (data.length === 0) {
-    return <p className="text-sm text-gray-400">Sin datos suficientes todavía.</p>;
+    return <p className="text-sm text-muted">Sin datos suficientes todavía.</p>;
   }
 
   function goToMonth(item: { payload?: MonthlySummaryPoint }) {

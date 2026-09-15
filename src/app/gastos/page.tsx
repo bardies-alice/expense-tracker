@@ -36,7 +36,7 @@ export default async function GastosPage({
 
       {from && (
         <div className="flex items-center gap-2 text-sm">
-          <span className="rounded-full bg-surface px-3 py-1.5 font-medium text-accent capitalize">
+          <span className="rounded-full bg-accent/10 px-3 py-1.5 font-medium text-accent capitalize">
             {MONTH_LABEL.format(from)}
           </span>
           <Link href="/gastos" className="text-muted hover:text-ink">

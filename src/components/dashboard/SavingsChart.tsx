@@ -7,7 +7,7 @@ import type { MonthlySummaryPoint } from "./IncomeVsExpenseChart";
 
 export function SavingsChart({ data }: { data: MonthlySummaryPoint[] }) {
   if (data.length === 0) {
-    return <p className="text-sm text-gray-400">Sin datos suficientes todavía.</p>;
+    return <p className="text-sm text-muted">Sin datos suficientes todavía.</p>;
   }
 
   const points = data.map((d) => ({ month: d.month, savings: Math.round((d.income - d.expense) * 100) / 100 }));

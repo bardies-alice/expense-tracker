@@ -12,7 +12,7 @@ export interface ItemSpendingPoint {
 
 export function ItemSpendingChart({ data }: { data: ItemSpendingPoint[] }) {
   if (data.length === 0) {
-    return <p className="text-sm text-gray-400">Sin gastos asociados a items todavía.</p>;
+    return <p className="text-sm text-muted">Sin gastos asociados a items todavía.</p>;
   }
 
   return (

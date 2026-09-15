@@ -16,7 +16,7 @@ export function MerchantRankingChart({ data }: { data: MerchantPoint[] }) {
   const router = useRouter();
 
   if (data.length === 0) {
-    return <p className="text-sm text-gray-400">Sin comercios registrados todavía.</p>;
+    return <p className="text-sm text-muted">Sin comercios registrados todavía.</p>;
   }
 
   return (

@@ -6,11 +6,11 @@ import { chartColors } from "@/components/charts/chartTheme";
 
 export function MonthlyBalanceChart({ data }: { data: { month: string; balance: number }[] }) {
   if (data.length === 0) {
-    return <p className="text-sm text-gray-400">Configura tu saldo actual para ver esta gráfica.</p>;
+    return <p className="text-sm text-muted">Configura tu saldo actual para ver esta gráfica.</p>;
   }
 
   if (data.length < 2) {
-    return <p className="text-sm text-gray-400">Necesitamos al menos dos meses de histórico para dibujar esta gráfica. Vuelve cuando pase el mes en curso.</p>;
+    return <p className="text-sm text-muted">Necesitamos al menos dos meses de histórico para dibujar esta gráfica. Vuelve cuando pase el mes en curso.</p>;
   }
 
   return (

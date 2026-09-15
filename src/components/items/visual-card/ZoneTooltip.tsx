@@ -11,14 +11,14 @@ export interface ZoneTooltipInfo {
 
 export function ZoneTooltip({ info }: { info: ZoneTooltipInfo | null }) {
   if (!info) {
-    return <p className="m-0 text-xs text-gray-400">Pasa el ratón o toca una zona para ver su estado.</p>;
+    return <p className="m-0 text-xs text-muted">Pasa el ratón o toca una zona para ver su estado.</p>;
   }
 
   return (
     <div className="flex items-center justify-between text-sm">
-      <span className="font-medium text-gray-800">{info.label}</span>
+      <span className="font-medium text-ink">{info.label}</span>
       <div className="flex items-center gap-2.5">
-        <span className="text-xs text-gray-400">
+        <span className="text-xs text-muted">
           {info.lastEventDate
             ? `${formatDate(info.lastEventDate)}${info.lastEventKm ? ` · ${info.lastEventKm.toLocaleString("es-ES")} km` : ""}`
             : "Sin registros"}

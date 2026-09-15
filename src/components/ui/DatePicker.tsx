@@ -104,14 +104,14 @@ export function DatePicker({
               <button
                 type="button"
                 onClick={() => setMonth((m) => subMonths(m, 1))}
-                className="flex h-8 w-8 items-center justify-center rounded-md border border-border text-muted hover:bg-gray-50"
+                className="flex h-8 w-8 items-center justify-center rounded-md border border-border text-muted hover:bg-surface"
               >
                 <ChevronLeft size={13} />
               </button>
               <button
                 type="button"
                 onClick={() => setMonth((m) => addMonths(m, 1))}
-                className="flex h-8 w-8 items-center justify-center rounded-md border border-border text-muted hover:bg-gray-50"
+                className="flex h-8 w-8 items-center justify-center rounded-md border border-border text-muted hover:bg-surface"
               >
                 <ChevronRight size={13} />
               </button>
@@ -137,7 +137,7 @@ export function DatePicker({
                   onClick={() => selectDay(d)}
                   className={clsx(
                     "flex h-9 w-9 items-center justify-center rounded-md text-xs",
-                    active ? "bg-ink font-semibold text-white" : isToday(d) ? "font-semibold text-accent" : "text-ink hover:bg-gray-100",
+                    active ? "bg-ink font-semibold text-white" : isToday(d) ? "font-semibold text-accent" : "text-ink hover:bg-surface",
                     !inMonth && !active && "text-muted/60"
                   )}
                 >

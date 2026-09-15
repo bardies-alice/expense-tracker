@@ -12,7 +12,7 @@ export interface CategoryBreakdownSlice {
 
 export function CategoryPieChart({ data }: { data: CategoryBreakdownSlice[] }) {
   if (data.length === 0) {
-    return <p className="text-sm text-gray-400">Sin gastos suficientes todavía.</p>;
+    return <p className="text-sm text-muted">Sin gastos suficientes todavía.</p>;
   }
 
   const total = data.reduce((sum, d) => sum + d.total, 0);
@@ -43,16 +43,16 @@ export function CategoryPieChart({ data }: { data: CategoryBreakdownSlice[] }) {
           </PieChart>
         </ResponsiveContainer>
         <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-          <span className="text-xs text-gray-400">Total</span>
-          <span className="tabular-nums text-lg font-semibold text-gray-900">{formatEUR(total)}</span>
+          <span className="text-xs text-muted">Total</span>
+          <span className="tabular-nums text-lg font-semibold text-ink">{formatEUR(total)}</span>
         </div>
       </div>
       <ul className="flex flex-col gap-2 text-sm">
         {data.map((slice) => (
           <li key={slice.name} className="flex items-center gap-2">
             <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: slice.color }} />
-            <span className="min-w-0 flex-1 truncate text-gray-600">{slice.name}</span>
-            <span className="shrink-0 tabular-nums font-medium text-gray-900">{formatEUR(slice.total)}</span>
+            <span className="min-w-0 flex-1 truncate text-muted">{slice.name}</span>
+            <span className="shrink-0 tabular-nums font-medium text-ink">{formatEUR(slice.total)}</span>
           </li>
         ))}
       </ul>

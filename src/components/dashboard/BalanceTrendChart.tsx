@@ -6,7 +6,7 @@ import type { MonthlySummaryPoint } from "./IncomeVsExpenseChart";
 
 export function BalanceTrendChart({ data }: { data: MonthlySummaryPoint[] }) {
   if (data.length === 0) {
-    return <p className="text-sm text-gray-400">Sin datos suficientes todavía.</p>;
+    return <p className="text-sm text-muted">Sin datos suficientes todavía.</p>;
   }
 
   const points = data.reduce<{ month: string; balance: number }[]>((acc, d) => {

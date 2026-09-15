@@ -12,7 +12,7 @@ export interface WeekdayPoint {
 
 export function WeekdayPatternChart({ data }: { data: WeekdayPoint[] }) {
   if (data.every((d) => d.total === 0)) {
-    return <p className="text-sm text-gray-400">Sin gastos suficientes todavía.</p>;
+    return <p className="text-sm text-muted">Sin gastos suficientes todavía.</p>;
   }
 
   return (
