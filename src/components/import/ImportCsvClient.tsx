@@ -293,7 +293,7 @@ export function ImportCsvClient({
 
   if (!rows) {
     return (
-      <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-gray-300 bg-white p-12 text-center">
+      <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-gray-300 bg-white p-6 text-center sm:p-12">
         <span className="flex h-[52px] w-[52px] items-center justify-center rounded-2xl bg-indigo-50">
           <UploadCloud size={22} className="text-indigo-600" />
         </span>
@@ -328,8 +328,8 @@ export function ImportCsvClient({
         <span className="text-gray-600">
           <strong className="text-gray-900">{includedRows.length}</strong> incluidos para importar
         </span>
-        <div className="ml-auto flex items-center gap-2">
-          <Input placeholder="Buscar descripción..." value={search} onChange={(e) => { setSearch(e.target.value); setPage(0); }} className="w-56" />
+        <div className="ml-auto flex w-full flex-wrap items-center gap-2 sm:w-auto">
+          <Input placeholder="Buscar descripción..." value={search} onChange={(e) => { setSearch(e.target.value); setPage(0); }} className="w-full sm:w-56" />
           <Button onClick={handleImport} disabled={pending || includedRows.length === 0}>
             {pending ? "Importando..." : `Importar ${includedRows.length}`}
           </Button>
@@ -347,7 +347,7 @@ export function ImportCsvClient({
         <p className="rounded-xl border border-red-200 bg-red-50 px-4 py-2 text-sm text-red-700">{error}</p>
       )}
 
-      <div className="flex gap-1 border-b border-gray-200">
+      <div className="flex gap-1 overflow-x-auto border-b border-gray-200">
         {(
           [
             ["pendientes", "Sin categoría", pendientesRows.length],
@@ -359,7 +359,7 @@ export function ImportCsvClient({
           <button
             key={value}
             onClick={() => changeTab(value)}
-            className={`px-4 py-2 text-sm font-medium border-b-2 -mb-px ${
+            className={`shrink-0 whitespace-nowrap border-b-2 -mb-px px-4 py-2 text-sm font-medium ${
               tab === value ? "border-indigo-600 text-indigo-600" : "border-transparent text-gray-500 hover:text-gray-700"
             }`}
           >
@@ -407,34 +407,35 @@ export function ImportCsvClient({
                         type="checkbox"
                         checked={r.included}
                         onChange={(e) => updateRow(r.externalRef, { included: e.target.checked })}
+                        className="h-5 w-5"
                       />
                     )}
                   </td>
                   <td className="whitespace-nowrap px-3 py-2 text-gray-500">{r.fechaInicio.slice(0, 10)}</td>
-                  <td className="px-3 py-2 text-gray-800">{r.descripcion}</td>
+                  <td className="max-w-[160px] truncate px-3 py-2 text-gray-800" title={r.descripcion}>{r.descripcion}</td>
                   <td className={`whitespace-nowrap px-3 py-2 text-right font-medium ${r.type === "INCOME" ? "text-emerald-600" : "text-gray-900"}`}>
                     {r.type === "INCOME" ? "+" : "-"}
                     {formatEUR(Math.abs(r.importe))}
                   </td>
                   <td className="px-3 py-2">
                     {newCatFor === r.externalRef ? (
-                      <div className="flex items-center gap-1">
+                      <div className="flex min-w-0 items-center gap-1">
                         <Input
                           autoFocus
                           placeholder="Nombre de la categoría"
                           value={newCatName}
                           onChange={(e) => setNewCatName(e.target.value)}
                           onKeyDown={(e) => e.key === "Enter" && submitNewCategory(r)}
-                          className="w-36"
+                          className="min-w-0 flex-1"
                         />
                         <button
                           onClick={() => submitNewCategory(r)}
                           disabled={creatingCat || !newCatName.trim()}
-                          className="text-xs text-indigo-600 hover:text-indigo-800 disabled:opacity-40"
+                          className="p-2 text-xs text-indigo-600 hover:text-indigo-800 disabled:opacity-40"
                         >
                           ✓
                         </button>
-                        <button onClick={() => setNewCatFor(null)} className="text-xs text-gray-400 hover:text-gray-600">
+                        <button onClick={() => setNewCatFor(null)} className="p-2 text-xs text-gray-400 hover:text-gray-600">
                           ✕
                         </button>
                       </div>
@@ -456,23 +457,23 @@ export function ImportCsvClient({
                   </td>
                   <td className="px-3 py-2">
                     {category && newSubFor === r.externalRef ? (
-                      <div className="flex items-center gap-1">
+                      <div className="flex min-w-0 items-center gap-1">
                         <Input
                           autoFocus
                           placeholder="Nombre de la subcategoría"
                           value={newSubName}
                           onChange={(e) => setNewSubName(e.target.value)}
                           onKeyDown={(e) => e.key === "Enter" && submitNewSubcategory(r)}
-                          className="w-36"
+                          className="min-w-0 flex-1"
                         />
                         <button
                           onClick={() => submitNewSubcategory(r)}
                           disabled={creatingSub || !newSubName.trim()}
-                          className="text-xs text-indigo-600 hover:text-indigo-800 disabled:opacity-40"
+                          className="p-2 text-xs text-indigo-600 hover:text-indigo-800 disabled:opacity-40"
                         >
                           ✓
                         </button>
-                        <button onClick={() => setNewSubFor(null)} className="text-xs text-gray-400 hover:text-gray-600">
+                        <button onClick={() => setNewSubFor(null)} className="p-2 text-xs text-gray-400 hover:text-gray-600">
                           ✕
                         </button>
                       </div>
@@ -505,6 +506,7 @@ export function ImportCsvClient({
                         disabled={!r.categoryId}
                         title="Recordar este comercio para futuras importaciones"
                         onChange={(e) => updateRow(r.externalRef, { remember: e.target.checked })}
+                        className="h-5 w-5"
                       />
                     )}
                   </td>
@@ -524,13 +526,13 @@ export function ImportCsvClient({
 
       {totalPages > 1 && (
         <div className="flex items-center justify-center gap-3 text-sm text-gray-500">
-          <button onClick={() => setPage((p) => Math.max(0, p - 1))} disabled={page === 0} className="disabled:opacity-30">
+          <button onClick={() => setPage((p) => Math.max(0, p - 1))} disabled={page === 0} className="px-3 py-2 disabled:opacity-30">
             ← Anterior
           </button>
           <span>
             Página {page + 1} de {totalPages}
           </span>
-          <button onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))} disabled={page >= totalPages - 1} className="disabled:opacity-30">
+          <button onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))} disabled={page >= totalPages - 1} className="px-3 py-2 disabled:opacity-30">
             Siguiente →
           </button>
         </div>
@@ -550,6 +552,7 @@ export function ImportCsvClient({
                       type="checkbox"
                       checked={propagation.selected.has(s.externalRef)}
                       onChange={() => togglePropagationRow(s.externalRef)}
+                      className="h-5 w-5"
                     />
                     <span className="text-gray-500">{s.fechaInicio.slice(0, 10)}</span>
                     <span className="ml-auto font-medium text-gray-900">{formatEUR(Math.abs(s.importe))}</span>

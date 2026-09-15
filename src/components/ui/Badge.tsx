@@ -15,9 +15,9 @@ const STATUS_LABELS: Record<ComponentStatus, string> = {
   unknown: "Sin datos",
 };
 
-export function StatusBadge({ status }: { status: ComponentStatus }) {
+export function StatusBadge({ status, className }: { status: ComponentStatus; className?: string }) {
   return (
-    <span className={clsx("inline-block rounded-full px-2 py-0.5 text-xs font-medium", STATUS_CLASSES[status])}>
+    <span className={clsx("inline-block rounded-full px-2 py-0.5 text-xs font-medium", STATUS_CLASSES[status], className)}>
       {STATUS_LABELS[status]}
     </span>
   );

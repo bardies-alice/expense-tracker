@@ -116,10 +116,10 @@ export default async function DashboardPage({
         <div className="flex flex-wrap items-center gap-3 text-sm">
           {isFiltered && (
             <>
-              <Link href={`/gastos?month=${month}`} className="text-indigo-600 hover:text-indigo-800">
+              <Link href={`/gastos?month=${month}`} className="inline-block py-2 text-indigo-600 hover:text-indigo-800">
                 Ver transacciones →
               </Link>
-              <Link href="/" className="text-gray-400 hover:text-gray-600">
+              <Link href="/" className="inline-block py-2 text-gray-400 hover:text-gray-600">
                 Quitar filtro ✕
               </Link>
             </>
@@ -169,11 +169,11 @@ export default async function DashboardPage({
           <h2 className="mb-3 text-sm font-medium text-gray-500">Necesitan atención</h2>
           <ul className="divide-y divide-gray-100 rounded-2xl border border-gray-200 bg-white">
             {attentionNeeded.map((c) => (
-              <li key={c.id} className="flex items-center justify-between px-4 py-2 text-sm">
-                <Link href={`/items/${c.item.slug}`} className="text-gray-800 hover:text-indigo-600">
+              <li key={c.id} className="flex items-center justify-between gap-2 px-4 py-2 text-sm">
+                <Link href={`/items/${c.item.slug}`} className="min-w-0 truncate text-gray-800 hover:text-indigo-600">
                   {c.label} · {c.item.name}
                 </Link>
-                <StatusBadge status={c.status} />
+                <StatusBadge status={c.status} className="shrink-0" />
               </li>
             ))}
           </ul>

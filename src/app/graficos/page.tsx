@@ -34,12 +34,12 @@ export default async function GraficosPage({
     <div className="space-y-8">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <PageHeading title="Gráficos" subtitle={`Últimos ${months} meses`} />
-        <div className="flex gap-1 rounded-lg border border-gray-200 bg-white p-1">
+        <div className="flex gap-1.5 rounded-lg border border-gray-200 bg-white p-1">
           {RANGE_OPTIONS.map((m) => (
             <Link
               key={m}
               href={`/graficos?months=${m}`}
-              className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+              className={`rounded-md px-3 py-2.5 text-sm font-medium transition-colors ${
                 m === months ? "bg-indigo-600 text-white" : "text-gray-500 hover:bg-gray-50"
               }`}
             >

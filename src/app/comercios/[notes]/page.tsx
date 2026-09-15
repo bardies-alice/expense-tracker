@@ -34,7 +34,7 @@ export default async function MerchantPage({ params }: { params: Promise<{ notes
 
       <div className="flex flex-wrap items-end justify-between gap-6">
         <div>
-          <h1 className="m-0 text-2xl font-bold tracking-tight text-gray-900">{merchantName}</h1>
+          <h1 className="m-0 break-words text-2xl font-bold tracking-tight text-gray-900">{merchantName}</h1>
           <p className="mt-1.5 text-sm text-gray-500">
             {transactions.length} {transactions.length === 1 ? "movimiento" : "movimientos"}
           </p>

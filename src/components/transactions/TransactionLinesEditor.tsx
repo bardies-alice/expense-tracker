@@ -40,16 +40,16 @@ export function TransactionLinesEditor({
     <div className="space-y-2">
       <p className="text-xs font-medium text-gray-500">Líneas de producto (opcional)</p>
       {lines.map((line, i) => (
-        <div key={i} className="flex items-center gap-2 text-sm">
-          <span className="flex-1">{line.productName}</span>
-          <span className="text-gray-400">x{line.quantity}</span>
-          <span>{line.totalPrice.toFixed(2)} €</span>
-          <button type="button" onClick={() => removeLine(i)} className="text-red-500 hover:text-red-700">
+        <div key={i} className="flex min-w-0 items-center gap-2 text-sm">
+          <span className="min-w-0 flex-1 truncate">{line.productName}</span>
+          <span className="shrink-0 text-gray-400">x{line.quantity}</span>
+          <span className="shrink-0">{line.totalPrice.toFixed(2)} €</span>
+          <button type="button" onClick={() => removeLine(i)} className="flex h-9 w-9 shrink-0 items-center justify-center text-red-500 hover:text-red-700">
             ✕
           </button>
         </div>
       ))}
-      <div className="flex gap-2">
+      <div className="flex flex-col gap-2 sm:flex-row">
         <div className="flex-1">
           <Input
             placeholder="Producto"
@@ -58,28 +58,30 @@ export function TransactionLinesEditor({
             onKeyDown={handleKeyDown}
           />
         </div>
-        <div className="w-16 shrink-0">
-          <Input
-            type="number"
-            placeholder="Cant."
-            value={draft.quantity}
-            onChange={(e) => setDraft({ ...draft, quantity: Number(e.target.value) })}
-            onKeyDown={handleKeyDown}
-          />
+        <div className="flex gap-2">
+          <div className="w-1/2 shrink-0 sm:w-16">
+            <Input
+              type="number"
+              placeholder="Cant."
+              value={draft.quantity}
+              onChange={(e) => setDraft({ ...draft, quantity: Number(e.target.value) })}
+              onKeyDown={handleKeyDown}
+            />
+          </div>
+          <div className="w-1/2 shrink-0 sm:w-24">
+            <Input
+              type="number"
+              step="0.01"
+              placeholder="Precio"
+              value={draft.totalPrice || ""}
+              onChange={(e) => setDraft({ ...draft, totalPrice: Number(e.target.value) })}
+              onKeyDown={handleKeyDown}
+            />
+          </div>
+          <Button type="button" variant="secondary" onClick={addLine}>
+            +
+          </Button>
         </div>
-        <div className="w-24 shrink-0">
-          <Input
-            type="number"
-            step="0.01"
-            placeholder="Precio"
-            value={draft.totalPrice || ""}
-            onChange={(e) => setDraft({ ...draft, totalPrice: Number(e.target.value) })}
-            onKeyDown={handleKeyDown}
-          />
-        </div>
-        <Button type="button" variant="secondary" onClick={addLine}>
-          +
-        </Button>
       </div>
     </div>
   );

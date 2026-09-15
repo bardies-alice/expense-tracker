@@ -91,7 +91,7 @@ export function TripForm({ categoryId }: { categoryId: string }) {
             </Select>
           )}
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <DatePicker name="startDate" required defaultValue={new Date().toISOString().slice(0, 10)} />
             <DatePicker name="endDate" />
           </div>

@@ -54,16 +54,16 @@ export function CategoryComparisonList({ rows }: { rows: CategoryComparisonRow[]
                 <path d="M9 18l6-6-6-6" />
               </svg>
               <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: r.color }} />
-              <span className="w-24 shrink-0 truncate text-sm text-gray-700">{r.name}</span>
-              <div className="h-2 flex-1 rounded-full bg-gray-100">
+              <span className="w-16 shrink-0 truncate text-sm text-gray-700 sm:w-24">{r.name}</span>
+              <div className="h-2 min-w-6 flex-1 rounded-full bg-gray-100">
                 <div
                   className="h-2 rounded-full"
                   style={{ width: `${(r.thisMonth / max) * 100}%`, background: r.color }}
                 />
               </div>
-              <span className="w-20 shrink-0 text-right text-sm font-medium text-gray-900">{formatEUR(r.thisMonth)}</span>
+              <span className="w-16 shrink-0 text-right text-sm font-medium text-gray-900 sm:w-20">{formatEUR(r.thisMonth)}</span>
               <span
-                className={`w-28 shrink-0 text-right text-xs font-medium ${
+                className={`hidden w-28 shrink-0 text-right text-xs font-medium sm:block ${
                   r.delta > 0 ? "text-red-600" : r.delta < 0 ? "text-emerald-600" : "text-gray-400"
                 }`}
               >
@@ -72,13 +72,13 @@ export function CategoryComparisonList({ rows }: { rows: CategoryComparisonRow[]
             </button>
 
             {isOpen && (
-              <ul className="ml-9 mb-2 space-y-1 border-l border-gray-100 pl-4">
+              <ul className="mb-2 ml-4 space-y-1 border-l border-gray-100 pl-3 sm:ml-9 sm:pl-4">
                 {r.topExpenses.map((e, i) => (
-                  <li key={i} className="flex items-center justify-between text-xs text-gray-500">
-                    <span>
+                  <li key={i} className="flex items-center justify-between gap-2 text-xs text-gray-500">
+                    <span className="min-w-0 truncate">
                       {e.notes ?? "(sin notas)"} · {formatDate(e.date)}
                     </span>
-                    <span className="font-medium text-gray-700">{formatEUR(e.amount)}</span>
+                    <span className="shrink-0 font-medium text-gray-700">{formatEUR(e.amount)}</span>
                   </li>
                 ))}
               </ul>

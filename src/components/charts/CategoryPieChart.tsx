@@ -28,8 +28,8 @@ export function CategoryPieChart({ data }: { data: CategoryBreakdownSlice[] }) {
               nameKey="name"
               cx="50%"
               cy="50%"
-              innerRadius={70}
-              outerRadius={110}
+              innerRadius="45%"
+              outerRadius="70%"
               paddingAngle={2}
               cornerRadius={4}
               label={({ percent }) => ((percent ?? 0) >= 0.08 ? `${((percent ?? 0) * 100).toFixed(0)}%` : "")}
@@ -51,8 +51,8 @@ export function CategoryPieChart({ data }: { data: CategoryBreakdownSlice[] }) {
         {data.map((slice) => (
           <li key={slice.name} className="flex items-center gap-2">
             <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: slice.color }} />
-            <span className="text-gray-600">{slice.name}</span>
-            <span className="ml-auto tabular-nums font-medium text-gray-900">{formatEUR(slice.total)}</span>
+            <span className="min-w-0 flex-1 truncate text-gray-600">{slice.name}</span>
+            <span className="shrink-0 tabular-nums font-medium text-gray-900">{formatEUR(slice.total)}</span>
           </li>
         ))}
       </ul>

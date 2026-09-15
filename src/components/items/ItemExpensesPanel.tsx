@@ -38,7 +38,7 @@ export function ItemExpensesPanel({
 
   return (
     <div className="rounded-xl border border-gray-200 bg-white shadow-sm">
-      <div className="flex items-center justify-between border-b border-gray-200 px-5 py-[18px]">
+      <div className="flex flex-col gap-3 border-b border-gray-200 px-5 py-[18px] sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="m-0 text-sm font-semibold text-gray-800">Gastos relacionados</h2>
           <p className="mt-1 text-xs text-gray-400">{visible.length} movimientos</p>
@@ -76,27 +76,29 @@ export function ItemExpensesPanel({
       {visible.length === 0 ? (
         <p className="px-5 py-8 text-center text-sm text-gray-400">Sin movimientos en esta categoría todavía.</p>
       ) : (
-        <table className="w-full border-collapse text-[13px]">
-          <thead>
-            <tr className="bg-gray-50 text-left">
-              <th className="px-5 py-2.5 text-[11px] font-medium uppercase text-gray-500">Fecha</th>
-              <th className="px-3 py-2.5 text-[11px] font-medium uppercase text-gray-500">Notas</th>
-              <th className="px-5 py-2.5 text-right text-[11px] font-medium uppercase text-gray-500">Importe</th>
-            </tr>
-          </thead>
-          <tbody>
-            {visible.map((t) => (
-              <tr key={t.id} className="h-11 border-t border-gray-100">
-                <td className="whitespace-nowrap px-5 text-gray-500">{formatDate(t.date)}</td>
-                <td className="px-3 text-gray-700">{t.notes ?? t.categoryLabel}</td>
-                <td className="whitespace-nowrap px-5 text-right font-medium text-gray-800">
-                  {t.type === "INCOME" ? "+" : "-"}
-                  {formatEUR(t.amount)}
-                </td>
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse text-[13px]">
+            <thead>
+              <tr className="bg-gray-50 text-left">
+                <th className="px-5 py-2.5 text-[11px] font-medium uppercase text-gray-500">Fecha</th>
+                <th className="px-3 py-2.5 text-[11px] font-medium uppercase text-gray-500">Notas</th>
+                <th className="px-5 py-2.5 text-right text-[11px] font-medium uppercase text-gray-500">Importe</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {visible.map((t) => (
+                <tr key={t.id} className="h-11 border-t border-gray-100">
+                  <td className="whitespace-nowrap px-5 text-gray-500">{formatDate(t.date)}</td>
+                  <td className="max-w-[180px] break-words px-3 text-gray-700">{t.notes ?? t.categoryLabel}</td>
+                  <td className="whitespace-nowrap px-5 text-right font-medium text-gray-800">
+                    {t.type === "INCOME" ? "+" : "-"}
+                    {formatEUR(t.amount)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
 
       <div className="border-t border-gray-200 px-5 py-3.5">

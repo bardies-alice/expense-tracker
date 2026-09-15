@@ -75,10 +75,10 @@ export function TravelMap({ trips, categoryId }: { trips: Trip[]; categoryId: st
 
   return (
     <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-      <div className="mb-3.5 flex items-center justify-between">
-        <h2 className="text-sm font-semibold text-gray-800">{drill ? drill.name : "Países visitados"}</h2>
+      <div className="mb-3.5 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <h2 className="min-w-0 truncate text-sm font-semibold text-gray-800">{drill ? drill.name : "Países visitados"}</h2>
         {drill ? (
-          <button onClick={() => setDrill(null)} className="text-xs text-indigo-600 hover:text-indigo-800">
+          <button onClick={() => setDrill(null)} className="self-start py-1 text-xs text-indigo-600 hover:text-indigo-800">
             ← Volver al mundo
           </button>
         ) : (
@@ -147,7 +147,7 @@ export function TravelMap({ trips, categoryId }: { trips: Trip[]; categoryId: st
             {!drill && isDrillSupported(selectedTrip.countryCode) && (
               <button
                 onClick={() => handleDrillIn(selectedTrip.countryCode, selectedTrip.countryName)}
-                className="text-xs font-normal text-indigo-500 underline hover:text-indigo-700"
+                className="py-1 text-xs font-normal text-indigo-500 underline hover:text-indigo-700"
               >
                 Ver por región
               </button>
@@ -172,7 +172,11 @@ export function TravelMap({ trips, categoryId }: { trips: Trip[]; categoryId: st
                   </div>
                   <span className="text-[13px] font-semibold text-gray-900">{tripTitle(trip)}</span>
                 </div>
-                <button onClick={() => handleDelete(trip.id)} className="text-[13px] text-gray-300 hover:text-gray-500" aria-label="Eliminar viaje">
+                <button
+                  onClick={() => handleDelete(trip.id)}
+                  className="flex h-9 w-9 shrink-0 items-center justify-center text-[13px] text-gray-300 hover:text-gray-500"
+                  aria-label="Eliminar viaje"
+                >
                   ✕
                 </button>
               </div>

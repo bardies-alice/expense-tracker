@@ -37,7 +37,11 @@ export function Modal({
       <div className="w-full max-w-md rounded-2xl bg-white p-5 shadow-xl" onClick={(e) => e.stopPropagation()}>
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-base font-semibold text-gray-900">{title}</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600" aria-label="Cerrar">
+          <button
+            onClick={onClose}
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+            aria-label="Cerrar"
+          >
             ✕
           </button>
         </div>

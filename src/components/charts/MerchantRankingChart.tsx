@@ -21,7 +21,7 @@ export function MerchantRankingChart({ data }: { data: MerchantPoint[] }) {
 
   return (
     <ResponsiveContainer width="100%" height={320}>
-      <BarChart data={data} layout="vertical" margin={{ left: 24, right: 56 }}>
+      <BarChart data={data} layout="vertical" margin={{ left: 8, right: 40 }}>
         <CartesianGrid strokeDasharray="0" horizontal={false} stroke={chartColors.gridline} />
         <XAxis type="number" tick={chartTickStyle} axisLine={{ stroke: chartColors.axis }} tickLine={false} />
         <YAxis
@@ -30,15 +30,15 @@ export function MerchantRankingChart({ data }: { data: MerchantPoint[] }) {
           tick={chartTickStyle}
           axisLine={{ stroke: chartColors.axis }}
           tickLine={false}
-          width={110}
-          tickFormatter={(v: string) => (v.length > 16 ? `${v.slice(0, 15)}…` : v)}
+          width={80}
+          tickFormatter={(v: string) => (v.length > 11 ? `${v.slice(0, 10)}…` : v)}
         />
         <Tooltip content={<ChartTooltip />} cursor={{ fill: "rgba(42,120,214,0.06)" }} />
         <Bar
           dataKey="total"
           name="Gastado"
           fill={chartColors.expense}
-          barSize={18}
+          barSize={28}
           radius={[0, 4, 4, 0]}
           cursor="pointer"
           onClick={(item) => {

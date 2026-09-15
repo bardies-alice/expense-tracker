@@ -29,20 +29,27 @@ export function RecurringRuleList({ rules, categoryId }: { rules: RecurringRule[
         {rules.map((rule) => (
           <li
             key={rule.id}
-            className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm"
+            className="flex flex-col gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm sm:flex-row sm:items-center sm:justify-between"
           >
-            <div>
-              <span className={rule.active ? "text-gray-900" : "text-gray-400 line-through"}>
+            <div className="min-w-0">
+              <span className={`truncate ${rule.active ? "text-gray-900" : "text-gray-400 line-through"}`}>
                 {rule.type === "INCOME" ? "+" : "-"}
                 {formatEUR(rule.amount)} · {FREQUENCY_LABEL[rule.frequency]}
               </span>
               <span className="ml-2 text-xs text-gray-400">Próxima: {formatDate(rule.nextRunDate)}</span>
             </div>
-            <div className="flex items-center gap-3">
-              <button onClick={() => handleToggle(rule.id, rule.active)} className="text-xs text-indigo-600 hover:text-indigo-800">
+            <div className="flex shrink-0 items-center gap-1">
+              <button
+                onClick={() => handleToggle(rule.id, rule.active)}
+                className="rounded-md px-2 py-2 text-xs text-indigo-600 hover:text-indigo-800"
+              >
                 {rule.active ? "Pausar" : "Reanudar"}
               </button>
-              <button onClick={() => handleDelete(rule.id)} className="text-gray-300 hover:text-gray-500" aria-label="Eliminar regla">
+              <button
+                onClick={() => handleDelete(rule.id)}
+                className="flex h-9 w-9 items-center justify-center text-gray-300 hover:text-gray-500"
+                aria-label="Eliminar regla"
+              >
                 ✕
               </button>
             </div>

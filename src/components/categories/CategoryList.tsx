@@ -19,7 +19,7 @@ export function CategoryList({
           className="relative flex flex-col items-center gap-2 rounded-2xl border border-gray-200 bg-white p-5 text-center transition-shadow hover:shadow-md"
         >
           {editMode && (
-            <div className="absolute right-2 top-2">
+            <div className="absolute right-1 top-1">
               <CategoryForm category={c} />
             </div>
           )}
@@ -29,7 +29,7 @@ export function CategoryList({
           >
             <CategoryIcon name={c.icon} className="h-6 w-6" />
           </div>
-          <span className="text-sm font-semibold text-gray-900">{c.name}</span>
+          <span className="line-clamp-1 w-full text-sm font-semibold text-gray-900">{c.name}</span>
           <span className="text-xs text-gray-400">{c.subcategories.length} subcategorías</span>
         </Link>
       ))}

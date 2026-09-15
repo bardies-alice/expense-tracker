@@ -105,26 +105,26 @@ export function AppCalendar({ events }: { events: CalendarEvent[] }) {
 
   return (
     <div className="grid grid-cols-1 items-start gap-4 lg:grid-cols-[minmax(0,1fr)_300px]">
-      <div className="min-w-0 rounded-2xl border border-gray-200 bg-white p-5">
+      <div className="min-w-0 rounded-2xl border border-gray-200 bg-white p-3 sm:p-5">
         <div className="mb-4 flex items-center justify-between">
           <span className="text-sm font-semibold capitalize text-gray-800">{format(month, "MMMM yyyy", { locale: es })}</span>
           <div className="flex gap-1">
             <button
               onClick={() => setMonth((m) => subMonths(m, 1))}
-              className="flex h-7 w-7 items-center justify-center rounded-md border border-gray-200 text-gray-500 hover:bg-gray-50"
+              className="flex h-10 w-10 items-center justify-center rounded-md border border-gray-200 text-gray-500 hover:bg-gray-50 sm:h-7 sm:w-7"
             >
-              <ChevronLeft size={14} />
+              <ChevronLeft size={16} />
             </button>
             <button
               onClick={() => setMonth((m) => addMonths(m, 1))}
-              className="flex h-7 w-7 items-center justify-center rounded-md border border-gray-200 text-gray-500 hover:bg-gray-50"
+              className="flex h-10 w-10 items-center justify-center rounded-md border border-gray-200 text-gray-500 hover:bg-gray-50 sm:h-7 sm:w-7"
             >
-              <ChevronRight size={14} />
+              <ChevronRight size={16} />
             </button>
           </div>
         </div>
 
-        <div className="mb-2 grid grid-cols-7 gap-2">
+        <div className="mb-2 grid grid-cols-7 gap-1 sm:gap-2">
           {WEEKDAYS.map((wd) => (
             <span key={wd} className="text-center text-[11px] font-bold uppercase text-gray-400">
               {wd}
@@ -132,7 +132,7 @@ export function AppCalendar({ events }: { events: CalendarEvent[] }) {
           ))}
         </div>
 
-        <div className="grid grid-cols-7 gap-2">
+        <div className="grid grid-cols-7 gap-1 sm:gap-2">
           {days.map((d) => {
             const key = dayKey(d);
             const dayEvents = eventsByDay.get(key) ?? [];
@@ -199,9 +199,9 @@ export function AppCalendar({ events }: { events: CalendarEvent[] }) {
           <p className="m-0 text-xs text-gray-400">Sin movimientos ese día.</p>
         ) : (
           selectedDayEvents.map((e) => (
-            <div key={e.id} className="flex items-center gap-2 border-b border-gray-100 py-2 last:border-0">
+            <div key={e.id} className="flex min-w-0 items-center gap-2 border-b border-gray-100 py-2 last:border-0">
               <span className={`h-[6px] w-[6px] shrink-0 rounded-full ${KIND_DOT[e.kind]}`} />
-              <span className={`text-xs font-medium ${KIND_TEXT_COLOR[e.kind]}`}>{e.title}</span>
+              <span className={`min-w-0 truncate text-xs font-medium ${KIND_TEXT_COLOR[e.kind]}`}>{e.title}</span>
             </div>
           ))
         )}

@@ -71,6 +71,7 @@ export function HouseSvg({ zoneStatuses, onZoneClick, hoveredZone, onZoneHover }
               onMouseLeave={() => onZoneHover?.(null)}
               style={{ cursor: onZoneClick ? "pointer" : "default" }}
             >
+              <circle cx={b.cx} cy={b.cy} r={b.r + 10} fill="transparent" />
               <circle
                 cx={b.cx}
                 cy={b.cy}

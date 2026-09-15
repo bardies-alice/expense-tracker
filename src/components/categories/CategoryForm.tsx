@@ -89,7 +89,7 @@ export function CategoryForm({ category }: { category?: Category }) {
           type="button"
           onClick={openModal}
           aria-label="Editar categoría"
-          className="flex h-7 w-7 items-center justify-center rounded-full text-gray-400 transition hover:bg-gray-100 hover:text-gray-700"
+          className="flex h-9 w-9 items-center justify-center rounded-full text-gray-400 transition hover:bg-gray-100 hover:text-gray-700"
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M12 20h9" />
@@ -107,7 +107,7 @@ export function CategoryForm({ category }: { category?: Category }) {
 
           <div>
             <p className="mb-1.5 text-xs font-medium text-gray-500">Color</p>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2.5">
               {COLOR_OPTIONS.map((c) => (
                 <button
                   key={c}
@@ -115,7 +115,7 @@ export function CategoryForm({ category }: { category?: Category }) {
                   onClick={() => setColor(c)}
                   aria-label={c}
                   className={clsx(
-                    "h-7 w-7 rounded-full ring-offset-2 transition",
+                    "h-9 w-9 rounded-full ring-offset-2 transition",
                     color === c ? "ring-2 ring-gray-900" : "ring-1 ring-gray-200"
                   )}
                   style={{ backgroundColor: c }}
@@ -126,7 +126,7 @@ export function CategoryForm({ category }: { category?: Category }) {
 
           <div>
             <p className="mb-1.5 text-xs font-medium text-gray-500">Icono</p>
-            <div className="grid grid-cols-7 gap-2">
+            <div className="grid grid-cols-5 gap-2 sm:grid-cols-7">
               {ICON_NAMES.map((name) => (
                 <button
                   key={name}
@@ -134,7 +134,7 @@ export function CategoryForm({ category }: { category?: Category }) {
                   onClick={() => setIcon(name)}
                   aria-label={name}
                   className={clsx(
-                    "flex h-9 w-9 items-center justify-center rounded-md border transition",
+                    "flex h-10 w-10 items-center justify-center rounded-md border transition",
                     icon === name ? "border-gray-900 bg-gray-100" : "border-gray-200 hover:bg-gray-50"
                   )}
                 >

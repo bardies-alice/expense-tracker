@@ -97,21 +97,21 @@ export function DatePicker({
       {name && <input type="hidden" name={name} value={selected} required={required} />}
 
       {open && (
-        <div className="absolute z-20 mt-1.5 w-[280px] rounded-xl border border-gray-200 bg-white p-3 shadow-lg">
+        <div className="absolute z-20 mt-1.5 w-[280px] max-w-[calc(100vw-2rem)] rounded-xl border border-gray-200 bg-white p-3 shadow-lg">
           <div className="mb-2 flex items-center justify-between">
             <span className="text-sm font-semibold capitalize text-gray-800">{format(month, "MMMM yyyy", { locale: es })}</span>
             <div className="flex gap-1">
               <button
                 type="button"
                 onClick={() => setMonth((m) => subMonths(m, 1))}
-                className="flex h-6 w-6 items-center justify-center rounded-md border border-gray-200 text-gray-500 hover:bg-gray-50"
+                className="flex h-8 w-8 items-center justify-center rounded-md border border-gray-200 text-gray-500 hover:bg-gray-50"
               >
                 <ChevronLeft size={13} />
               </button>
               <button
                 type="button"
                 onClick={() => setMonth((m) => addMonths(m, 1))}
-                className="flex h-6 w-6 items-center justify-center rounded-md border border-gray-200 text-gray-500 hover:bg-gray-50"
+                className="flex h-8 w-8 items-center justify-center rounded-md border border-gray-200 text-gray-500 hover:bg-gray-50"
               >
                 <ChevronRight size={13} />
               </button>
@@ -136,7 +136,7 @@ export function DatePicker({
                   type="button"
                   onClick={() => selectDay(d)}
                   className={clsx(
-                    "flex h-7 w-7 items-center justify-center rounded-md text-xs",
+                    "flex h-9 w-9 items-center justify-center rounded-md text-xs",
                     active ? "bg-indigo-600 font-semibold text-white" : isToday(d) ? "font-semibold text-indigo-600" : "text-gray-700 hover:bg-gray-100",
                     !inMonth && !active && "text-gray-300"
                   )}

@@ -51,7 +51,7 @@ export function CarSvg({ zoneStatuses, onZoneClick, hoveredZone, onZoneHover }: 
           cx={cx}
           cy="344"
           r="32"
-          fill="none"
+          fill="transparent"
           stroke={statusColor(ringStatus)}
           strokeWidth="5"
           opacity={dimOpacity(ringKey)}
@@ -61,6 +61,17 @@ export function CarSvg({ zoneStatuses, onZoneClick, hoveredZone, onZoneHover }: 
           onMouseLeave={() => onZoneHover?.(null)}
         />
         <circle cx={cx} cy="344" r="19" fill="#3b4250" />
+        {/* hit area más grande que el círculo visible (r=9) para un target táctil razonable */}
+        <circle
+          cx={cx}
+          cy="344"
+          r="20"
+          fill="transparent"
+          style={{ cursor: onZoneClick ? "pointer" : "default" }}
+          onClick={() => onZoneClick?.(brakeKey)}
+          onMouseEnter={() => onZoneHover?.(brakeKey)}
+          onMouseLeave={() => onZoneHover?.(null)}
+        />
         <circle
           cx={cx}
           cy="344"
@@ -68,10 +79,8 @@ export function CarSvg({ zoneStatuses, onZoneClick, hoveredZone, onZoneHover }: 
           fill={statusColor(brakeStatus)}
           stroke="#0d0f12"
           strokeWidth="1.5"
-          style={{ filter: `drop-shadow(0 0 ${brakeActive ? 5 : 0}px ${statusGlow(brakeStatus)})`, cursor: onZoneClick ? "pointer" : "default", transition: "filter 200ms ease", opacity: dimOpacity(brakeKey) }}
-          onClick={() => onZoneClick?.(brakeKey)}
-          onMouseEnter={() => onZoneHover?.(brakeKey)}
-          onMouseLeave={() => onZoneHover?.(null)}
+          pointerEvents="none"
+          style={{ filter: `drop-shadow(0 0 ${brakeActive ? 5 : 0}px ${statusGlow(brakeStatus)})`, transition: "filter 200ms ease", opacity: dimOpacity(brakeKey) }}
         />
       </g>
     );
@@ -470,6 +479,7 @@ c14 127 119 384 153 373 8 -2 66 -23 128 -45 194 -70 306 -52 394 63 50 67 63
               onMouseLeave={() => onZoneHover?.(null)}
               style={{ cursor: onZoneClick ? "pointer" : "default" }}
             >
+              <circle cx={b.cx} cy={b.cy} r={b.r + 10} fill="transparent" />
               <circle
                 cx={b.cx}
                 cy={b.cy}

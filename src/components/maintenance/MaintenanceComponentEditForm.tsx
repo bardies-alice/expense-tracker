@@ -63,11 +63,11 @@ export function MaintenanceComponentEditForm({
               </option>
             ))}
           </Select>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             <Input name="intervalKm" type="number" placeholder="Intervalo km" defaultValue={component.intervalKm ?? ""} />
-            <Input name="warningKm" type="number" placeholder="Aviso km antes" defaultValue={component.warningKm ?? ""} />
+            <Input name="warningKm" type="number" placeholder="Aviso km" defaultValue={component.warningKm ?? ""} />
             <Input name="intervalDays" type="number" placeholder="Intervalo días" defaultValue={component.intervalDays ?? ""} />
-            <Input name="warningDays" type="number" placeholder="Aviso días antes" defaultValue={component.warningDays ?? ""} />
+            <Input name="warningDays" type="number" placeholder="Aviso días" defaultValue={component.warningDays ?? ""} />
           </div>
           <p className="text-xs text-gray-400">Deja un campo vacío para quitar ese límite.</p>
           <Button type="submit" disabled={pending} className="w-full">

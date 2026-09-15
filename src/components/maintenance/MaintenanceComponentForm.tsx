@@ -95,7 +95,7 @@ export function MaintenanceComponentForm({
               </option>
             ))}
           </Select>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             <Input name="intervalKm" type="number" placeholder="Intervalo km" defaultValue={selected?.intervalKm} />
             <Input name="warningKm" type="number" placeholder="Aviso km" defaultValue={selected?.warningKm} />
             <Input name="intervalDays" type="number" placeholder="Intervalo días" defaultValue={selected?.intervalDays} />

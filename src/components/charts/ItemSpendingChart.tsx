@@ -17,7 +17,7 @@ export function ItemSpendingChart({ data }: { data: ItemSpendingPoint[] }) {
 
   return (
     <ResponsiveContainer width="100%" height={280}>
-      <BarChart data={data} layout="vertical" margin={{ left: 24, right: 56 }}>
+      <BarChart data={data} layout="vertical" margin={{ left: 8, right: 40 }}>
         <CartesianGrid strokeDasharray="0" horizontal={false} stroke={chartColors.gridline} />
         <XAxis type="number" tick={chartTickStyle} axisLine={{ stroke: chartColors.axis }} tickLine={false} />
         <YAxis
@@ -26,8 +26,8 @@ export function ItemSpendingChart({ data }: { data: ItemSpendingPoint[] }) {
           tick={chartTickStyle}
           axisLine={{ stroke: chartColors.axis }}
           tickLine={false}
-          width={100}
-          tickFormatter={(v: string) => (v.length > 14 ? `${v.slice(0, 13)}…` : v)}
+          width={72}
+          tickFormatter={(v: string) => (v.length > 9 ? `${v.slice(0, 8)}…` : v)}
         />
         <Tooltip content={<ChartTooltip />} cursor={{ fill: "rgba(27,175,122,0.06)" }} />
         <Bar dataKey="total" name="Gastado" fill={chartColors.expense} barSize={18} radius={[0, 4, 4, 0]}>

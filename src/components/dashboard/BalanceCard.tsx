@@ -41,11 +41,11 @@ export function BalanceCard({ balance }: { balance: { amount: number; asOfDate: 
       <div className="rounded-2xl border border-gray-200 bg-white p-4">
         <p className="mb-2 text-xs font-medium text-gray-500">Saldo actual</p>
         <form onSubmit={handleSubmit} className="flex flex-wrap items-end gap-2.5">
-          <div className="w-32">
+          <div className="w-full sm:w-32">
             <label className="mb-1 block text-[11px] text-gray-400">Importe</label>
             <Input type="number" step="0.01" value={amount} onChange={(e) => setAmount(Number(e.target.value))} />
           </div>
-          <div className="w-36">
+          <div className="w-full sm:w-36">
             <label className="mb-1 block text-[11px] text-gray-400">A fecha de</label>
             <DatePicker value={date} onChange={setDate} />
           </div>
@@ -79,7 +79,7 @@ export function BalanceCard({ balance }: { balance: { amount: number; asOfDate: 
         <span className="text-xs font-semibold text-white/80">Saldo actual</span>
         <button
           onClick={() => setEditing(true)}
-          className="rounded-md bg-white/20 px-2 py-1 text-[11px] font-semibold text-white hover:bg-white/30"
+          className="flex min-h-10 items-center rounded-md bg-white/20 px-3 py-2 text-[11px] font-semibold text-white hover:bg-white/30"
         >
           Editar
         </button>
