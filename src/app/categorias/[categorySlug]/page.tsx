@@ -36,20 +36,20 @@ export default async function CategoriaDetailPage({ params }: { params: Promise<
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
         {isTravel ? (
           <div className="flex items-center gap-3.5">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-surface text-accent">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M17.8 19.3l-1.6-8.7 4-2.3c1-.6 1-2 0-2.6l-.8-.5c-.5-.3-1.1-.3-1.6 0L14 7.4 6.3 4.9c-.5-.2-1 0-1.3.4l-.5.7c-.3.4-.2 1 .2 1.3L10 10l-3 2.2-2.6-.6c-.4-.1-.8 0-1 .4l-.3.5c-.3.4-.1 1 .3 1.2l3.1 1.6.9 3.3c.1.4.5.7 1 .6l.5-.1c.4-.1.7-.5.6-1l-.7-2.7 3-2.2 3.3 6.7c.2.5.8.7 1.2.4l.5-.3c.3-.2.4-.6.3-1z" />
               </svg>
             </div>
             <div>
-              <h1 className="m-0 text-[26px] font-bold tracking-tight text-gray-900">{category.name}</h1>
-              <p className="mt-1 text-sm text-gray-500">
+              <h1 className="m-0 text-[26px] font-bold tracking-tight text-ink">{category.name}</h1>
+              <p className="mt-1 text-sm text-muted">
                 {new Set(trips.map((t) => t.countryCode)).size} países visitados · {trips.length} viajes registrados
               </p>
             </div>
           </div>
         ) : (
-          <h1 className="text-xl font-semibold text-gray-900">{category.name}</h1>
+          <h1 className="text-xl font-semibold text-ink">{category.name}</h1>
         )}
         <div className="flex flex-wrap gap-2">
           {itemsEnabled && <ItemForm categoryId={category.id} defaultType={DEFAULT_ITEM_TYPE[category.slug]} />}
@@ -75,7 +75,7 @@ export default async function CategoriaDetailPage({ params }: { params: Promise<
 
       {itemsEnabled && (
         <section>
-          <h2 className="mb-3 text-sm font-medium text-gray-500">Items</h2>
+          <h2 className="mb-3 text-sm font-medium text-muted">Items</h2>
           <ItemList items={category.items} />
         </section>
       )}
@@ -83,7 +83,7 @@ export default async function CategoriaDetailPage({ params }: { params: Promise<
       <RecurringRuleList rules={recurringRules} categoryId={category.id} />
 
       <section>
-        <h2 className="mb-3 text-sm font-medium text-gray-500">Transacciones</h2>
+        <h2 className="mb-3 text-sm font-medium text-muted">Transacciones</h2>
         <TransactionTable transactions={transactions} categories={categories} />
       </section>
     </div>

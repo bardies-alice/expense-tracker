@@ -2,9 +2,9 @@ import { formatEUR } from "@/lib/format";
 
 function StatCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-xl border border-gray-200 bg-white px-[18px] py-4">
-      <p className="m-0 text-[11px] font-medium uppercase tracking-wide text-gray-400">{label}</p>
-      <p className="mt-1.5 text-lg font-bold text-gray-900 sm:text-[22px]">{value}</p>
+    <div className="rounded-xl border border-border bg-card px-[18px] py-4">
+      <p className="m-0 text-[11px] font-medium uppercase tracking-wide text-muted">{label}</p>
+      <p className="mt-1.5 text-lg font-bold text-ink sm:text-[22px]">{value}</p>
     </div>
   );
 }

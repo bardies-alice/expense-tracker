@@ -89,7 +89,7 @@ export function CategoryForm({ category }: { category?: Category }) {
           type="button"
           onClick={openModal}
           aria-label="Editar categoría"
-          className="flex h-9 w-9 items-center justify-center rounded-full text-gray-400 transition hover:bg-gray-100 hover:text-gray-700"
+          className="flex h-9 w-9 items-center justify-center rounded-full text-muted transition hover:bg-surface hover:text-ink"
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M12 20h9" />
@@ -106,7 +106,7 @@ export function CategoryForm({ category }: { category?: Category }) {
           <input type="hidden" name="icon" value={icon} />
 
           <div>
-            <p className="mb-1.5 text-xs font-medium text-gray-500">Color</p>
+            <p className="mb-1.5 text-xs font-medium text-muted">Color</p>
             <div className="flex flex-wrap gap-2.5">
               {COLOR_OPTIONS.map((c) => (
                 <button
@@ -116,7 +116,7 @@ export function CategoryForm({ category }: { category?: Category }) {
                   aria-label={c}
                   className={clsx(
                     "h-9 w-9 rounded-full ring-offset-2 transition",
-                    color === c ? "ring-2 ring-gray-900" : "ring-1 ring-gray-200"
+                    color === c ? "ring-2 ring-ink" : "ring-1 ring-border"
                   )}
                   style={{ backgroundColor: c }}
                 />
@@ -125,7 +125,7 @@ export function CategoryForm({ category }: { category?: Category }) {
           </div>
 
           <div>
-            <p className="mb-1.5 text-xs font-medium text-gray-500">Icono</p>
+            <p className="mb-1.5 text-xs font-medium text-muted">Icono</p>
             <div className="grid grid-cols-5 gap-2 sm:grid-cols-7">
               {ICON_NAMES.map((name) => (
                 <button
@@ -135,10 +135,10 @@ export function CategoryForm({ category }: { category?: Category }) {
                   aria-label={name}
                   className={clsx(
                     "flex h-10 w-10 items-center justify-center rounded-md border transition",
-                    icon === name ? "border-gray-900 bg-gray-100" : "border-gray-200 hover:bg-gray-50"
+                    icon === name ? "border-ink bg-surface" : "border-border hover:bg-surface"
                   )}
                 >
-                  <CategoryIcon name={name} className="h-4.5 w-4.5 text-gray-700" />
+                  <CategoryIcon name={name} className="h-4.5 w-4.5 text-ink" />
                 </button>
               ))}
             </div>
