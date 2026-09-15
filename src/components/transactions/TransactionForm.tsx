@@ -137,9 +137,9 @@ export function TransactionForm({
       <Input name="notes" placeholder="Notas (opcional)" defaultValue={initial?.notes ?? ""} />
 
       {!initial?.id && (
-        <div className="flex flex-col gap-3 rounded-md border border-gray-200 px-3 py-2.5 sm:flex-row sm:items-center">
-          <label className="flex items-center gap-2 text-sm text-gray-700">
-            <input type="checkbox" checked={repeat} onChange={(e) => setRepeat(e.target.checked)} className="h-4 w-4 rounded border-gray-300" />
+        <div className="flex flex-col gap-3 rounded-md border border-border px-3 py-2.5 sm:flex-row sm:items-center">
+          <label className="flex items-center gap-2 text-sm text-ink">
+            <input type="checkbox" checked={repeat} onChange={(e) => setRepeat(e.target.checked)} className="h-4 w-4 rounded border-border" />
             Repetir automáticamente
           </label>
           {repeat && (

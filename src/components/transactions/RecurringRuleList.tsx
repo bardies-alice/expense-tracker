@@ -24,30 +24,30 @@ export function RecurringRuleList({ rules, categoryId }: { rules: RecurringRule[
 
   return (
     <section>
-      <h2 className="mb-3 text-sm font-medium text-gray-500">Recurrentes</h2>
+      <h2 className="mb-3 text-sm font-medium text-muted">Recurrentes</h2>
       <ul className="space-y-2">
         {rules.map((rule) => (
           <li
             key={rule.id}
-            className="flex flex-col gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm sm:flex-row sm:items-center sm:justify-between"
+            className="flex flex-col gap-2 rounded-lg border border-border bg-card px-4 py-2.5 text-sm sm:flex-row sm:items-center sm:justify-between"
           >
             <div className="min-w-0">
-              <span className={`truncate ${rule.active ? "text-gray-900" : "text-gray-400 line-through"}`}>
+              <span className={`truncate ${rule.active ? "text-ink" : "text-muted line-through"}`}>
                 {rule.type === "INCOME" ? "+" : "-"}
                 {formatEUR(rule.amount)} · {FREQUENCY_LABEL[rule.frequency]}
               </span>
-              <span className="ml-2 text-xs text-gray-400">Próxima: {formatDate(rule.nextRunDate)}</span>
+              <span className="ml-2 text-xs text-muted">Próxima: {formatDate(rule.nextRunDate)}</span>
             </div>
             <div className="flex shrink-0 items-center gap-1">
               <button
                 onClick={() => handleToggle(rule.id, rule.active)}
-                className="rounded-md px-2 py-2 text-xs text-indigo-600 hover:text-indigo-800"
+                className="rounded-md px-2 py-2 text-xs text-accent"
               >
                 {rule.active ? "Pausar" : "Reanudar"}
               </button>
               <button
                 onClick={() => handleDelete(rule.id)}
-                className="flex h-9 w-9 items-center justify-center text-gray-300 hover:text-gray-500"
+                className="flex h-9 w-9 items-center justify-center text-muted hover:text-ink"
                 aria-label="Eliminar regla"
               >
                 ✕

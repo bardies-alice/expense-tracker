@@ -25,7 +25,7 @@ export default async function MerchantPage({ params }: { params: Promise<{ notes
 
   return (
     <div className="space-y-6">
-      <Link href="/gastos" className="mb-2 inline-flex items-center gap-1.5 text-[13px] text-gray-500 hover:text-gray-700">
+      <Link href="/gastos" className="mb-2 inline-flex items-center gap-1.5 text-[13px] text-muted hover:text-ink">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M15 18l-6-6 6-6" />
         </svg>
@@ -34,19 +34,19 @@ export default async function MerchantPage({ params }: { params: Promise<{ notes
 
       <div className="flex flex-wrap items-end justify-between gap-6">
         <div>
-          <h1 className="m-0 break-words text-2xl font-bold tracking-tight text-gray-900">{merchantName}</h1>
-          <p className="mt-1.5 text-sm text-gray-500">
+          <h1 className="m-0 break-words text-2xl font-bold tracking-tight text-ink">{merchantName}</h1>
+          <p className="mt-1.5 text-sm text-muted">
             {transactions.length} {transactions.length === 1 ? "movimiento" : "movimientos"}
           </p>
         </div>
         <div className="flex gap-6">
           <div className="text-right">
-            <p className="text-xs uppercase tracking-wide text-gray-400">Gastado</p>
-            <p className="text-lg font-semibold text-gray-900">{formatEUR(totalSpent)}</p>
+            <p className="text-xs uppercase tracking-wide text-muted">Gastado</p>
+            <p className="text-lg font-semibold text-ink">{formatEUR(totalSpent)}</p>
           </div>
           {totalIncome > 0 && (
             <div className="text-right">
-              <p className="text-xs uppercase tracking-wide text-gray-400">Recibido</p>
+              <p className="text-xs uppercase tracking-wide text-muted">Recibido</p>
               <p className="text-lg font-semibold text-emerald-600">{formatEUR(totalIncome)}</p>
             </div>
           )}

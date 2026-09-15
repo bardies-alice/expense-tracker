@@ -38,11 +38,11 @@ export function TransactionLinesEditor({
 
   return (
     <div className="space-y-2">
-      <p className="text-xs font-medium text-gray-500">Líneas de producto (opcional)</p>
+      <p className="text-xs font-medium text-muted">Líneas de producto (opcional)</p>
       {lines.map((line, i) => (
         <div key={i} className="flex min-w-0 items-center gap-2 text-sm">
           <span className="min-w-0 flex-1 truncate">{line.productName}</span>
-          <span className="shrink-0 text-gray-400">x{line.quantity}</span>
+          <span className="shrink-0 text-muted">x{line.quantity}</span>
           <span className="shrink-0">{line.totalPrice.toFixed(2)} €</span>
           <button type="button" onClick={() => removeLine(i)} className="flex h-9 w-9 shrink-0 items-center justify-center text-red-500 hover:text-red-700">
             ✕
