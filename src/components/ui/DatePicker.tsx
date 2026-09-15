@@ -84,7 +84,7 @@ export function DatePicker({
           setOpen((o) => !o);
         }}
         className={clsx(
-          "flex w-full items-center justify-between rounded-lg border border-border bg-white px-3 py-2 text-left text-sm text-ink shadow-sm focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent",
+          "flex w-full items-center justify-between rounded-lg border border-border bg-card px-3 py-2 text-left text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent",
           className
         )}
       >
@@ -97,9 +97,9 @@ export function DatePicker({
       {name && <input type="hidden" name={name} value={selected} required={required} />}
 
       {open && (
-        <div className="absolute z-20 mt-1.5 w-[280px] max-w-[calc(100vw-2rem)] rounded-xl border border-border bg-white p-3 shadow-lg">
+        <div className="absolute z-20 mt-1.5 w-[280px] max-w-[calc(100vw-2rem)] rounded-xl border border-border bg-card p-3 shadow-lg">
           <div className="mb-2 flex items-center justify-between">
-            <span className="text-sm font-semibold capitalize text-gray-800">{format(month, "MMMM yyyy", { locale: es })}</span>
+            <span className="text-sm font-semibold capitalize text-ink">{format(month, "MMMM yyyy", { locale: es })}</span>
             <div className="flex gap-1">
               <button
                 type="button"
@@ -120,7 +120,7 @@ export function DatePicker({
 
           <div className="mb-1 grid grid-cols-7 gap-1">
             {WEEKDAYS.map((wd) => (
-              <span key={wd} className="text-center text-[10px] font-bold uppercase text-gray-400">
+              <span key={wd} className="text-center text-[10px] font-bold uppercase text-muted">
                 {wd}
               </span>
             ))}
