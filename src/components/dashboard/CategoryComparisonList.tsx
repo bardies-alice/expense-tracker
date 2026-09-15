@@ -55,7 +55,7 @@ export function CategoryComparisonList({ rows }: { rows: CategoryComparisonRow[]
               </svg>
               <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: r.color }} />
               <span className="w-16 shrink-0 truncate text-sm text-ink sm:w-24">{r.name}</span>
-              <div className="h-2 min-w-6 flex-1 rounded-full bg-gray-100">
+              <div className="h-2 min-w-6 flex-1 rounded-full bg-border">
                 <div
                   className="h-2 rounded-full"
                   style={{ width: `${(r.thisMonth / max) * 100}%`, background: r.color }}
@@ -74,7 +74,7 @@ export function CategoryComparisonList({ rows }: { rows: CategoryComparisonRow[]
             {isOpen && (
               <ul className="mb-2 ml-4 space-y-1 border-l border-border pl-3 sm:ml-9 sm:pl-4">
                 {r.topExpenses.map((e, i) => (
-                  <li key={i} className="flex items-center justify-between gap-2 text-xs text-gray-500">
+                  <li key={i} className="flex items-center justify-between gap-2 text-xs text-muted">
                     <span className="min-w-0 truncate">
                       {e.notes ?? "(sin notas)"} · {formatDate(e.date)}
                     </span>
