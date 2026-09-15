@@ -26,12 +26,12 @@ export function NavBar() {
             key={l.href}
             href={l.href}
             title={l.label}
-            className={`flex flex-1 flex-col items-center gap-0.5 rounded-2xl px-1.5 py-2 text-[10.5px] font-semibold transition-colors sm:min-w-[60px] sm:flex-none sm:px-2.5 ${
+            className={`flex flex-col items-center gap-0.5 rounded-2xl px-1 py-2 text-[9.5px] font-semibold transition-colors sm:min-w-[60px] sm:px-2.5 sm:text-[10.5px] ${
               active ? "bg-indigo-600 text-white" : "text-white/55 hover:text-white/80"
             }`}
           >
-            <Icon size={17} />
-            <span className={`whitespace-nowrap ${active ? "" : "hidden sm:inline"}`}>{l.label}</span>
+            <Icon size={16} />
+            <span className="whitespace-nowrap">{l.label}</span>
           </Link>
         );
       })}
