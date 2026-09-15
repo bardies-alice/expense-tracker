@@ -151,7 +151,7 @@ export function AppCalendar({ events }: { events: CalendarEvent[] }) {
                 title={expenseTotal > 0 ? `${expenseTotal.toFixed(2)}€ gastados` : undefined}
                 className={`flex aspect-square flex-col items-center justify-center gap-1 rounded-[10px] border p-1 ${
                   selected
-                    ? "border-ink bg-accent/10"
+                    ? "border-ink bg-ink/10"
                     : heat
                       ? "border-red-200"
                       : "border-border bg-card hover:bg-surface"
