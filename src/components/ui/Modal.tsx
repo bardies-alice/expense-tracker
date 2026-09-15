@@ -34,8 +34,11 @@ export function Modal({
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
       onClick={onClose}
     >
-      <div className="w-full max-w-md rounded-2xl bg-white p-5 shadow-xl" onClick={(e) => e.stopPropagation()}>
-        <div className="mb-4 flex items-center justify-between">
+      <div
+        className="flex max-h-[85vh] w-full max-w-md flex-col rounded-2xl bg-white shadow-xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between px-5 pb-3 pt-5">
           <h2 className="text-base font-semibold text-gray-900">{title}</h2>
           <button
             onClick={onClose}
@@ -45,7 +48,7 @@ export function Modal({
             ✕
           </button>
         </div>
-        {children}
+        <div className="overflow-y-auto px-5 pb-5">{children}</div>
       </div>
     </div>,
     document.body
