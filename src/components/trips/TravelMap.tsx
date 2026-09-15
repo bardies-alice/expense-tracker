@@ -74,15 +74,15 @@ export function TravelMap({ trips, categoryId }: { trips: Trip[]; categoryId: st
   }, [drill]);
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+    <div className="rounded-lg border border-border bg-card p-5">
       <div className="mb-3.5 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <h2 className="min-w-0 truncate text-sm font-semibold text-gray-800">{drill ? drill.name : "Países visitados"}</h2>
+        <h2 className="min-w-0 truncate text-sm font-semibold text-ink">{drill ? drill.name : "Países visitados"}</h2>
         {drill ? (
-          <button onClick={() => setDrill(null)} className="self-start py-1 text-xs text-indigo-600 hover:text-indigo-800">
+          <button onClick={() => setDrill(null)} className="self-start py-1 text-xs text-accent hover:opacity-80">
             ← Volver al mundo
           </button>
         ) : (
-          <div className="flex items-center gap-3.5 text-xs text-gray-500">
+          <div className="flex items-center gap-3.5 text-xs text-muted">
             <span className="inline-flex items-center gap-1.5">
               <span className="inline-block h-2.5 w-2.5 rounded-[3px]" style={{ background: VISITED_COLOR }} />
               Visitado
@@ -96,7 +96,7 @@ export function TravelMap({ trips, categoryId }: { trips: Trip[]; categoryId: st
       </div>
 
       {!world ? (
-        <div className="flex h-72 items-center justify-center text-sm text-gray-400">Cargando mapa…</div>
+        <div className="flex h-72 items-center justify-center text-sm text-muted">Cargando mapa…</div>
       ) : (
         <ComposableMap
           width={MAP_WIDTH}
@@ -142,46 +142,46 @@ export function TravelMap({ trips, categoryId }: { trips: Trip[]; categoryId: st
 
       <div className="mt-2.5 min-h-[20px]">
         {selectedTrip ? (
-          <p className="m-0 flex items-center gap-2 text-[13px] font-medium text-indigo-700">
+          <p className="m-0 flex items-center gap-2 text-[13px] font-medium text-accent">
             {tripTitle(selectedTrip)} · {formatDate(selectedTrip.startDate)}
             {!drill && isDrillSupported(selectedTrip.countryCode) && (
               <button
                 onClick={() => handleDrillIn(selectedTrip.countryCode, selectedTrip.countryName)}
-                className="py-1 text-xs font-normal text-indigo-500 underline hover:text-indigo-700"
+                className="py-1 text-xs font-normal text-accent underline hover:opacity-80"
               >
                 Ver por región
               </button>
             )}
           </p>
         ) : (
-          <p className="m-0 text-xs text-gray-400">Toca un país visitado para ver el detalle del viaje.</p>
+          <p className="m-0 text-xs text-muted">Toca un país visitado para ver el detalle del viaje.</p>
         )}
       </div>
 
       {trips.length > 0 && (
         <div className="mt-4 grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-3">
           {trips.map((trip) => (
-            <div key={trip.id} className="flex flex-col gap-1.5 rounded-[10px] border border-gray-200 p-3.5">
+            <div key={trip.id} className="flex flex-col gap-1.5 rounded-[10px] border border-border p-3.5">
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600">
+                  <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-surface text-accent">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M12 21c-4-4-7-8-7-11a7 7 0 1 1 14 0c0 3-3 7-7 11Z" />
                       <circle cx="12" cy="10" r="2.5" />
                     </svg>
                   </div>
-                  <span className="text-[13px] font-semibold text-gray-900">{tripTitle(trip)}</span>
+                  <span className="text-[13px] font-semibold text-ink">{tripTitle(trip)}</span>
                 </div>
                 <button
                   onClick={() => handleDelete(trip.id)}
-                  className="flex h-9 w-9 shrink-0 items-center justify-center text-[13px] text-gray-300 hover:text-gray-500"
+                  className="flex h-9 w-9 shrink-0 items-center justify-center text-[13px] text-muted hover:text-ink"
                   aria-label="Eliminar viaje"
                 >
                   ✕
                 </button>
               </div>
-              <p className="m-0 text-xs text-gray-400">{tripDateRange(trip)}</p>
-              {trip.notes && <p className="m-0 mt-0.5 text-xs text-gray-500">{trip.notes}</p>}
+              <p className="m-0 text-xs text-muted">{tripDateRange(trip)}</p>
+              {trip.notes && <p className="m-0 mt-0.5 text-xs text-muted">{trip.notes}</p>}
             </div>
           ))}
         </div>
