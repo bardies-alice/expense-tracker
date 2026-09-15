@@ -82,7 +82,7 @@ export function MaintenanceComponentForm({
                 </option>
               ))}
             </Select>
-            <p className="mt-1 text-xs text-gray-400">
+            <p className="mt-1 text-xs text-muted">
               {isCustom
                 ? "Dónde aparece el marcador en el dibujo. Si no eliges ninguna, el componente se mostrará igualmente en la lista de abajo."
                 : "Este componente ya tiene marcador asignado en el dibujo."}

@@ -33,21 +33,21 @@ export function MaintenanceComponentsList({
   const editing = components.find((c) => c.id === editingId) ?? null;
 
   return (
-    <div className="mt-5 rounded-xl border border-gray-200 bg-white shadow-sm">
-      <div className="flex flex-col gap-2 border-b border-gray-200 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
-        <h2 className="text-[13px] font-semibold text-gray-800">Componentes de mantenimiento</h2>
+    <div className="mt-5 rounded-lg border border-border bg-card">
+      <div className="flex flex-col gap-2 border-b border-border px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+        <h2 className="text-[13px] font-semibold text-ink">Componentes de mantenimiento</h2>
         <MaintenanceComponentForm itemId={itemId} itemType={itemType} catalog={catalog} />
       </div>
       <div>
         {components.map((c) => (
-          <div key={c.id} className="flex items-center border-b border-gray-100 last:border-b-0 hover:bg-gray-50">
+          <div key={c.id} className="flex items-center border-b border-border last:border-b-0 hover:bg-surface">
             <button onClick={() => onSelect?.(c.id)} className="flex flex-1 flex-wrap items-center justify-between gap-2 px-5 py-3 text-left">
               <span className="min-w-0">
-                <span className="block truncate text-[13px] text-gray-800">{c.label}</span>
-                <span className="block text-[11px] text-gray-400">{ruleSummary(c)}</span>
+                <span className="block truncate text-[13px] text-ink">{c.label}</span>
+                <span className="block text-[11px] text-muted">{ruleSummary(c)}</span>
               </span>
               <span className="flex items-center gap-2">
-                <span className="hidden text-xs text-gray-400 sm:inline">
+                <span className="hidden text-xs text-muted sm:inline">
                   {c.lastEventDate
                     ? `${formatDate(c.lastEventDate)}${c.lastEventKm ? ` · ${c.lastEventKm.toLocaleString("es-ES")} km` : ""}`
                     : "Sin registros"}
@@ -63,7 +63,7 @@ export function MaintenanceComponentsList({
             <button
               onClick={() => setEditingId(c.id)}
               aria-label={`Editar vida útil de ${c.label}`}
-              className="flex h-11 w-11 shrink-0 items-center justify-center text-gray-400 hover:text-indigo-600"
+              className="flex h-11 w-11 shrink-0 items-center justify-center text-muted hover:text-accent"
             >
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M12 20h9" />

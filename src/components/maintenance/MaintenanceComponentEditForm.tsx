@@ -69,7 +69,7 @@ export function MaintenanceComponentEditForm({
             <Input name="intervalDays" type="number" placeholder="Intervalo días" defaultValue={component.intervalDays ?? ""} />
             <Input name="warningDays" type="number" placeholder="Aviso días" defaultValue={component.warningDays ?? ""} />
           </div>
-          <p className="text-xs text-gray-400">Deja un campo vacío para quitar ese límite.</p>
+          <p className="text-xs text-muted">Deja un campo vacío para quitar ese límite.</p>
           <Button type="submit" disabled={pending} className="w-full">
             {pending ? "Guardando..." : "Guardar cambios"}
           </Button>

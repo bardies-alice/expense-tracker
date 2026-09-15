@@ -53,7 +53,7 @@ export default async function ItemDetailPage({ params }: { params: Promise<{ ite
 
   return (
     <div>
-      <Link href={`/categorias/${item.category.slug}`} className="mb-4 inline-flex items-center gap-1.5 text-[13px] text-gray-500 hover:text-gray-700">
+      <Link href={`/categorias/${item.category.slug}`} className="mb-4 inline-flex items-center gap-1.5 text-[13px] text-muted hover:text-ink">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M15 18l-6-6 6-6" />
         </svg>
@@ -62,8 +62,8 @@ export default async function ItemDetailPage({ params }: { params: Promise<{ ite
 
       <div className="mb-7 flex flex-wrap items-end justify-between gap-6">
         <div>
-          <h1 className="m-0 text-2xl font-bold tracking-tight text-gray-900">{item.name}</h1>
-          <p className="mt-1.5 text-sm text-gray-500">
+          <h1 className="m-0 text-2xl font-bold tracking-tight text-ink">{item.name}</h1>
+          <p className="mt-1.5 text-sm text-muted">
             {item.category.name}
             {subtitle ? ` · ${subtitle}` : ""}
           </p>

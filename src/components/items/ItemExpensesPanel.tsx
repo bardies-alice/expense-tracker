@@ -37,35 +37,36 @@ export function ItemExpensesPanel({
   const total = visible.reduce((sum, t) => sum + (t.type === "INCOME" ? t.amount : -t.amount), 0);
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white shadow-sm">
-      <div className="flex flex-col gap-3 border-b border-gray-200 px-5 py-[18px] sm:flex-row sm:items-center sm:justify-between">
+    <div className="rounded-lg border border-border bg-card">
+      <div className="flex flex-col gap-3 border-b border-border px-5 py-[18px] sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="m-0 text-sm font-semibold text-gray-800">Gastos relacionados</h2>
-          <p className="mt-1 text-xs text-gray-400">{visible.length} movimientos</p>
+          <h2 className="m-0 text-sm font-semibold text-ink">Gastos relacionados</h2>
+          <p className="mt-1 text-xs text-muted">{visible.length} movimientos</p>
         </div>
         <div className="flex items-start gap-4">
           <div className="text-right">
-            <p className="m-0 text-[11px] uppercase tracking-wide text-gray-400">Total</p>
-            <p className="mt-0.5 text-lg font-bold text-gray-900">{formatEUR(Math.abs(total))}</p>
+            <p className="m-0 text-[11px] uppercase tracking-wide text-muted">Total</p>
+            <p className="mt-0.5 text-lg font-bold text-ink">{formatEUR(Math.abs(total))}</p>
           </div>
           <button
             onClick={() => setAddOpen(true)}
-            className="whitespace-nowrap rounded-lg bg-indigo-600 px-3 py-2 text-[13px] font-medium text-white hover:bg-indigo-700"
+            className="whitespace-nowrap rounded-lg bg-ink px-3 py-2 text-[13px] font-medium text-white hover:opacity-90"
           >
             + Añadir gasto
           </button>
         </div>
       </div>
 
-      <div className="flex gap-1 overflow-x-auto border-b border-gray-200 px-5 pt-3">
+      <div className="flex gap-1 overflow-x-auto border-b border-border px-5 pt-3">
         {tabs.map((tab) => {
           const active = tab.id === activeTab;
           return (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className="whitespace-nowrap border-b-2 px-3 pb-3 pt-2 text-[13px] font-medium"
-              style={{ color: active ? "#4c51bf" : "#718096", borderColor: active ? "#667eea" : "transparent" }}
+              className={`whitespace-nowrap border-b-2 px-3 pb-3 pt-2 text-[13px] font-medium ${
+                active ? "border-ink text-ink" : "border-transparent text-muted"
+              }`}
             >
               {tab.label}
             </button>
@@ -74,23 +75,23 @@ export function ItemExpensesPanel({
       </div>
 
       {visible.length === 0 ? (
-        <p className="px-5 py-8 text-center text-sm text-gray-400">Sin movimientos en esta categoría todavía.</p>
+        <p className="px-5 py-8 text-center text-sm text-muted">Sin movimientos en esta categoría todavía.</p>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full border-collapse text-[13px]">
             <thead>
-              <tr className="bg-gray-50 text-left">
-                <th className="px-5 py-2.5 text-[11px] font-medium uppercase text-gray-500">Fecha</th>
-                <th className="px-3 py-2.5 text-[11px] font-medium uppercase text-gray-500">Notas</th>
-                <th className="px-5 py-2.5 text-right text-[11px] font-medium uppercase text-gray-500">Importe</th>
+              <tr className="bg-surface text-left">
+                <th className="px-5 py-2.5 text-[11px] font-medium uppercase text-muted">Fecha</th>
+                <th className="px-3 py-2.5 text-[11px] font-medium uppercase text-muted">Notas</th>
+                <th className="px-5 py-2.5 text-right text-[11px] font-medium uppercase text-muted">Importe</th>
               </tr>
             </thead>
             <tbody>
               {visible.map((t) => (
-                <tr key={t.id} className="h-11 border-t border-gray-100">
-                  <td className="whitespace-nowrap px-5 text-gray-500">{formatDate(t.date)}</td>
-                  <td className="max-w-[180px] break-words px-3 text-gray-700">{t.notes ?? t.categoryLabel}</td>
-                  <td className="whitespace-nowrap px-5 text-right font-medium text-gray-800">
+                <tr key={t.id} className="h-11 border-t border-border">
+                  <td className="whitespace-nowrap px-5 text-muted">{formatDate(t.date)}</td>
+                  <td className="max-w-[180px] break-words px-3 text-ink">{t.notes ?? t.categoryLabel}</td>
+                  <td className="whitespace-nowrap px-5 text-right font-medium text-ink">
                     {t.type === "INCOME" ? "+" : "-"}
                     {formatEUR(t.amount)}
                   </td>
@@ -101,8 +102,8 @@ export function ItemExpensesPanel({
         </div>
       )}
 
-      <div className="border-t border-gray-200 px-5 py-3.5">
-        <Link href={`/categorias/${category.slug}`} className="text-[13px] font-medium text-indigo-600 hover:text-indigo-800">
+      <div className="border-t border-border px-5 py-3.5">
+        <Link href={`/categorias/${category.slug}`} className="text-[13px] font-medium text-accent hover:opacity-80">
           Ver todos los gastos de {item.name} →
         </Link>
       </div>

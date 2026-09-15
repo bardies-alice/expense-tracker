@@ -57,41 +57,41 @@ export function VisualCard({
   const hasZones = itemType === "CAR" || itemType === "HOUSE";
 
   return (
-    <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
-      <div className="flex items-center justify-between border-b border-gray-200 bg-gray-50 px-5 py-3.5">
-        <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-gray-400">
+    <div className="overflow-hidden rounded-lg border border-border bg-card">
+      <div className="flex items-center justify-between border-b border-border bg-surface px-5 py-3.5">
+        <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted">
           {isCar ? "Cuadro de mando" : "Estado"}
         </span>
         {isCar && (
-          <div className={clsx(chakraPetch.variable, "flex items-baseline gap-1.5 rounded-md bg-gray-900 px-3 py-1.5")}>
-            <span className="text-[19px] font-semibold text-gray-50" style={{ fontFamily: "var(--font-chakra)" }}>
+          <div className={clsx(chakraPetch.variable, "flex items-baseline gap-1.5 rounded-md bg-ink px-3 py-1.5")}>
+            <span className="text-[19px] font-semibold text-white" style={{ fontFamily: "var(--font-chakra)" }}>
               {currentKm != null ? currentKm.toLocaleString("es-ES") : "—"}
             </span>
-            <span className="text-[10px] uppercase tracking-wide text-gray-400">km</span>
+            <span className="text-[10px] uppercase tracking-wide text-white/60">km</span>
           </div>
         )}
       </div>
 
-      <div className="flex items-center justify-center bg-white px-5 pb-2.5 pt-7">
+      <div className="flex items-center justify-center bg-card px-5 pb-2.5 pt-7">
         {itemType === "CAR" && (
           <CarSvg zoneStatuses={zoneStatuses} hoveredZone={hoveredZone} onZoneHover={setHoveredZone} onZoneClick={handleZoneClick} />
         )}
         {itemType === "HOUSE" && (
           <HouseSvg zoneStatuses={zoneStatuses} hoveredZone={hoveredZone} onZoneHover={setHoveredZone} onZoneClick={handleZoneClick} />
         )}
-        {itemType === "GENERIC" && <p className="text-sm text-gray-400">Sin representación visual para este tipo de item.</p>}
+        {itemType === "GENERIC" && <p className="text-sm text-muted">Sin representación visual para este tipo de item.</p>}
       </div>
 
       {hasZones && (
-        <div className="border-t border-gray-200 bg-gray-50 px-5 py-4">
+        <div className="border-t border-border bg-surface px-5 py-4">
           <div className="min-h-[20px]">
             <ZoneTooltip info={hoveredInfo ? toTooltipInfo(hoveredInfo) : null} />
           </div>
 
-          <p className="mt-3.5 text-[10px] uppercase tracking-wide text-gray-400">
+          <p className="mt-3.5 text-[10px] uppercase tracking-wide text-muted">
             Todos los componentes {isCar ? "(con o sin marcador en el coche)" : "(con o sin marcador en el dibujo)"}
           </p>
-          <div className="mt-1.5 grid grid-cols-3 gap-px overflow-hidden rounded-lg bg-gray-200 sm:grid-cols-6">
+          <div className="mt-1.5 grid grid-cols-3 gap-px overflow-hidden rounded-lg bg-border sm:grid-cols-6">
             {components.map((c) => {
               const active = isActive(c.status);
               const color = statusColor(c.status);
@@ -101,13 +101,13 @@ export function VisualCard({
                   onClick={() => onZoneClick?.(c.id)}
                   onMouseEnter={() => setHoveredZone(c.zoneKey)}
                   onMouseLeave={() => setHoveredZone(null)}
-                  className="flex flex-col items-center gap-1.5 bg-white px-1.5 py-3 transition-colors hover:bg-gray-50"
+                  className="flex flex-col items-center gap-1.5 bg-card px-1.5 py-3 transition-colors hover:bg-surface"
                 >
                   <TelltaleIcon
                     componentType={c.componentType}
                     style={{ width: 22, height: 22, color, filter: active ? `drop-shadow(0 0 4px ${statusGlow(c.status)})` : undefined }}
                   />
-                  <span className="text-center text-[9px] uppercase leading-tight tracking-wide text-gray-500">{c.label}</span>
+                  <span className="text-center text-[9px] uppercase leading-tight tracking-wide text-muted">{c.label}</span>
                 </button>
               );
             })}

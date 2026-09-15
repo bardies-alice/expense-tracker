@@ -14,10 +14,10 @@ export function ItemList({ items }: { items: Item[] }) {
         <Link
           key={item.id}
           href={`/items/${item.slug}`}
-          className="relative rounded-lg border border-gray-200 bg-white p-4 transition-shadow hover:shadow-md"
+          className="relative rounded-lg border border-border bg-card p-4 transition-shadow hover:shadow-md"
         >
-          <p className="pr-4 text-sm font-medium text-gray-900">{item.name}</p>
-          <p className="text-xs text-gray-400">{item.type}</p>
+          <p className="pr-4 text-sm font-medium text-ink">{item.name}</p>
+          <p className="text-xs text-muted">{item.type}</p>
           <DeleteItemButton id={item.id} categoryId={item.categoryId} />
         </Link>
       ))}
