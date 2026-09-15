@@ -29,7 +29,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="es" className={`${fraunces.variable} ${plexSans.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col bg-surface">
-        <main className="mx-auto w-full max-w-[1400px] flex-1 px-4 py-4 pb-28 sm:px-6 sm:py-6">{children}</main>
+        <main className="mx-auto w-full max-w-[1400px] flex-1 px-4 py-4 pb-32 sm:px-6 sm:py-6">{children}</main>
         <NavBar />
       </body>
     </html>
